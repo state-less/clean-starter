@@ -1,0 +1,24 @@
+{
+    "plugins": [
+      [
+        "@babel/plugin-transform-react-jsx",
+        {
+          "throwIfNamespace": false, // defaults to true
+          "runtime": "automatic", // defaults to classic
+          "importSource": "react-server/jsx-renderer" // defaults to react
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties"
+      ],
+      [
+        "@babel/plugin-proposal-optional-chaining"
+      ],
+      [
+        "@babel/plugin-transform-modules-commonjs"
+      ]
+    ]
+    // "presets": [
+    //     "@babel/preset-env"
+    // ]
+  }
