@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "rootDir": "src",
+        "jsx": "preserve",
+        // Ensure that .d.ts files are created by tsc, but not .js files
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        // Ensure that Babel can safely transpile files in the TypeScript project
+        "isolatedModules": true,
+        "outDir": "./dist/",
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "lib": ["ES2021", "DOM"]
+    },
+    "include": ["src"],
+    "exclude": ["node_modules/**"]
+}
