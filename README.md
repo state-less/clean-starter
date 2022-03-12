@@ -21,6 +21,15 @@ Once you fetched the remote you can checkout single files from it without affect
 Checkout all the files contained in the backend branch (see backend branch)
 After you checked out all config files you can remove the repository again (or keep it in case you want pull new changes)
 
+## Target 
+This branch targets backend projects working with **react-server** it contains everything you need to run a react-server. (TypeScript + JSX)
+
+## What does this package contain
+
+It contains all config files and dev dependencies needed for *babel*, *eslint* and *prettier*. It enforces a consisten EOL to mitigate cross env line endings conflicting with eslint. It contains a standard .gitignore and a .eslintignore. Prettier can be used with VSCode and configured to run with Alt+Shift+F. It contains a simple babel.config.json that compiles JavaScript, TypeScript and JSX. It also contains a build script in the *package.json* to run babel on your src directory. 
+
+That's about the minimum you need for a clean code experience in a server side JavaScript environment.
+
 # Guidelines
 ## What's clean code. 
 
