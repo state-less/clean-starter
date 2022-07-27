@@ -1,24 +1,34 @@
 {
-    "plugins": [
-      [
-        "@babel/plugin-transform-react-jsx",
-        {
-          "throwIfNamespace": false, // defaults to true
-          "runtime": "automatic", // defaults to classic
-          "importSource": "react-server/jsx-renderer" // defaults to react
-        }
-      ],
-      [
-        "@babel/plugin-proposal-class-properties"
-      ],
-      [
-        "@babel/plugin-proposal-optional-chaining"
-      ],
-      [
-        "@babel/plugin-transform-modules-commonjs"
-      ]
+  "plugins": [
+    
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "throwIfNamespace": false, // defaults to true
+        "runtime": "automatic", // defaults to classic
+        "importSource": "react-server/jsx-renderer" // defaults to react
+      }
+    ],
+    [
+      "@babel/plugin-transform-typescript",
+      {
+        "isTSX": true,
+        "allExtensions": true
+      }
+    ],
+    [
+      "@babel/plugin-proposal-class-properties"
+    ],
+    [
+      "@babel/plugin-proposal-optional-chaining"
+    ],
+    [
+      "@babel/plugin-transform-modules-commonjs"
     ]
-    // "presets": [
-    //     "@babel/preset-env"
-    // ]
-  }
+  ],
+  "presets": [
+      // "@babel/preset-env",
+      // "@babel/preset-typescript"
+
+  ]
+}
