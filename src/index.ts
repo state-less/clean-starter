@@ -1,4 +1,7 @@
-/**
- * This is the main entrypoint for your application.
- */
-export {}
+import { render } from "react-server";
+import router from "./server";
+
+(async () => {
+  /** Render the server */
+  await render(router);
+})();
