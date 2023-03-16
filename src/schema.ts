@@ -2,6 +2,7 @@ import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
     scalar JSON
+    scalar Timestamp
 
     union Components = Server | TestComponent | ServerSideProps | Provider
 
@@ -40,7 +41,7 @@ export const typeDefs = gql`
 
     type Server {
         version: String
-        uptime: Int
+        uptime: Timestamp
         platform: String
         children: [Components]
     }

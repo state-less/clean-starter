@@ -3,6 +3,7 @@ import { render, StateValue } from '@state-less/react-server';
 import { globalInstance } from '@state-less/react-server/dist/lib/reactServer';
 import { Resolver, State } from '@state-less/react-server/dist/types/graphql';
 import { pubsub, store } from './instances';
+import TimestampType from './lib/TimestampType';
 
 const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `${state.key}:${state.scope}`;
@@ -64,4 +65,5 @@ export const resolvers = {
             return obj.__typename || null;
         },
     },
+    Timestamp: TimestampType,
 };

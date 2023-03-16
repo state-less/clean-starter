@@ -15,4 +15,5 @@ export declare const resolvers: {
     Components: {
         __resolveType(obj: any): any;
     };
+    Timestamp: import("graphql").GraphQLScalarType<Date, number>;
 };

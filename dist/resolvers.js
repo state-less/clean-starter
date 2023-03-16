@@ -9,6 +9,7 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 var _reactServer = require("@state-less/react-server");
 var _reactServer2 = require("@state-less/react-server/dist/lib/reactServer");
 var _instances = require("./instances");
+var _TimestampType = _interopRequireDefault(require("./lib/TimestampType"));
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var generatePubSubKey = function generatePubSubKey(state) {
@@ -69,6 +70,7 @@ var resolvers = {
       // eslint-disable-next-line no-underscore-dangle
       return obj.__typename || null;
     }
-  }
+  },
+  Timestamp: _TimestampType["default"]
 };
 exports.resolvers = resolvers;
