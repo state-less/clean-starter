@@ -29,6 +29,11 @@ var apolloServer = new _apolloServerExpress.ApolloServer({
   schema: schema
 });
 
+// const options = {
+//     key: fs.readFileSync(path.resolve('./ssl/key.pem')),
+//     cert: fs.readFileSync(path.resolve('./ssl/cert.pem')),
+// };
+
 // Create a HTTP server
 var httpServer = (0, _http.createServer)(app);
 

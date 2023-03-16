@@ -2,6 +2,8 @@ import { ApolloServer } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import { execute, subscribe } from 'graphql';
 import { createServer } from 'http';
+import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import {
@@ -11,6 +13,7 @@ import {
     Dispatcher,
     createContext,
 } from '@state-less/react-server';
+
 import { store } from './instances';
 
 import { resolvers } from './resolvers';
@@ -29,6 +32,11 @@ const schema = makeExecutableSchema({
 const apolloServer = new ApolloServer({
     schema,
 });
+
+// const options = {
+//     key: fs.readFileSync(path.resolve('./ssl/key.pem')),
+//     cert: fs.readFileSync(path.resolve('./ssl/cert.pem')),
+// };
 
 // Create a HTTP server
 const httpServer = createServer(app);

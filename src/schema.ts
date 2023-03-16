@@ -40,6 +40,8 @@ export const typeDefs = gql`
 
     type Server {
         version: String
+        uptime: Number
+        platform: String
         children: [Components]
     }
 
