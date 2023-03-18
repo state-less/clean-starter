@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.resolvers = void 0;
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _reactServer = require("@state-less/react-server");
 var _reactServer2 = require("@state-less/react-server/dist/lib/reactServer");
@@ -14,6 +16,9 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var generatePubSubKey = function generatePubSubKey(state) {
   return "".concat(state.key, ":").concat(state.scope);
+};
+var generateComponentPubSubKey = function generateComponentPubSubKey(state) {
+  return "component::".concat(state.key);
 };
 var useState = function useState(parent, args) {
   var initialValue = args.initialValue,
@@ -30,7 +35,9 @@ var renderComponent = function renderComponent(parent, args, context) {
     scope = args.scope,
     props = args.props;
   var component = _reactServer2.globalInstance.components.get(key);
+  console.log('ABOUT TO RENDER COMPONENT', key, component);
   var rendered = (0, _reactServer.render)(component, context);
+  console.log('RENDERING COMPONENT', rendered, props);
   return {
     rendered: rendered
   };
@@ -49,18 +56,56 @@ var setState = function setState(parent, args) {
   });
   return _objectSpread({}, state);
 };
+var callFunction = /*#__PURE__*/function () {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(parent, args, context) {
+    var key, scope, prop, fnArgs, component, rendered, fn, result;
+    return _regenerator["default"].wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          key = args.key, scope = args.scope, prop = args.prop, fnArgs = args.args;
+          component = _reactServer2.globalInstance.components.get(key);
+          rendered = (0, _reactServer.render)(component, context);
+          console.log('CALLING FUNCTION', component, rendered, prop, rendered.props[prop].fn);
+          if (!rendered.props[prop]) {
+            _context.next = 8;
+            break;
+          }
+          fn = rendered.props[prop].fn;
+          result = fn(fnArgs);
+          return _context.abrupt("return", result);
+        case 8:
+          return _context.abrupt("return", {
+            rendered: rendered
+          });
+        case 9:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return function callFunction(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
 var resolvers = {
   Query: {
     getState: useState,
     renderComponent: renderComponent
   },
   Mutation: {
-    setState: setState
+    setState: setState,
+    callFunction: callFunction
   },
   Subscription: {
     updateState: {
       subscribe: function subscribe(parent, args) {
         return _instances.pubsub.asyncIterator(generatePubSubKey(args));
+      }
+    },
+    updateComponent: {
+      subscribe: function subscribe(parent, args) {
+        console.log('Subscribing to component', generateComponentPubSubKey(args));
+        return _instances.pubsub.asyncIterator(generateComponentPubSubKey(args));
       }
     }
   },

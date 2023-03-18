@@ -14,12 +14,14 @@ import {
     createContext,
 } from '@state-less/react-server';
 
-import { store } from './instances';
+import { pubsub, store } from './instances';
 
 import { resolvers } from './resolvers';
 import { typeDefs } from './schema';
+import { Navigation } from './components/Navigation';
 
 Dispatcher.getCurrent().setStore(store);
+Dispatcher.getCurrent().setPubSub(pubsub);
 
 const app = express();
 const PORT = 4000;
@@ -65,6 +67,7 @@ const context = createContext();
 export const reactServer = (
     <Server key="server">
         <TestComponent key="test" />
+        <Navigation key="navigation" />
     </Server>
 );
 

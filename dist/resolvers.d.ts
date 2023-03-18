@@ -6,9 +6,13 @@ export declare const resolvers: {
     };
     Mutation: {
         setState: Resolver<unknown, State>;
+        callFunction: (parent: any, args: any, context: any) => Promise<any>;
     };
     Subscription: {
         updateState: {
+            subscribe: (parent: any, args: Pick<State, 'key' | 'scope'>) => AsyncIterator<unknown, any, undefined>;
+        };
+        updateComponent: {
             subscribe: (parent: any, args: Pick<State, 'key' | 'scope'>) => AsyncIterator<unknown, any, undefined>;
         };
     };

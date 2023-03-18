@@ -28,10 +28,12 @@ export const typeDefs = gql`
 
     type Mutation {
         setState(key: ID!, scope: String!, value: JSON): State!
+        callFunction(key: ID!, prop: String!, args: JSON): JSON
     }
 
     type Subscription {
         updateState(key: ID!, scope: String!): State!
+        updateComponent(key: ID!, scope: String!): Component!
     }
 
     type TestComponent {
@@ -51,7 +53,8 @@ export const typeDefs = gql`
     }
 
     type ServerSideProps {
-        props: JSON
+        key: ID!
+        props: JSON!
         children: JSON
     }
 `;
