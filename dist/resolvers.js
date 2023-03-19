@@ -39,6 +39,7 @@ var renderComponent = function renderComponent(parent, args, context) {
   if (!component) {
     throw new Error('Component not found');
   }
+  console.log('RESOLVE CONTEXT: ', context);
   var rendered = (0, _reactServer.render)(component, context);
   return {
     rendered: rendered

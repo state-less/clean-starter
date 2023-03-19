@@ -34,6 +34,10 @@ const schema = makeExecutableSchema({
 
 const apolloServer = new ApolloServer({
     schema,
+    context: ({ req }) => {
+        const { headers } = req;
+        return { headers };
+    },
 });
 
 // const options = {

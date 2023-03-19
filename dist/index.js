@@ -29,7 +29,14 @@ var schema = (0, _graphqlTools.makeExecutableSchema)({
   resolvers: _resolvers.resolvers
 });
 var apolloServer = new _apolloServerExpress.ApolloServer({
-  schema: schema
+  schema: schema,
+  context: function context(_ref) {
+    var req = _ref.req;
+    var headers = req.headers;
+    return {
+      headers: headers
+    };
+  }
 });
 
 // const options = {

@@ -1699,7 +1699,7 @@
 
 "@state-less/react-server@state-less/react-server#v2":
   version "2.0.1"
-  resolved "https://codeload.github.com/state-less/react-server/tar.gz/9c74acc10184f056c4dec913b064d82f2d063ea1"
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/e6547cf4c16d039cc91c342a53f4e38a68a11661"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"

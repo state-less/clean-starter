@@ -32,6 +32,8 @@ const renderComponent: Resolver<unknown, State> = (parent, args, context) => {
     if (!component) {
         throw new Error('Component not found');
     }
+
+    console.log('RESOLVE CONTEXT: ', context);
     const rendered = render(component, context);
 
     return {

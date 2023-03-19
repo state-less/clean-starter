@@ -1,4 +1,4 @@
-import { useState } from '@state-less/react-server';
+import { Scopes, useState } from '@state-less/react-server';
 import { ServerSideProps } from './ServerSideProps';
 import { v4 } from 'uuid';
 
@@ -14,12 +14,13 @@ export const isEntry = (entry: any): entry is NavigationEntry => {
 
 /** This should check if the path contains a / and also that it doesn't contain any special characters */
 const isValidPath = (path: string) => {
-    return /^\/[0-9A-Za-z_-]+$/.test(path);
+    return /^\/([0-9A-Za-z_\-][\/]?)*$/.test(path);
 };
 
 export const Navigation = () => {
     const [entries, setEntries] = useState<NavigationEntry[]>([], {
         key: 'entries',
+        scope: Scopes.Client,
     });
 
     const addEntry = (entry) => {

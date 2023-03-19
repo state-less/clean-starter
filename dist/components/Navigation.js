@@ -21,11 +21,12 @@ var isEntry = function isEntry(entry) {
 /** This should check if the path contains a / and also that it doesn't contain any special characters */
 exports.isEntry = isEntry;
 var isValidPath = function isValidPath(path) {
-  return /^\/[0-9A-Za-z_-]+$/.test(path);
+  return /^\/([0-9A-Za-z_\-][\/]?)*$/.test(path);
 };
 var Navigation = function Navigation() {
   var _useState = (0, _reactServer.useState)([], {
-      key: 'entries'
+      key: 'entries',
+      scope: _reactServer.Scopes.Client
     }),
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     entries = _useState2[0],
