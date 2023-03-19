@@ -1,7 +1,10 @@
-import { State } from '@state-less/react-server/dist/types/graphql';
+import { StateValue } from '@state-less/react-server';
+import { Resolver, State } from '@state-less/react-server/dist/types/graphql';
 export declare const resolvers: {
     Query: {
-        getState: Resolver<unknown, any>;
+        getState: Resolver<unknown, State & {
+            initialValue: StateValue;
+        }>;
         renderComponent: Resolver<unknown, State>;
     };
     Mutation: {

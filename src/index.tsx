@@ -19,6 +19,7 @@ import { pubsub, store } from './instances';
 import { resolvers } from './resolvers';
 import { typeDefs } from './schema';
 import { Navigation } from './components/Navigation';
+import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -68,6 +69,8 @@ export const reactServer = (
     <Server key="server">
         <TestComponent key="test" />
         <Navigation key="navigation" />
+        <HelloWorldExample1 key="hello-world-1" />
+        <HelloWorldExample2 key="hello-world-2" />
     </Server>
 );
 

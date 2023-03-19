@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.resolvers = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _reactServer = require("@state-less/react-server");
@@ -35,9 +36,10 @@ var renderComponent = function renderComponent(parent, args, context) {
     scope = args.scope,
     props = args.props;
   var component = _reactServer2.globalInstance.components.get(key);
-  console.log('ABOUT TO RENDER COMPONENT', key, component);
+  if (!component) {
+    throw new Error('Component not found');
+  }
   var rendered = (0, _reactServer.render)(component, context);
-  console.log('RENDERING COMPONENT', rendered, props);
   return {
     rendered: rendered
   };
@@ -65,19 +67,18 @@ var callFunction = /*#__PURE__*/function () {
           key = args.key, scope = args.scope, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
           rendered = (0, _reactServer.render)(component, context);
-          console.log('CALLING FUNCTION', component, rendered, prop, rendered.props[prop].fn);
           if (!rendered.props[prop]) {
-            _context.next = 8;
+            _context.next = 7;
             break;
           }
           fn = rendered.props[prop].fn;
-          result = fn(fnArgs);
+          result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
           return _context.abrupt("return", result);
-        case 8:
+        case 7:
           return _context.abrupt("return", {
             rendered: rendered
           });
-        case 9:
+        case 8:
         case "end":
           return _context.stop();
       }
