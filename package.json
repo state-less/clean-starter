@@ -4,7 +4,7 @@
     "description": "This is a new react-server project.",
     "main": "dist/index.js",
     "scripts": {
-        "build": "babel -x \".ts\" -x \".tsx\" -x \".js\" ./src --out-dir ./dist && tsc",
+        "build": "babel -x \".ts\" -x \".tsx\" -x \".js\" ./src --out-dir ./dist",
         "postinstall": "npm run build",
         "start": "yarn build && node dist/index.js",
         "test": "jest --coverage"
