@@ -41,11 +41,6 @@ const apolloServer = new ApolloServer({
     },
 });
 
-// const options = {
-//     key: fs.readFileSync(path.resolve('./ssl/key.pem')),
-//     cert: fs.readFileSync(path.resolve('./ssl/cert.pem')),
-// };
-
 // Create a HTTP server
 const httpServer = createServer(app);
 
@@ -68,8 +63,6 @@ SubscriptionServer.create(
     }
 );
 
-const context = createContext();
-
 export const reactServer = (
     <Server key="server">
         <TestComponent key="test" />
@@ -82,7 +75,7 @@ export const reactServer = (
 );
 
 const node = render(reactServer, null, null);
-console.log('NODE', node);
+
 (async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });

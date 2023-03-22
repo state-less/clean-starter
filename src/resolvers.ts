@@ -33,7 +33,11 @@ const renderComponent: Resolver<unknown, State> = (parent, args, context) => {
         throw new Error('Component not found');
     }
 
-    const rendered = render(component, { clientProps: props, context });
+    try {
+        const rendered = render(component, { clientProps: props, context });
+    } catch (e) {
+        console.log('Error rendering component', e, context);
+    }
 
     return {
         rendered,
