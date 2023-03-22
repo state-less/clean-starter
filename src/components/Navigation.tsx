@@ -13,7 +13,7 @@ export const isEntry = (entry: any): entry is NavigationEntry => {
 };
 
 /** This should check if the path contains a / and also that it doesn't contain any special characters */
-const isValidPath = (path: string) => {
+export const isValidPath = (path: string) => {
     return /^\/([0-9A-Za-z_\-][\/]?)*$/.test(path);
 };
 

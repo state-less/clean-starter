@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.isEntry = exports.Navigation = void 0;
+exports.isValidPath = exports.isEntry = exports.Navigation = void 0;
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
@@ -23,6 +23,7 @@ exports.isEntry = isEntry;
 var isValidPath = function isValidPath(path) {
   return /^\/([0-9A-Za-z_\-][\/]?)*$/.test(path);
 };
+exports.isValidPath = isValidPath;
 var Navigation = function Navigation() {
   var _useState = (0, _reactServer.useState)([], {
       key: 'entries',
