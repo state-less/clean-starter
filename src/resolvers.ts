@@ -35,13 +35,17 @@ const renderComponent: Resolver<unknown, State> = (parent, args, context) => {
 
     try {
         const rendered = render(component, { clientProps: props, context });
+        return {
+            rendered,
+        };
     } catch (e) {
         console.log('Error rendering component', e, context);
+        return {
+            rendered: {
+                error: e.message,
+            },
+        };
     }
-
-    return {
-        rendered,
-    };
 };
 
 const setState: Resolver<unknown, State> = (parent, args) => {
