@@ -39,6 +39,6 @@ var HelloWorldExample2 = function HelloWorldExample2() {
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     count: count,
     increase: increase
-  });
+  }, "hello-world-2-props");
 };
 exports.HelloWorldExample2 = HelloWorldExample2;

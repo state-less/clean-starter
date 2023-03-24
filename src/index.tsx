@@ -21,6 +21,7 @@ import { typeDefs } from './schema';
 import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
+import { Todos } from './components/Todos';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -71,6 +72,7 @@ export const reactServer = (
         <HelloWorldExample2 key="hello-world-2" />
         <Pages key="pages" />
         <DynamicPage key="page" />
+        <Todos key="todos" />
     </Server>
 );
 

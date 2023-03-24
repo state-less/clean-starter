@@ -39,13 +39,22 @@ var renderComponent = function renderComponent(parent, args, context) {
   if (!component) {
     throw new Error('Component not found');
   }
-  var rendered = (0, _reactServer.render)(component, {
-    clientProps: props,
-    context: context
-  });
-  return {
-    rendered: rendered
-  };
+  try {
+    var rendered = (0, _reactServer.render)(component, {
+      clientProps: props,
+      context: context
+    });
+    return {
+      rendered: rendered
+    };
+  } catch (e) {
+    console.log('Error rendering component', e, context);
+    return {
+      rendered: {
+        error: e.message
+      }
+    };
+  }
 };
 var setState = function setState(parent, args) {
   var scope = args.scope,

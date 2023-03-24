@@ -18,5 +18,11 @@ export const HelloWorldExample2 = () => {
         setState(count + 1);
     };
 
-    return <ServerSideProps count={count} increase={increase} />;
+    return (
+        <ServerSideProps
+            key="hello-world-2-props"
+            count={count}
+            increase={increase}
+        />
+    );
 };

@@ -20,6 +20,7 @@ var _schema = require("./schema");
 var _Navigation = require("./components/Navigation");
 var _examples = require("./components/examples");
 var _Pages = require("./components/Pages");
+var _Todos = require("./components/Todos");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
@@ -40,11 +41,6 @@ var apolloServer = new _apolloServerExpress.ApolloServer({
   }
 });
 
-// const options = {
-//     key: fs.readFileSync(path.resolve('./ssl/key.pem')),
-//     cert: fs.readFileSync(path.resolve('./ssl/cert.pem')),
-// };
-
 // Create a HTTP server
 var httpServer = (0, _http.createServer)(app);
 
@@ -63,13 +59,11 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   server: httpServer,
   path: apolloServer.graphqlPath
 });
-var context = (0, _reactServer.createContext)();
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page")]
+  children: [(0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);
-console.log('NODE', node);
 (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
   return _regenerator["default"].wrap(function _callee$(_context) {
     while (1) switch (_context.prev = _context.next) {
