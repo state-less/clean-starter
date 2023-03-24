@@ -55,10 +55,12 @@ var Navigation = function Navigation() {
       return entry.id !== id;
     }));
   };
-  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
+  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps
+  // Needed for reactivity
+  , {
     entries: entries,
     addEntry: addEntry,
     removeEntry: removeEntry
-  });
+  }, "navigation-props");
 };
 exports.Navigation = Navigation;

@@ -23,10 +23,9 @@ var DynamicPage = function DynamicPage(props, _ref) {
     }),
     _useState2 = (0, _slicedToArray2["default"])(_useState, 1),
     pages = _useState2[0];
-  console.log('CLient Props', clientProps, pages);
   if (!(clientProps !== null && clientProps !== void 0 && clientProps.path)) {
     return (0, _jsxRuntime.jsx)(Page, {
-      id: null,
+      id: "404",
       content: ['404'],
       path: "/404"
     });
@@ -36,7 +35,7 @@ var DynamicPage = function DynamicPage(props, _ref) {
   });
   if (!page) {
     return (0, _jsxRuntime.jsx)(Page, {
-      id: null,
+      id: "404",
       content: ['404'],
       path: clientProps.path
     });
@@ -66,7 +65,7 @@ var Page = function Page(_ref2) {
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, page), {}, {
     setContent: setContent
-  }));
+  }), page.id);
 };
 exports.Page = Page;
 var Pages = function Pages() {
@@ -95,12 +94,14 @@ var Pages = function Pages() {
     }
     setPages([].concat((0, _toConsumableArray2["default"])(pages), [newPage]));
   };
-  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
+  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps
+  // Needed for reactivity
+  , {
     addPage: addPage,
     children: pages.map(function (page) {
       return (0, _jsxRuntime.jsx)(Page, _objectSpread({}, page));
     })
-  });
+  }, "pages-props");
 };
 exports.Pages = Pages;
 var isValidPage = function isValidPage(page) {

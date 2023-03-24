@@ -8,7 +8,14 @@ export const HelloWorldExample1 = () => {
         throw new Error('Not implemented');
     };
 
-    return <ServerSideProps count={count} increase={increase} />;
+    return (
+        <ServerSideProps
+            // Needed for reactivity
+            key="hello-world-1-props"
+            count={count}
+            increase={increase}
+        />
+    );
 };
 
 export const HelloWorldExample2 = () => {

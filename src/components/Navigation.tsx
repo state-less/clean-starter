@@ -47,6 +47,8 @@ export const Navigation = () => {
 
     return (
         <ServerSideProps
+            // Needed for reactivity
+            key="navigation-props"
             entries={entries}
             addEntry={addEntry}
             removeEntry={removeEntry}

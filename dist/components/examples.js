@@ -19,10 +19,12 @@ var HelloWorldExample1 = function HelloWorldExample1() {
   var increase = function increase() {
     throw new Error('Not implemented');
   };
-  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
+  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps
+  // Needed for reactivity
+  , {
     count: count,
     increase: increase
-  });
+  }, "hello-world-1-props");
 };
 exports.HelloWorldExample1 = HelloWorldExample1;
 var HelloWorldExample2 = function HelloWorldExample2() {

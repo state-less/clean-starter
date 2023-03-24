@@ -15,14 +15,12 @@ export const DynamicPage = (props, { clientProps }) => {
         scope: Scopes.Client,
     });
 
-    console.log('CLient Props', clientProps, pages);
-
     if (!clientProps?.path) {
-        return <Page id={null} content={['404']} path="/404" />;
+        return <Page id="404" content={['404']} path="/404" />;
     }
     const page = pages.find((p) => p.path === clientProps.path);
     if (!page) {
-        return <Page id={null} content={['404']} path={clientProps.path} />;
+        return <Page id="404" content={['404']} path={clientProps.path} />;
     }
 
     return <Page {...page} />;
@@ -45,7 +43,7 @@ export const Page = ({ id, content, path }: PageObject) => {
         setPage({ ...page, content: newContent });
     };
 
-    return <ServerSideProps {...page} setContent={setContent} />;
+    return <ServerSideProps key={page.id} {...page} setContent={setContent} />;
 };
 
 export const Pages = () => {
@@ -70,7 +68,11 @@ export const Pages = () => {
     };
 
     return (
-        <ServerSideProps addPage={addPage}>
+        <ServerSideProps
+            // Needed for reactivity
+            key="pages-props"
+            addPage={addPage}
+        >
             {pages.map((page) => (
                 <Page {...page} />
             ))}
@@ -78,6 +80,6 @@ export const Pages = () => {
     );
 };
 
-const isValidPage = (page) => {
+const isValidPage = (page): page is PageObject => {
     return page.id && page.path && page.content;
 };
