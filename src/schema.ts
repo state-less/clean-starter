@@ -29,6 +29,7 @@ export const typeDefs = gql`
     type Mutation {
         setState(key: ID!, scope: String!, value: JSON): State!
         callFunction(key: ID!, prop: String!, args: JSON): JSON
+        authenticate(strategy: String!, data: JSON): AuthenticationResult
     }
 
     type Subscription {
@@ -56,5 +57,13 @@ export const typeDefs = gql`
         key: ID!
         props: JSON!
         children: JSON
+    }
+
+    type AuthenticationResult {
+        id: ID!
+        email: String
+        strategy: String!
+        strategies: JSON!
+        token: String!
     }
 `;
