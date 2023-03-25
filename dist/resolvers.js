@@ -80,7 +80,6 @@ var useState = function useState(parent, args) {
 };
 var renderComponent = function renderComponent(parent, args, context) {
   var key = args.key,
-    scope = args.scope,
     props = args.props;
   var component = _reactServer2.globalInstance.components.get(key);
   if (!component) {
@@ -95,12 +94,8 @@ var renderComponent = function renderComponent(parent, args, context) {
       rendered: rendered
     };
   } catch (e) {
-    console.log('Error rendering component', e, context);
-    return {
-      rendered: {
-        error: e.message
-      }
-    };
+    console.log('Error rendering component', e);
+    throw e;
   }
 };
 var setState = function setState(parent, args) {
@@ -119,11 +114,11 @@ var setState = function setState(parent, args) {
 };
 var callFunction = /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args, context) {
-    var key, scope, prop, fnArgs, component, rendered, fn, result;
+    var key, prop, fnArgs, component, rendered, fn, result;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          key = args.key, scope = args.scope, prop = args.prop, fnArgs = args.args;
+          key = args.key, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
           rendered = (0, _reactServer.render)(component, context);
           if (!rendered.props[prop]) {
@@ -153,28 +148,27 @@ var verifyGoogleSignature = /*#__PURE__*/function () {
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          console.log('Verifying google signature', "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=".concat(token));
-          _context3.prev = 1;
-          _context3.next = 4;
+          _context3.prev = 0;
+          _context3.next = 3;
           return _axios["default"].get("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=".concat(token));
-        case 4:
+        case 3:
           response = _context3.sent;
           if (!response.data.error) {
-            _context3.next = 7;
+            _context3.next = 6;
             break;
           }
           throw new Error(response.data.error);
-        case 7:
+        case 6:
           return _context3.abrupt("return", response.data);
-        case 10:
-          _context3.prev = 10;
-          _context3.t0 = _context3["catch"](1);
+        case 9:
+          _context3.prev = 9;
+          _context3.t0 = _context3["catch"](0);
           throw new Error("Error verifying google signature: ".concat(_context3.t0.message || _context3.t0.toString()));
-        case 13:
+        case 12:
         case "end":
           return _context3.stop();
       }
-    }, _callee3, null, [[1, 10]]);
+    }, _callee3, null, [[0, 9]]);
   }));
   return function verifyGoogleSignature(_x5) {
     return _ref4.apply(this, arguments);
@@ -215,7 +209,7 @@ var decodeGoogleToken = /*#__PURE__*/function () {
   };
 }();
 var authenticate = /*#__PURE__*/function () {
-  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(parent, args, context) {
+  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(parent, args) {
     var strategy, data, auth, id, payload;
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
@@ -252,7 +246,7 @@ var authenticate = /*#__PURE__*/function () {
       }
     }, _callee5);
   }));
-  return function authenticate(_x7, _x8, _x9) {
+  return function authenticate(_x7, _x8) {
     return _ref6.apply(this, arguments);
   };
 }();

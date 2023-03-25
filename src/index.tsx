@@ -22,6 +22,7 @@ import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
 import { Todos } from './components/Todos';
+import { Session } from './components/Session';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -73,6 +74,7 @@ export const reactServer = (
         <Pages key="pages" />
         <DynamicPage key="page" />
         <Todos key="todos" />
+        <Session key="session" />
     </Server>
 );
 

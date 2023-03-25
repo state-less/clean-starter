@@ -31,6 +31,10 @@ type GoogleAuthData = {
     idToken: string;
 };
 
+type AuthStrategyData = {
+    [AuthStrategy.Google]: GoogleAuthData;
+};
+
 type GoogleToken = {
     iss: string;
     sub: string;
@@ -64,10 +68,7 @@ const generateComponentPubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `component::${state.key}`;
 };
 
-const useState: Resolver<unknown, State & { initialValue: StateValue }> = (
-    parent,
-    args
-) => {
+const useState = (parent, args) => {
     const { initialValue, key, scope } = args;
     const state = store.getState(initialValue, { key, scope });
 
@@ -76,8 +77,8 @@ const useState: Resolver<unknown, State & { initialValue: StateValue }> = (
     };
 };
 
-const renderComponent: Resolver<unknown, State> = (parent, args, context) => {
-    const { key, scope, props } = args;
+const renderComponent = (parent, args, context) => {
+    const { key, props } = args;
     const component = globalInstance.components.get(key);
     if (!component) {
         throw new Error('Component not found');
@@ -89,12 +90,8 @@ const renderComponent: Resolver<unknown, State> = (parent, args, context) => {
             rendered,
         };
     } catch (e) {
-        console.log('Error rendering component', e, context);
-        return {
-            rendered: {
-                error: e.message,
-            },
-        };
+        console.log('Error rendering component', e);
+        throw e;
     }
 };
 
@@ -111,7 +108,7 @@ const setState: Resolver<unknown, State> = (parent, args) => {
 };
 
 const callFunction = async (parent, args, context) => {
-    const { key, scope, prop, args: fnArgs } = args;
+    const { key, prop, args: fnArgs } = args;
     const component = globalInstance.components.get(key);
     const rendered = render(component, context);
     if (rendered.props[prop]) {
@@ -126,10 +123,6 @@ const callFunction = async (parent, args, context) => {
 };
 
 const verifyGoogleSignature = async (token: string) => {
-    console.log(
-        'Verifying google signature',
-        `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`
-    );
     try {
         const response = await axios.get(
             `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`
@@ -147,7 +140,10 @@ const verifyGoogleSignature = async (token: string) => {
     }
 };
 
-const strategies: Record<AuthStrategy, (data: any) => Promise<PartialAuth>> = {
+const strategies: Record<
+    AuthStrategy,
+    (data: any) => Promise<PartialAuth<unknown>>
+> = {
     [AuthStrategy.Google]: authenticateGoogle,
 };
 
@@ -177,14 +173,9 @@ const decodeGoogleToken = async (token): Promise<GoogleToken> => {
     });
 };
 
-type AuthStrategyData = {
-    [AuthStrategy.Google]: GoogleAuthData;
-};
-
 const authenticate = async <T extends AuthStrategy>(
     parent,
-    args: { strategy: T; data: AuthStrategyData[T] },
-    context
+    args: { strategy: T; data: AuthStrategyData[T] }
 ): Promise<CompoundAuth> => {
     const { strategy, data } = args;
 
@@ -213,7 +204,7 @@ const authenticate = async <T extends AuthStrategy>(
     };
 };
 
-const isValidAuthResponse = (auth: any): auth is PartialAuth => {
+const isValidAuthResponse = (auth: any): auth is PartialAuth<any> => {
     return auth && auth.id && auth.token;
 };
 
