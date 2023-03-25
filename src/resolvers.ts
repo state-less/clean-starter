@@ -9,6 +9,7 @@ import jwksClient from 'jwks-rsa';
 import { pubsub, store } from './instances';
 import TimestampType from './lib/TimestampType';
 import { JWT_SECRET } from './config';
+import { GoogleOAuthToken } from './lib/types';
 
 enum AuthStrategy {
     Google = 'google',
@@ -35,15 +36,10 @@ type AuthStrategyData = {
     [AuthStrategy.Google]: GoogleAuthData;
 };
 
-type GoogleToken = {
-    iss: string;
-    sub: string;
-    email: string;
-};
 const authenticateGoogle = async ({
     accessToken,
     idToken,
-}: GoogleAuthData): Promise<PartialAuth<GoogleToken>> => {
+}: GoogleAuthData): Promise<PartialAuth<GoogleOAuthToken>> => {
     try {
         await verifyGoogleSignature(accessToken);
     } catch (e) {
@@ -147,7 +143,7 @@ const strategies: Record<
     [AuthStrategy.Google]: authenticateGoogle,
 };
 
-const decodeGoogleToken = async (token): Promise<GoogleToken> => {
+const decodeGoogleToken = async (token): Promise<GoogleOAuthToken> => {
     return new Promise((resolve, reject) => {
         const client = jwksClient({
             jwksUri: 'https://www.googleapis.com/oauth2/v3/certs',
@@ -167,7 +163,7 @@ const decodeGoogleToken = async (token): Promise<GoogleToken> => {
                 if (err) {
                     reject(err);
                 }
-                resolve(decoded as GoogleToken);
+                resolve(decoded as GoogleOAuthToken);
             }
         );
     });

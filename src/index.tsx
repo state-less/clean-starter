@@ -23,6 +23,7 @@ import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
 import { Todos } from './components/Todos';
 import { Session } from './components/Session';
+import { Poll, PollActions } from './components/Poll';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -75,6 +76,15 @@ export const reactServer = (
         <DynamicPage key="page" />
         <Todos key="todos" />
         <Session key="session" />
+        <Poll
+            key="poll"
+            values={[
+                'Where can I get this?',
+                'Meh...',
+                'Shut up and take my money.',
+            ]}
+            allow={[PollActions.Revert]}
+        />
     </Server>
 );
 
