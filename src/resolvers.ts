@@ -64,9 +64,11 @@ const generateComponentPubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `component::${state.key}`;
 };
 
-const useState = (parent, args) => {
+const useState = async (parent, args) => {
     const { initialValue, key, scope } = args;
     const state = store.getState(initialValue, { key, scope });
+
+    await state.getValue();
 
     return {
         ...state,
@@ -94,7 +96,7 @@ const renderComponent = (parent, args, context) => {
 const setState: Resolver<unknown, State> = (parent, args) => {
     const { scope, value, key } = args;
     const state = store.getState(null, { key, scope });
-    state.value = value;
+    state.setValue(value);
 
     pubsub.publish(generatePubSubKey(state), { updateState: state });
 

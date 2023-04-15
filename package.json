@@ -17,8 +17,9 @@
         "@babel/plugin-transform-modules-commonjs": "^7.21.2",
         "@babel/plugin-transform-runtime": "^7.21.0",
         "@babel/preset-env": "^7.20.2",
-        "@state-less/react-server": "^2.0.1",
+        "@state-less/react-server": "state-less/react-server#feat/transport",
         "@types/graphql": "^14.5.0",
+        "@types/node": "^18.15.10",
         "@typescript-eslint/eslint-plugin": "^5.54.0",
         "@typescript-eslint/parser": "^5.54.0",
         "apollo-server": "^3.12.0",
@@ -41,6 +42,7 @@
         "react-dom": "^18.2.0",
         "react-server": "github:state-less/react-server#v2",
         "subscriptions-transport-ws": "^0.11.0",
+        "ts-node": "^10.9.1",
         "uuid": "^9.0.0"
     },
     "devDependencies": {
@@ -62,7 +64,7 @@
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.3.0",
         "prettier": "^2.5.1",
-        "typescript": "^4.5.5"
+        "typescript": "^5.0.2"
     },
     "config": {
         "commitizen": {

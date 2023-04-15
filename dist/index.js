@@ -17,11 +17,6 @@ var _reactServer = require("@state-less/react-server");
 var _instances = require("./instances");
 var _resolvers = require("./resolvers");
 var _schema = require("./schema");
-var _Navigation = require("./components/Navigation");
-var _examples = require("./components/examples");
-var _Pages = require("./components/Pages");
-var _Todos = require("./components/Todos");
-var _Session = require("./components/Session");
 var _Poll = require("./components/Poll");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
@@ -61,11 +56,11 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   server: httpServer,
   path: apolloServer.graphqlPath
 });
-var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
+var reactServer = (0, _jsxRuntime.jsx)(_reactServer.Server, {
+  children: (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],
     allow: [_Poll.PollActions.Revert]
-  }, "poll")]
+  }, "poll")
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);

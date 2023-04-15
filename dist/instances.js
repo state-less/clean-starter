@@ -9,6 +9,8 @@ var _reactServer = require("@state-less/react-server");
 var pubsub = new _graphqlSubscriptions.PubSub();
 exports.pubsub = pubsub;
 var store = new _reactServer.Store({
-  scope: 'root'
+  transport: new _reactServer.PostgresTransport({
+    connectionString: 'postgres://postgres:mysecretpassword@localhost:5433/postgres'
+  })
 });
 exports.store = store;

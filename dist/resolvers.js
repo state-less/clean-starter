@@ -68,16 +68,31 @@ var generatePubSubKey = function generatePubSubKey(state) {
 var generateComponentPubSubKey = function generateComponentPubSubKey(state) {
   return "component::".concat(state.key);
 };
-var useState = function useState(parent, args) {
-  var initialValue = args.initialValue,
-    key = args.key,
-    scope = args.scope;
-  var state = _instances.store.getState(initialValue, {
-    key: key,
-    scope: scope
-  });
-  return _objectSpread({}, state);
-};
+var useState = /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args) {
+    var initialValue, key, scope, state;
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          initialValue = args.initialValue, key = args.key, scope = args.scope;
+          state = _instances.store.getState(initialValue, {
+            key: key,
+            scope: scope
+          });
+          _context2.next = 4;
+          return state.getValue();
+        case 4:
+          return _context2.abrupt("return", _objectSpread({}, state));
+        case 5:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return function useState(_x2, _x3) {
+    return _ref3.apply(this, arguments);
+  };
+}();
 var renderComponent = function renderComponent(parent, args, context) {
   var key = args.key,
     props = args.props;
@@ -106,81 +121,81 @@ var setState = function setState(parent, args) {
     key: key,
     scope: scope
   });
-  state.value = value;
+  state.setValue(value);
   _instances.pubsub.publish(generatePubSubKey(state), {
     updateState: state
   });
   return _objectSpread({}, state);
 };
 var callFunction = /*#__PURE__*/function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args, context) {
+  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(parent, args, context) {
     var key, prop, fnArgs, component, rendered, fn, result;
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
           key = args.key, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
           rendered = (0, _reactServer.render)(component, context);
           if (!rendered.props[prop]) {
-            _context2.next = 7;
+            _context3.next = 7;
             break;
           }
           fn = rendered.props[prop].fn;
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
-          return _context2.abrupt("return", result);
+          return _context3.abrupt("return", result);
         case 7:
-          return _context2.abrupt("return", {
+          return _context3.abrupt("return", {
             rendered: rendered
           });
         case 8:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   }));
-  return function callFunction(_x2, _x3, _x4) {
-    return _ref3.apply(this, arguments);
+  return function callFunction(_x4, _x5, _x6) {
+    return _ref4.apply(this, arguments);
   };
 }();
 var verifyGoogleSignature = /*#__PURE__*/function () {
-  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(token) {
+  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(token) {
     var response;
-    return _regenerator["default"].wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+    return _regenerator["default"].wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          _context3.prev = 0;
-          _context3.next = 3;
+          _context4.prev = 0;
+          _context4.next = 3;
           return _axios["default"].get("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=".concat(token));
         case 3:
-          response = _context3.sent;
+          response = _context4.sent;
           if (!response.data.error) {
-            _context3.next = 6;
+            _context4.next = 6;
             break;
           }
           throw new Error(response.data.error);
         case 6:
-          return _context3.abrupt("return", response.data);
+          return _context4.abrupt("return", response.data);
         case 9:
-          _context3.prev = 9;
-          _context3.t0 = _context3["catch"](0);
-          throw new Error("Error verifying google signature: ".concat(_context3.t0.message || _context3.t0.toString()));
+          _context4.prev = 9;
+          _context4.t0 = _context4["catch"](0);
+          throw new Error("Error verifying google signature: ".concat(_context4.t0.message || _context4.t0.toString()));
         case 12:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3, null, [[0, 9]]);
+    }, _callee4, null, [[0, 9]]);
   }));
-  return function verifyGoogleSignature(_x5) {
-    return _ref4.apply(this, arguments);
+  return function verifyGoogleSignature(_x7) {
+    return _ref5.apply(this, arguments);
   };
 }();
 var strategies = (0, _defineProperty2["default"])({}, AuthStrategy.Google, authenticateGoogle);
 var decodeGoogleToken = /*#__PURE__*/function () {
-  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(token) {
-    return _regenerator["default"].wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(token) {
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          return _context4.abrupt("return", new Promise(function (resolve, reject) {
+          return _context5.abrupt("return", new Promise(function (resolve, reject) {
             var client = (0, _jwksRsa["default"])({
               jwksUri: 'https://www.googleapis.com/oauth2/v3/certs'
             });
@@ -200,33 +215,33 @@ var decodeGoogleToken = /*#__PURE__*/function () {
           }));
         case 1:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
-    }, _callee4);
+    }, _callee5);
   }));
-  return function decodeGoogleToken(_x6) {
-    return _ref5.apply(this, arguments);
+  return function decodeGoogleToken(_x8) {
+    return _ref6.apply(this, arguments);
   };
 }();
 var authenticate = /*#__PURE__*/function () {
-  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(parent, args) {
+  var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(parent, args) {
     var strategy, data, auth, id, payload;
-    return _regenerator["default"].wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
+    return _regenerator["default"].wrap(function _callee6$(_context6) {
+      while (1) switch (_context6.prev = _context6.next) {
         case 0:
           strategy = args.strategy, data = args.data;
           if (strategies[strategy]) {
-            _context5.next = 3;
+            _context6.next = 3;
             break;
           }
           throw new Error('Invalid strategy');
         case 3:
-          _context5.next = 5;
+          _context6.next = 5;
           return strategies[strategy](data);
         case 5:
-          auth = _context5.sent;
+          auth = _context6.sent;
           if (isValidAuthResponse(auth)) {
-            _context5.next = 8;
+            _context6.next = 8;
             break;
           }
           throw new Error('Invalid auth response');
@@ -237,17 +252,17 @@ var authenticate = /*#__PURE__*/function () {
             strategy: strategy,
             strategies: (0, _defineProperty2["default"])({}, strategy, auth)
           };
-          return _context5.abrupt("return", _objectSpread(_objectSpread({}, payload), {}, {
+          return _context6.abrupt("return", _objectSpread(_objectSpread({}, payload), {}, {
             token: _jsonwebtoken["default"].sign(payload, _config.JWT_SECRET)
           }));
         case 11:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
-    }, _callee5);
+    }, _callee6);
   }));
-  return function authenticate(_x7, _x8) {
-    return _ref6.apply(this, arguments);
+  return function authenticate(_x9, _x10) {
+    return _ref7.apply(this, arguments);
   };
 }();
 var isValidAuthResponse = function isValidAuthResponse(auth) {
