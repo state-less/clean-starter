@@ -1,5 +1,6 @@
 import {
     authenticate,
+    IComponent,
     isClientContext,
     Scopes,
     useState,
@@ -8,18 +9,17 @@ import { JWT_SECRET } from '../config';
 import { ServerSideProps } from './ServerSideProps';
 
 export enum PollActions {
+    Authenticate,
     Revert,
 }
 
-export const Poll = (
-    {
-        values,
-        key,
-        allow = [],
-    }: { values: string[]; key: string; allow: PollActions[] },
-    { context }
+export const Poll: IComponent<any> = (
+    { values, policies = [] }: { values: string[]; policies: PollActions[] },
+    { context, key }
 ) => {
-    if (isClientContext(context)) authenticate(context.headers, JWT_SECRET);
+    if (isClientContext(context) && policies.includes(PollActions.Authenticate))
+        authenticate(context.headers, JWT_SECRET);
+
     const [votes, setVotes] = useState(
         values.map(() => 0),
         { key: `votes-${key}`, scope: 'global' }
@@ -41,7 +41,7 @@ export const Poll = (
     };
 
     const vote = (index) => {
-        if (voted === index && allow.includes(PollActions.Revert)) {
+        if (voted === index && policies.includes(PollActions.Revert)) {
             unvote(index);
             return;
         }

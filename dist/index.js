@@ -64,8 +64,11 @@ _subscriptionsTransportWs.SubscriptionServer.create({
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   children: [(0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],
-    allow: [_Poll.PollActions.Revert]
-  }, "poll")]
+    policies: [_Poll.PollActions.Revert, _Poll.PollActions.Authenticate]
+  }, "poll"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
+    values: ['Nice!', 'Meh...', "It's not working", 'Add more features.', 'Add a comment section.', 'Shut up and take my money.'],
+    policies: [_Poll.PollActions.Revert]
+  }, "poll-open")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);
