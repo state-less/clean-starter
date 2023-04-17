@@ -13,7 +13,8 @@ var _ServerSideProps = require("./ServerSideProps");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var CommentActions = /*#__PURE__*/function (CommentActions) {
   CommentActions[CommentActions["Authenticate"] = 0] = "Authenticate";
-  CommentActions[CommentActions["Delete"] = 1] = "Delete";
+  CommentActions[CommentActions["AuthenticateRead"] = 1] = "AuthenticateRead";
+  CommentActions[CommentActions["Delete"] = 2] = "Delete";
   return CommentActions;
 }({});
 exports.CommentActions = CommentActions;
@@ -21,7 +22,7 @@ var Comments = function Comments(_ref, _ref2) {
   var _ref$policies = _ref.policies,
     policies = _ref$policies === void 0 ? [] : _ref$policies;
   var context = _ref2.context;
-  if ((0, _reactServer.isClientContext)(context) && policies.includes(CommentActions.Authenticate)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  if ((0, _reactServer.isClientContext)(context) && policies.includes(CommentActions.AuthenticateRead)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   var _useState = (0, _reactServer.useState)([], {
       key: "comments",
       scope: _reactServer.Scopes.Component

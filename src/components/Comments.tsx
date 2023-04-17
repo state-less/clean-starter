@@ -11,6 +11,7 @@ import { ServerSideProps } from './ServerSideProps';
 
 export enum CommentActions {
     Authenticate,
+    AuthenticateRead,
     Delete,
 }
 
@@ -20,7 +21,7 @@ export const Comments: IComponent<any> = (
 ) => {
     if (
         isClientContext(context) &&
-        policies.includes(CommentActions.Authenticate)
+        policies.includes(CommentActions.AuthenticateRead)
     )
         authenticate(context.headers, JWT_SECRET);
 
