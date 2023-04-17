@@ -12,17 +12,18 @@ var _config = require("../config");
 var _ServerSideProps = require("./ServerSideProps");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var PollActions = /*#__PURE__*/function (PollActions) {
-  PollActions[PollActions["Revert"] = 0] = "Revert";
+  PollActions[PollActions["Authenticate"] = 0] = "Authenticate";
+  PollActions[PollActions["Revert"] = 1] = "Revert";
   return PollActions;
 }({});
 exports.PollActions = PollActions;
 var Poll = function Poll(_ref, _ref2) {
   var values = _ref.values,
-    key = _ref.key,
-    _ref$allow = _ref.allow,
-    allow = _ref$allow === void 0 ? [] : _ref$allow;
-  var context = _ref2.context;
-  if ((0, _reactServer.isClientContext)(context)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+    _ref$policies = _ref.policies,
+    policies = _ref$policies === void 0 ? [] : _ref$policies;
+  var context = _ref2.context,
+    key = _ref2.key;
+  if ((0, _reactServer.isClientContext)(context) && policies.includes(PollActions.Authenticate)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   var _useState = (0, _reactServer.useState)(values.map(function () {
       return 0;
     }), {
@@ -49,7 +50,7 @@ var Poll = function Poll(_ref, _ref2) {
     setVoted(-1);
   };
   var vote = function vote(index) {
-    if (voted === index && allow.includes(PollActions.Revert)) {
+    if (voted === index && policies.includes(PollActions.Revert)) {
       unvote(index);
       return;
     }

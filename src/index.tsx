@@ -83,7 +83,19 @@ export const reactServer = (
                 'Meh...',
                 'Shut up and take my money.',
             ]}
-            allow={[PollActions.Revert]}
+            policies={[PollActions.Revert, PollActions.Authenticate]}
+        />
+        <Poll
+            key="poll-open"
+            values={[
+                'Nice!',
+                'Meh...',
+                "It's not working",
+                'Add more features.',
+                'Add a comment section.',
+                'Shut up and take my money.',
+            ]}
+            policies={[PollActions.Revert]}
         />
     </Server>
 );
