@@ -24,6 +24,7 @@ import { DynamicPage, Pages } from './components/Pages';
 import { Todos } from './components/Todos';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
+import { CommentActions, Comments } from './components/Comments';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -97,6 +98,7 @@ export const reactServer = (
             ]}
             policies={[PollActions.Revert]}
         />
+        <Comments key="comments" policies={[CommentActions.Authenticate]} />
     </Server>
 );
 

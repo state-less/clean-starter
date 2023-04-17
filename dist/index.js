@@ -23,6 +23,7 @@ var _Pages = require("./components/Pages");
 var _Todos = require("./components/Todos");
 var _Session = require("./components/Session");
 var _Poll = require("./components/Poll");
+var _Comments = require("./components/Comments");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
@@ -68,7 +69,9 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   }, "poll"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Nice!', 'Meh...', "It's not working", 'Add more features.', 'Add a comment section.', 'Shut up and take my money.'],
     policies: [_Poll.PollActions.Revert]
-  }, "poll-open")]
+  }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
+    policies: [_Comments.CommentActions.Authenticate]
+  }, "comments")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);
