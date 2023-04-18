@@ -6,6 +6,7 @@ import { ConsoleTransport } from 'l0g/transports/ConsoleTransport';
 import { FileTransport } from 'l0g/transports/FileTransport';
 import { ReloadConfigFeature } from 'l0g/features/ReloadConfigFeature';
 import { hasLogCfg, formatLogCfg } from './format';
+
 const { name: packageName } = require('../../package.json');
 
 const features = [];

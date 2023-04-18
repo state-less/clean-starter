@@ -10,6 +10,7 @@ import { pubsub, store } from './instances';
 import TimestampType from './lib/TimestampType';
 import { JWT_SECRET } from './config';
 import { GoogleOAuthToken } from './lib/types';
+import logger from './lib/logger';
 
 enum AuthStrategy {
     Google = 'google',
@@ -60,8 +61,10 @@ const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `${state.key}:${state.scope}`;
 };
 
-const generateComponentPubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
-    return `component::${state.key}`;
+const generateComponentPubSubKey = (
+    state: Pick<State, 'key' | 'scope'> & { id: string }
+) => {
+    return `component::${state.id}::${state.key}`;
 };
 
 const useState = (parent, args) => {
@@ -81,6 +84,7 @@ const renderComponent = (parent, args, context) => {
     }
 
     try {
+        logger.log`Rendering compoenent ${key}.`;
         const rendered = render(component, { clientProps: props, context });
         return {
             rendered,
@@ -221,11 +225,16 @@ export const resolvers = {
             },
         },
         updateComponent: {
-            subscribe: (parent, args: Pick<State, 'key' | 'scope'>) => {
-                console.log(
-                    'Subscribing to component',
-                    generateComponentPubSubKey(args)
-                );
+            subscribe: (
+                parent,
+                args: Pick<State, 'key' | 'scope'> & {
+                    id: string;
+                    bearer?: string;
+                }
+            ) => {
+                logger.log`Subscribing to component ${generateComponentPubSubKey(
+                    args
+                )}`;
                 return pubsub.asyncIterator(generateComponentPubSubKey(args));
             },
         },

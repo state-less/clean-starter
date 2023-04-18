@@ -25,6 +25,7 @@ import { Todos } from './components/Todos';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
 import { CommentActions, Comments } from './components/Comments';
+import logger from './lib/logger';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -54,11 +55,12 @@ SubscriptionServer.create(
         schema,
         execute,
         subscribe,
-        onConnect: () => {
-            console.log('Client connected');
+        onConnect: (params) => {
+            logger.log`Client connected`;
+            return { headers: params.headers };
         },
         onDisconnect: () => {
-            console.log('Client disconnected');
+            logger.log`Client disconnected`;
         },
     },
     {
@@ -108,6 +110,6 @@ const node = render(reactServer, null, null);
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });
     httpServer.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}.`);
+        logger.log`Server listening on port ${PORT}.`;
     });
 })();

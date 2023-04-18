@@ -1701,10 +1701,9 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@^2.0.6":
+"@state-less/react-server@state-less/react-server#feat/client-pub":
   version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.6.tgz#b5e718cfcb87ced57d9efb317abc8c178fe9d8ff"
-  integrity sha512-/rcI0QK54C+zoj2zREgcVhGa2zCl7vejLB3vrR+Cmqh3v3vkygBAEhrDKW6WJN4M457SeDI6jnMUqCDWDhYIxw==
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/3f9fd9ff3f2e98bf2876530e104a4e8471f51748"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"
@@ -4909,9 +4908,9 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-"l0g@github:C5H8NNaO4/l0g#dev":
+l0g@C5H8NNaO4/l0g#dev:
   version "0.0.1"
-  resolved "https://codeload.github.com/C5H8NNaO4/l0g/tar.gz/23848cc461170fdf8911083cb768c3d3c1706623"
+  resolved "https://codeload.github.com/C5H8NNaO4/l0g/tar.gz/a16cc0cbdf9b8eeb05ea52665eebb65470e0252b"
   dependencies:
     "@babel/preset-react" "^7.12.10"
     ansi_up "^4.0.4"

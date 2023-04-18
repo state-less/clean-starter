@@ -34,7 +34,12 @@ export const typeDefs = gql`
 
     type Subscription {
         updateState(key: ID!, scope: String!): State!
-        updateComponent(key: ID!, scope: String!): Component!
+        updateComponent(
+            key: ID!
+            scope: String!
+            id: String!
+            bearer: String
+        ): Component!
     }
 
     type TestComponent {

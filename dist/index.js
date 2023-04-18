@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.reactServer = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _apolloServerExpress = require("apollo-server-express");
 var _graphqlTools = require("graphql-tools");
 var _graphql = require("graphql");
@@ -24,7 +25,9 @@ var _Todos = require("./components/Todos");
 var _Session = require("./components/Session");
 var _Poll = require("./components/Poll");
 var _Comments = require("./components/Comments");
+var _logger = _interopRequireDefault(require("./lib/logger"));
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
+var _templateObject, _templateObject2, _templateObject3;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
 var app = (0, _express["default"])();
@@ -52,11 +55,14 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   schema: schema,
   execute: _graphql.execute,
   subscribe: _graphql.subscribe,
-  onConnect: function onConnect() {
-    console.log('Client connected');
+  onConnect: function onConnect(params) {
+    _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Client connected"])));
+    return {
+      headers: params.headers
+    };
   },
   onDisconnect: function onDisconnect() {
-    console.log('Client disconnected');
+    _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Client disconnected"])));
   }
 }, {
   server: httpServer,
@@ -86,7 +92,7 @@ var node = (0, _reactServer.render)(reactServer, null, null);
           app: app
         });
         httpServer.listen(PORT, function () {
-          console.log("Server listening on port ".concat(PORT, "."));
+          _logger["default"].log(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Server listening on port ", "."])), PORT);
         });
       case 4:
       case "end":
