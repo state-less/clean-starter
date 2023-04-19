@@ -67,6 +67,6 @@ var Poll = function Poll(_ref, _ref2) {
     values: values,
     voted: voted,
     vote: vote
-  }, "poll-props");
+  }, (0, _reactServer.clientKey)('poll-props', context));
 };
 exports.Poll = Poll;

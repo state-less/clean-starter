@@ -1,9 +1,11 @@
 import {
     authenticate,
+    ClientContext,
     IComponent,
     isClientContext,
     Scopes,
     useState,
+    clientKey,
 } from '@state-less/react-server';
 import { JWT_SECRET } from '../config';
 import { ServerSideProps } from './ServerSideProps';
@@ -56,7 +58,7 @@ export const Poll: IComponent<any> = (
 
     return (
         <ServerSideProps
-            key="poll-props"
+            key={clientKey('poll-props', context)}
             votes={votes}
             values={values}
             voted={voted}

@@ -124,7 +124,10 @@ var callFunction = /*#__PURE__*/function () {
         case 0:
           key = args.key, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
-          rendered = (0, _reactServer.render)(component, context);
+          rendered = (0, _reactServer.render)(component, {
+            context: context,
+            clientProps: {}
+          });
           if (!rendered.props[prop]) {
             _context2.next = 7;
             break;

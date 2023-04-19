@@ -110,7 +110,7 @@ const setState: Resolver<unknown, State> = (parent, args) => {
 const callFunction = async (parent, args, context) => {
     const { key, prop, args: fnArgs } = args;
     const component = globalInstance.components.get(key);
-    const rendered = render(component, context);
+    const rendered = render(component, { context, clientProps: {} });
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
         const result = fn(...fnArgs);
