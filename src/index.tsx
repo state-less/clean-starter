@@ -69,7 +69,7 @@ SubscriptionServer.create(
             return { headers: params.headers };
         },
         onDisconnect: () => {
-            connections.value -= 1;
+            connections.value = Math.max(0, connections.value - 1);
             pubsub.publish(generatePubSubKey(connections), {
                 updateState: connections,
             });

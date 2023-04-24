@@ -69,7 +69,7 @@ _subscriptionsTransportWs.SubscriptionServer.create({
     };
   },
   onDisconnect: function onDisconnect() {
-    connections.value -= 1;
+    connections.value = Math.max(0, connections.value - 1);
     _instances.pubsub.publish((0, _resolvers.generatePubSubKey)(connections), {
       updateState: connections
     });
