@@ -49,7 +49,10 @@ var apolloServer = new _apolloServerExpress.ApolloServer({
 
 // Create a HTTP server
 var httpServer = (0, _http.createServer)(app);
-
+var connections = _instances.store.createState(0, {
+  key: 'connections',
+  scope: 'global'
+});
 // Create a WebSocket server for subscriptions
 _subscriptionsTransportWs.SubscriptionServer.create({
   schema: schema,
@@ -57,11 +60,19 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   subscribe: _graphql.subscribe,
   onConnect: function onConnect(params) {
     _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Client connected"])));
+    connections.value += 1;
+    _instances.pubsub.publish((0, _resolvers.generatePubSubKey)(connections), {
+      updateState: connections
+    });
     return {
       headers: params.headers
     };
   },
   onDisconnect: function onDisconnect() {
+    connections.value -= 1;
+    _instances.pubsub.publish((0, _resolvers.generatePubSubKey)(connections), {
+      updateState: connections
+    });
     _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Client disconnected"])));
   }
 }, {

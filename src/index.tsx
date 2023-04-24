@@ -16,7 +16,7 @@ import {
 
 import { pubsub, store } from './instances';
 
-import { resolvers } from './resolvers';
+import { generatePubSubKey, resolvers } from './resolvers';
 import { typeDefs } from './schema';
 import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
@@ -49,6 +49,10 @@ const apolloServer = new ApolloServer({
 // Create a HTTP server
 const httpServer = createServer(app);
 
+const connections = store.createState(0, {
+    key: 'connections',
+    scope: 'global',
+});
 // Create a WebSocket server for subscriptions
 SubscriptionServer.create(
     {
@@ -57,9 +61,19 @@ SubscriptionServer.create(
         subscribe,
         onConnect: (params) => {
             logger.log`Client connected`;
+            connections.value += 1;
+            pubsub.publish(generatePubSubKey(connections), {
+                updateState: connections,
+            });
+
             return { headers: params.headers };
         },
         onDisconnect: () => {
+            connections.value -= 1;
+            pubsub.publish(generatePubSubKey(connections), {
+                updateState: connections,
+            });
+
             logger.log`Client disconnected`;
         },
     },

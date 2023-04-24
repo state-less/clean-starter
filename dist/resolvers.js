@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.resolvers = void 0;
+exports.resolvers = exports.generatePubSubKey = void 0;
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
@@ -68,6 +68,7 @@ var authenticateGoogle = /*#__PURE__*/function () {
 var generatePubSubKey = function generatePubSubKey(state) {
   return "".concat(state.key, ":").concat(state.scope);
 };
+exports.generatePubSubKey = generatePubSubKey;
 var generateComponentPubSubKey = function generateComponentPubSubKey(state) {
   return "component::".concat(state.id, "::").concat(state.key);
 };

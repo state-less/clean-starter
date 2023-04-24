@@ -1701,10 +1701,10 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.8.tgz#1736b441fd6bc33c8e376ab000c328611c66654e"
-  integrity sha512-KfGOkWI5N3pKz1z73ueGkSZ1fQ0KlKu4b9RjCHrmFFn8CGzHF/Z768BVDDSPJxLUWKAdKTWnb5A3J6GOBTAgmw==
+"@state-less/react-server@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.9.tgz#04be83a696b3c22de63d6fcb37d7f66257bd078b"
+  integrity sha512-I1gfHMXB73g6lIdW6TJYWjNmOi0Wd8gWW8ulUKQqqt853s4GqmY8egbFei/o7Re49u8ZcH2fBtDub9TX4VQ2cg==
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"

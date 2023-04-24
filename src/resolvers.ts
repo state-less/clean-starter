@@ -57,7 +57,7 @@ const authenticateGoogle = async ({
     };
 };
 
-const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
+export const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `${state.key}:${state.scope}`;
 };
 
