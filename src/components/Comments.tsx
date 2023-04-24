@@ -9,28 +9,29 @@ import {
 import { JWT_SECRET } from '../config';
 import { ServerSideProps } from './ServerSideProps';
 import { admins } from '../lib/permissions';
+import { Session } from '../lib/types';
 
-export enum CommentActions {
+export enum CommentPolicies {
     Authenticate,
     AuthenticateRead,
     Delete,
 }
 
 export const Comments: IComponent<any> = (
-    { policies = [] }: { policies: CommentActions[] },
+    { policies = [] }: { policies: CommentPolicies[] },
     { context }
 ) => {
     if (
         isClientContext(context) &&
-        policies.includes(CommentActions.AuthenticateRead)
+        policies.includes(CommentPolicies.AuthenticateRead)
     )
         authenticate(context.headers, JWT_SECRET);
 
-    let user;
+    let user: Session | null;
     try {
-        user = authenticate(context.headers, JWT_SECRET);
+        user = authenticate((context as ClientContext).headers, JWT_SECRET);
     } catch (e) {
-        console.log('Not authenticated');
+        user = null;
     }
 
     const [comments, setComments] = useState([], {
@@ -39,24 +40,41 @@ export const Comments: IComponent<any> = (
     });
 
     const comment = (message) => {
-        let decoded;
-        if (policies.includes(CommentActions.Authenticate)) {
+        let decoded: Session | null = null;
+        try {
             decoded = authenticate(
                 (context as ClientContext).headers,
                 JWT_SECRET
             );
+        } catch (e) {
+            decoded = null;
         }
 
-        const { strategy } = decoded;
-        const { email } = decoded.strategies[strategy];
+        if (policies.includes(CommentPolicies.Authenticate)) {
+            if (!decoded) {
+                throw new Error('Not authenticated');
+            }
+        }
+
+        if (!message) throw new Error('Message is required');
+
+        const { strategy } = decoded || { strategy: 'anonymous' };
+        const {
+            email,
+            decoded: { name, picture },
+        } = decoded?.strategies?.[strategy] || {
+            email: null,
+            decoded: { name: 'Anonymous', picture: null },
+        };
 
         const commentObj = {
             message,
             identity: {
+                id: (context as ClientContext).headers['x-unique-id'],
                 email,
                 strategy,
-                name: decoded.strategies[strategy].decoded.name,
-                picture: decoded.strategies[strategy].decoded.picture,
+                name,
+                picture,
             },
         };
         const newComments = [...comments, commentObj];
@@ -64,9 +82,22 @@ export const Comments: IComponent<any> = (
     };
 
     const del = (index) => {
-        if (!admins.includes(user?.strategies[user?.strategy].email)) {
+        const commentToDelete = comments[index];
+        if (!commentToDelete) throw new Error('Comment not found');
+        const isOwnComment =
+            commentToDelete.identity.email ===
+                user?.strategies?.[user?.strategy]?.email ||
+            (commentToDelete.identity.id ===
+                (context as ClientContext).headers['x-unique-id'] &&
+                commentToDelete.identity.strategy === 'anonymous');
+
+        if (
+            !isOwnComment &&
+            !admins.includes(user?.strategies?.[user?.strategy]?.email)
+        ) {
             throw new Error('Not an admin');
         }
+
         const newComments = [...comments];
         newComments.splice(index, 1);
         setComments(newComments);
@@ -75,8 +106,12 @@ export const Comments: IComponent<any> = (
     return (
         <ServerSideProps
             permissions={{
-                comment: user?.id,
-                delete: admins.includes(user?.strategies[user?.strategy].email),
+                comment: policies.includes(CommentPolicies.Authenticate)
+                    ? !!user?.id
+                    : true,
+                delete: admins.includes(
+                    user?.strategies?.[user?.strategy]?.email
+                ),
             }}
             key="comments-props"
             comments={comments}

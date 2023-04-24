@@ -87,7 +87,7 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     values: ['Nice!', 'Meh...', "It's not working", 'Add more features.', 'Add a comment section.', 'Shut up and take my money.'],
     policies: [_Poll.PollActions.Revert]
   }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
-    policies: [_Comments.CommentActions.Authenticate]
+    policies: [_Comments.CommentPolicies.Authenticate]
   }, "comments")]
 }, "server");
 exports.reactServer = reactServer;

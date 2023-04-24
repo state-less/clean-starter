@@ -24,7 +24,7 @@ import { DynamicPage, Pages } from './components/Pages';
 import { Todos } from './components/Todos';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
-import { CommentActions, Comments } from './components/Comments';
+import { CommentPolicies, Comments } from './components/Comments';
 import logger from './lib/logger';
 
 Dispatcher.getCurrent().setStore(store);
@@ -114,7 +114,7 @@ export const reactServer = (
             ]}
             policies={[PollActions.Revert]}
         />
-        <Comments key="comments" policies={[CommentActions.Authenticate]} />
+        <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
     </Server>
 );
 

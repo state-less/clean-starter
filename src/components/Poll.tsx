@@ -28,7 +28,7 @@ export const Poll: IComponent<any> = (
     );
 
     const [voted, setVoted] = useState(-1, {
-        key: 'voted',
+        key: `voted-${key}`,
         scope: Scopes.Client,
     });
 
@@ -58,7 +58,7 @@ export const Poll: IComponent<any> = (
 
     return (
         <ServerSideProps
-            key={clientKey('poll-props', context)}
+            key={clientKey(`poll-props-${key}`, context)}
             votes={votes}
             values={values}
             voted={voted}
