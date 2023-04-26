@@ -16,10 +16,8 @@ type ScoreObject = {
 export const Votings = (
     {
         scope = Scopes.Global,
-        maxVotes = 1,
     }: {
         scope?: Scopes;
-        maxVotes?: number;
         key: string;
     },
     { context, key }
@@ -82,21 +80,33 @@ export const Votings = (
     };
 
     const upvote = () => {
-        if (voted >= maxVotes) {
+        if (voted === -1) {
             throw new Error('Already voted');
         }
-        const newVoting = { ...voting, upvotes: voting.upvotes + 1 };
-        setVoted(voted + 1);
+        let newVoting;
+        if (voted === 1) {
+            newVoting = { ...voting, upvotes: voting.upvotes - 1 };
+            setVoted(0);
+        } else {
+            newVoting = { ...voting, upvotes: voting.upvotes + 1 };
+            setVoted(1);
+        }
         setVoting(newVoting);
         storeWilsonScore(newVoting);
     };
 
     const downvote = () => {
-        if (voted > maxVotes) {
+        if (voted === 1) {
             throw new Error('Already voted');
         }
-        const newVoting = { ...voting, downvotes: voting.downvotes + 1 };
-        setVoted(voted + 1);
+        let newVoting;
+        if (voted === -1) {
+            newVoting = { ...voting, downvotes: voting.downvotes - 1 };
+            setVoted(0);
+        } else {
+            newVoting = { ...voting, downvotes: voting.downvotes + 1 };
+            setVoted(-1);
+        }
         setVoting(newVoting);
         storeWilsonScore(newVoting);
     };
@@ -108,7 +118,6 @@ export const Votings = (
             upvote={upvote}
             downvote={downvote}
             score={score}
-            maxVotes={maxVotes}
             voted={voted}
         />
     );

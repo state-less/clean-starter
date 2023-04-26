@@ -77,24 +77,40 @@ var Votings = function Votings(_ref, _ref2) {
     });
   };
   var upvote = function upvote() {
-    if (voted >= maxVotes) {
+    if (voted === -1) {
       throw new Error('Already voted');
     }
-    var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
-      upvotes: voting.upvotes + 1
-    });
-    setVoted(voted + 1);
+    var newVoting;
+    if (voted === 1) {
+      newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+        upvotes: voting.upvotes - 1
+      });
+      setVoted(0);
+    } else {
+      newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+        upvotes: voting.upvotes + 1
+      });
+      setVoted(1);
+    }
     setVoting(newVoting);
     storeWilsonScore(newVoting);
   };
   var downvote = function downvote() {
-    if (voted > maxVotes) {
+    if (voted === 1) {
       throw new Error('Already voted');
     }
-    var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
-      downvotes: voting.downvotes + 1
-    });
-    setVoted(voted + 1);
+    var newVoting;
+    if (voted === -1) {
+      newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+        downvotes: voting.downvotes - 1
+      });
+      setVoted(0);
+    } else {
+      newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+        downvotes: voting.downvotes + 1
+      });
+      setVoted(-1);
+    }
     setVoting(newVoting);
     storeWilsonScore(newVoting);
   };
