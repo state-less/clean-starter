@@ -36,14 +36,6 @@ export const Votings = () => {
         }
     );
 
-    const upvote = () => {
-        setVoting({ ...voting, upvotes: voting.upvotes + 1 });
-    };
-
-    const downvote = () => {
-        setVoting({ ...voting, downvotes: voting.downvotes + 1 });
-    };
-
     const wilsonScoreInterval = () => {
         const { upvotes, downvotes } = voting;
         const n = upvotes + downvotes;
@@ -57,6 +49,18 @@ export const Votings = () => {
         const leftBoundary = (left - right) / (1 + (z * z) / n);
         const rightBoundary = (left + right) / (1 + (z * z) / n);
         setScore({ leftBound: leftBoundary, rightBound: rightBoundary });
+    };
+
+    const upvote = () => {
+        const newVoting = { ...voting, upvotes: voting.upvotes + 1 };
+        setVoting(newVoting);
+        wilsonScoreInterval();
+    };
+
+    const downvote = () => {
+        const newVoting = { ...voting, downvotes: voting.downvotes + 1 };
+        setVoting(newVoting);
+        wilsonScoreInterval();
     };
 
     return (

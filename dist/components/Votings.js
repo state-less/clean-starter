@@ -34,16 +34,6 @@ var Votings = function Votings() {
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     score = _useState4[0],
     setScore = _useState4[1];
-  var upvote = function upvote() {
-    setVoting(_objectSpread(_objectSpread({}, voting), {}, {
-      upvotes: voting.upvotes + 1
-    }));
-  };
-  var downvote = function downvote() {
-    setVoting(_objectSpread(_objectSpread({}, voting), {}, {
-      downvotes: voting.downvotes + 1
-    }));
-  };
   var wilsonScoreInterval = function wilsonScoreInterval() {
     var upvotes = voting.upvotes,
       downvotes = voting.downvotes;
@@ -60,6 +50,20 @@ var Votings = function Votings() {
       leftBound: leftBoundary,
       rightBound: rightBoundary
     });
+  };
+  var upvote = function upvote() {
+    var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+      upvotes: voting.upvotes + 1
+    });
+    setVoting(newVoting);
+    wilsonScoreInterval();
+  };
+  var downvote = function downvote() {
+    var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
+      downvotes: voting.downvotes + 1
+    });
+    setVoting(newVoting);
+    wilsonScoreInterval();
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, voting), {}, {
     upvote: upvote,
