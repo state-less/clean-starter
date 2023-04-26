@@ -12,9 +12,13 @@ var _ServerSideProps = require("./ServerSideProps");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-var Votings = function Votings(_ref) {
+var Votings = function Votings(_ref, _ref2) {
   var _ref$scope = _ref.scope,
-    scope = _ref$scope === void 0 ? _reactServer.Scopes.Global : _ref$scope;
+    scope = _ref$scope === void 0 ? _reactServer.Scopes.Global : _ref$scope,
+    _ref$maxVotes = _ref.maxVotes,
+    maxVotes = _ref$maxVotes === void 0 ? 1 : _ref$maxVotes;
+  var context = _ref2.context,
+    key = _ref2.key;
   var _useState = (0, _reactServer.useState)({
       title: 'Voting',
       upvotes: 0,
@@ -36,6 +40,13 @@ var Votings = function Votings(_ref) {
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     score = _useState4[0],
     setScore = _useState4[1];
+  var _useState5 = (0, _reactServer.useState)(0, {
+      key: 'voted',
+      scope: "".concat(key, "-").concat(_reactServer.Scopes.Client)
+    }),
+    _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
+    voted = _useState6[0],
+    setVoted = _useState6[1];
 
   /* *
    * We use the wilson score to compute two bounds. One for the upvote proportion and one for the downvote proportion.
@@ -66,23 +77,33 @@ var Votings = function Votings(_ref) {
     });
   };
   var upvote = function upvote() {
+    if (voted >= maxVotes) {
+      throw new Error('Already voted');
+    }
     var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
       upvotes: voting.upvotes + 1
     });
+    setVoted(voted + 1);
     setVoting(newVoting);
     storeWilsonScore(newVoting);
   };
   var downvote = function downvote() {
+    if (voted > maxVotes) {
+      throw new Error('Already voted');
+    }
     var newVoting = _objectSpread(_objectSpread({}, voting), {}, {
       downvotes: voting.downvotes + 1
     });
+    setVoted(voted + 1);
     setVoting(newVoting);
     storeWilsonScore(newVoting);
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, voting), {}, {
     upvote: upvote,
     downvote: downvote,
-    score: score
-  }), "votings-props");
+    score: score,
+    maxVotes: maxVotes,
+    voted: voted
+  }), (0, _reactServer.clientKey)("poll-props-".concat(key), context));
 };
 exports.Votings = Votings;
