@@ -22,6 +22,7 @@ import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
 import { Todos } from './components/Todos';
+import { Votings } from './components/Votings';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
 import { CommentPolicies, Comments } from './components/Comments';
@@ -92,6 +93,7 @@ export const reactServer = (
         <Pages key="pages" />
         <DynamicPage key="page" />
         <Todos key="todos" />
+        <Votings key="votings" />
         <Session key="session" />
         <Poll
             key="poll"
