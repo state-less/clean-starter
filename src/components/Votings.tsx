@@ -9,11 +9,11 @@ type VotingObject = {
 };
 
 type ScoreObject = {
-    leftBound: number;
-    rightBound: number;
+    upvote: number;
+    downvote: number;
 };
 
-export const Votings = () => {
+export const Votings = ({ scope = Scopes.Global }: { scope?: Scopes }) => {
     const [voting, setVoting] = useState<VotingObject>(
         {
             title: 'Voting',
@@ -22,55 +22,69 @@ export const Votings = () => {
         },
         {
             key: 'votings',
-            scope: Scopes.Global,
+            scope,
         }
     );
     const [score, setScore] = useState<ScoreObject>(
         {
-            leftBound: 0,
-            rightBound: 0,
+            upvote: 0,
+            downvote: 0,
         },
         {
             key: 'score',
-            scope: Scopes.Global,
+            scope,
         }
     );
 
-    const wilsonScoreInterval = () => {
-        const { upvotes, downvotes } = voting;
-        const n = upvotes + downvotes;
+    /* *
+     * We use the wilson score to compute two bounds. One for the upvote proportion and one for the downvote proportion.
+     * */
+    const wilsonScoreInterval = (n, votes) => {
         if (n === 0) return 0; // no votes yet
 
         const z = 1.96; // 95% probability
-        const phat = (1 * upvotes) / n;
+        const phat = (1 * votes) / n;
         const left = phat + (z * z) / (2 * n);
         const right =
             z * Math.sqrt((phat * (1 - phat) + (z * z) / (4 * n)) / n);
         const leftBoundary = (left - right) / (1 + (z * z) / n);
-        const rightBoundary = (left + right) / (1 + (z * z) / n);
-        setScore({ leftBound: leftBoundary, rightBound: rightBoundary });
+
+        // We don't need the upper boundary of the score.
+        // const rightBoundary = (left + right) / (1 + (z * z) / n);
+
+        return leftBoundary;
+    };
+
+    const storeWilsonScore = (newVoting) => {
+        // We need to pass newVoting because variable in the scope will have an outdated value.
+        const { upvotes, downvotes } = newVoting;
+        const upvoteScore = wilsonScoreInterval(upvotes + downvotes, upvotes);
+        const downvoteScore = wilsonScoreInterval(
+            upvotes + downvotes,
+            downvotes
+        );
+        setScore({ upvote: upvoteScore, downvote: downvoteScore });
     };
 
     const upvote = () => {
         const newVoting = { ...voting, upvotes: voting.upvotes + 1 };
         setVoting(newVoting);
-        wilsonScoreInterval();
+        storeWilsonScore(newVoting);
     };
 
     const downvote = () => {
         const newVoting = { ...voting, downvotes: voting.downvotes + 1 };
         setVoting(newVoting);
-        wilsonScoreInterval();
+        storeWilsonScore(newVoting);
     };
 
     return (
         <ServerSideProps
-            key={`votings-props`}
+            key="votings-props"
             {...voting}
             upvote={upvote}
             downvote={downvote}
             score={score}
-            wilsonScoreInterval={wilsonScoreInterval}
         />
     );
 };
