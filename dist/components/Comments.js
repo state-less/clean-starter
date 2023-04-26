@@ -4,14 +4,18 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Comments = exports.CommentPolicies = void 0;
+exports.Comments = exports.CommentPolicies = exports.Comment = void 0;
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _reactServer = require("@state-less/react-server");
 var _config = require("../config");
 var _ServerSideProps = require("./ServerSideProps");
 var _permissions = require("../lib/permissions");
+var _Votings = require("./Votings");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var CommentPolicies = /*#__PURE__*/function (CommentPolicies) {
   CommentPolicies[CommentPolicies["Authenticate"] = 0] = "Authenticate";
   CommentPolicies[CommentPolicies["AuthenticateRead"] = 1] = "AuthenticateRead";
@@ -99,7 +103,19 @@ var Comments = function Comments(_ref, _ref2) {
     },
     comments: comments,
     comment: comment,
-    del: del
+    del: del,
+    children: comments.map(function (cmt, i) {
+      return (0, _jsxRuntime.jsx)(Comment, _objectSpread({}, cmt), "comment-".concat(i));
+    })
   }, "comments-props");
 };
 exports.Comments = Comments;
+var Comment = function Comment(props, _ref5) {
+  var key = _ref5.key;
+  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, props), {}, {
+    children: (0, _jsxRuntime.jsx)(_Votings.Votings, {
+      policies: [_Votings.VotingPolicies.SingleVote]
+    }, "votings-".concat(key))
+  }), "".concat(key, "-comment.props"));
+};
+exports.Comment = Comment;

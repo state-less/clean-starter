@@ -10,6 +10,7 @@ import { JWT_SECRET } from '../config';
 import { ServerSideProps } from './ServerSideProps';
 import { admins } from '../lib/permissions';
 import { Session } from '../lib/types';
+import { VotingPolicies, Votings } from './Votings';
 
 export enum CommentPolicies {
     Authenticate,
@@ -117,6 +118,21 @@ export const Comments: IComponent<any> = (
             comments={comments}
             comment={comment}
             del={del}
-        />
+        >
+            {comments.map((cmt, i) => {
+                return <Comment key={`comment-${i}`} {...cmt} />;
+            })}
+        </ServerSideProps>
+    );
+};
+
+export const Comment = (props, { key }) => {
+    return (
+        <ServerSideProps key={`${key}-comment.props`} {...props}>
+            <Votings
+                key={`votings-${key}`}
+                policies={[VotingPolicies.SingleVote]}
+            />
+        </ServerSideProps>
     );
 };
