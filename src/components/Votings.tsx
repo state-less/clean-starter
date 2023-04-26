@@ -9,16 +9,40 @@ type VotingObject = {
 };
 
 type ScoreObject = {
-    upvote: number;
-    downvote: number;
+    upvote: number[];
+    downvote: number[];
+};
+
+export enum VotingPolicies {
+    SingleVote = 'single-vote',
+}
+
+/* *
+ * We use the wilson score to compute two bounds. One for the upvote proportion and one for the downvote proportion.
+ * */
+const wilsonScoreInterval = (n, votes) => {
+    if (n === 0) return [0, 1]; // no votes yet
+
+    const z = 1.96; // 95% probability
+    const phat = (1 * votes) / n;
+    const left = phat + (z * z) / (2 * n);
+    const right = z * Math.sqrt((phat * (1 - phat) + (z * z) / (4 * n)) / n);
+    const leftBoundary = (left - right) / (1 + (z * z) / n);
+
+    // We don't need the upper boundary of the score.
+    const rightBoundary = (left + right) / (1 + (z * z) / n);
+
+    return [leftBoundary, rightBoundary];
 };
 
 export const Votings = (
     {
         scope = Scopes.Global,
+        policies = [],
     }: {
         scope?: Scopes;
         key: string;
+        policies: VotingPolicies[];
     },
     { context, key }
 ) => {
@@ -29,14 +53,14 @@ export const Votings = (
             downvotes: 0,
         },
         {
-            key: 'votings',
+            key: `votings-${key}`,
             scope,
         }
     );
     const [score, setScore] = useState<ScoreObject>(
         {
-            upvote: 0,
-            downvote: 0,
+            upvote: [0, 0],
+            downvote: [0, 0],
         },
         {
             key: 'score',
@@ -45,28 +69,9 @@ export const Votings = (
     );
 
     const [voted, setVoted] = useState(0, {
-        key: 'voted',
-        scope: `${key}-${Scopes.Client}`,
+        key: `voted-${key}`,
+        scope: Scopes.Client,
     });
-
-    /* *
-     * We use the wilson score to compute two bounds. One for the upvote proportion and one for the downvote proportion.
-     * */
-    const wilsonScoreInterval = (n, votes) => {
-        if (n === 0) return 0; // no votes yet
-
-        const z = 1.96; // 95% probability
-        const phat = (1 * votes) / n;
-        const left = phat + (z * z) / (2 * n);
-        const right =
-            z * Math.sqrt((phat * (1 - phat) + (z * z) / (4 * n)) / n);
-        const leftBoundary = (left - right) / (1 + (z * z) / n);
-
-        // We don't need the upper boundary of the score.
-        // const rightBoundary = (left + right) / (1 + (z * z) / n);
-
-        return leftBoundary;
-    };
 
     const storeWilsonScore = (newVoting) => {
         // We need to pass newVoting because variable in the scope will have an outdated value.
@@ -80,11 +85,11 @@ export const Votings = (
     };
 
     const upvote = () => {
-        if (voted === -1) {
+        if (policies.includes(VotingPolicies.SingleVote) && voted === -1) {
             throw new Error('Already voted');
         }
         let newVoting;
-        if (voted === 1) {
+        if (voted === 1 && policies.includes(VotingPolicies.SingleVote)) {
             newVoting = { ...voting, upvotes: voting.upvotes - 1 };
             setVoted(0);
         } else {
@@ -96,11 +101,11 @@ export const Votings = (
     };
 
     const downvote = () => {
-        if (voted === 1) {
+        if (policies.includes(VotingPolicies.SingleVote) && voted === 1) {
             throw new Error('Already voted');
         }
         let newVoting;
-        if (voted === -1) {
+        if (voted === -1 && policies.includes(VotingPolicies.SingleVote)) {
             newVoting = { ...voting, downvotes: voting.downvotes - 1 };
             setVoted(0);
         } else {
@@ -119,6 +124,7 @@ export const Votings = (
             downvote={downvote}
             score={score}
             voted={voted}
+            policies={policies}
         />
     );
 };
