@@ -1,34 +1,71 @@
 {
     "name": "clean-code-starter",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "version": "0.0.1",
+    "description": "This is a new react-server project.",
+    "main": "dist/index.js",
     "scripts": {
-        "build": "babel -x \".ts\" -x \".tsx\" -x \".js\" ./src --out-dir ./dist && tsc"
+        "build": "babel -x \".ts\" -x \".tsx\" -x \".js\" ./src --out-dir ./dist",
+        "postinstall": "npm run build",
+        "start": "yarn build && node dist/index.js",
+        "test": "jest --coverage"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2"
+        "@babel/plugin-proposal-class-properties": "^7.18.6",
+        "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+        "@babel/plugin-transform-modules-commonjs": "^7.21.2",
+        "@babel/plugin-transform-runtime": "^7.21.0",
+        "@babel/preset-env": "^7.20.2",
+        "@state-less/react-server": "^2.0.13",
+        "@types/graphql": "^14.5.0",
+        "@typescript-eslint/eslint-plugin": "^5.54.0",
+        "@typescript-eslint/parser": "^5.54.0",
+        "apollo-server": "^3.12.0",
+        "apollo-server-express": "^3.12.0",
+        "axios": "^1.3.4",
+        "chalk": "^5.2.0",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "graphql": "^16.6.0",
+        "graphql-subscriptions": "^2.0.0",
+        "graphql-tools": "^8.3.18",
+        "jest": "^29.4.3",
+        "jsonwebtoken": "^9.0.0",
+        "jwks-rsa": "^3.0.1",
+        "jwt-simple": "^0.5.6",
+        "l0g": "C5H8NNaO4/l0g#dev",
+        "pem": "^1.14.6",
+        "prettier": "^2.8.4",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "subscriptions-transport-ws": "^0.11.0",
+        "uuid": "^9.0.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.17.6",
         "@babel/core": "^7.17.5",
-        "@typescript-eslint/eslint-plugin": "^5.14.0",
+        "@babel/plugin-transform-react-jsx": "^7.21.0",
         "@babel/plugin-transform-typescript": "^7.16.1",
+        "@babel/preset-react": "^7.18.6",
         "@babel/preset-typescript": "^7.16.0",
+        "@typescript-eslint/eslint-plugin": "^5.14.0",
         "@typescript-eslint/parser": "^5.12.1",
+        "cz-conventional-changelog": "^3.3.0",
+        "eslint": "^8.10.0",
         "eslint-config-airbnb": "^19.0.4",
-        "eslint-config-prettier": "^8.4.0",
-        "eslint-plugin-import": "^2.25.4",
-        "eslint-plugin-jsx-a11y": "^6.5.1",
-        "eslint-plugin-prettier": "^4.0.0",
-        "eslint-plugin-react": "^7.28.0",
+        "eslint-config-prettier": "^8.6.0",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-jsx-a11y": "^6.7.1",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.3.0",
         "prettier": "^2.5.1",
-        "typescript": "^4.5.5",
-        "cz-conventional-changelog": "^3.3.0",
-        "eslint": "^8.10.0"
+        "typescript": "^4.5.5"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }
