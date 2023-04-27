@@ -1701,13 +1701,14 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@^2.0.9":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.9.tgz#04be83a696b3c22de63d6fcb37d7f66257bd078b"
-  integrity sha512-I1gfHMXB73g6lIdW6TJYWjNmOi0Wd8gWW8ulUKQqqt853s4GqmY8egbFei/o7Re49u8ZcH2fBtDub9TX4VQ2cg==
+"@state-less/react-server@^2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.13.tgz#43790dbc0e3d548e83efe2110717c5681864586e"
+  integrity sha512-vDV0SLO7SnrPiBuOB4Q3Oxsx0SGBgAh+Z4v2w60DG03MXo5qtrTyWvmL5O/QWhz6rCMvOoSubBY/tkZ4Yj8SCg==
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"
+    "@types/event-emitter" "^0.3.3"
     "@types/graphql" "^14.5.0"
     apollo-server "^3.12.0"
     apollo-server-express "^3.12.0"
@@ -1808,6 +1809,11 @@
   version "2.8.12"
   resolved "https://registry.yarnpkg.com/@types/cors/-/cors-2.8.12.tgz#6b2c510a7ad7039e98e7b8d3d6598f4359e5c080"
   integrity sha512-vt+kDhq/M2ayberEtJcIN/hxXy1Pk+59g2FV/ZQceeaTyCtCucjL2Q7FXlFjtWn4n15KCr1NE2lNNFhp0lEThw==
+
+"@types/event-emitter@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@types/event-emitter/-/event-emitter-0.3.3.tgz#727032a9fc67565f96bbd78b2e2809275c97d7e7"
+  integrity sha512-UfnOK1pIxO7P+EgPRZXD9jMpimd8QEFcEZ5R67R1UhGbv4zghU5+NE7U8M8G9H5Jc8FI51rqDWQs6FtUfq2e/Q==
 
 "@types/express-serve-static-core@4.17.31":
   version "4.17.31"

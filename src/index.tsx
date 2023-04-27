@@ -27,6 +27,7 @@ import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
 import { CommentPolicies, Comments } from './components/Comments';
 import logger from './lib/logger';
+import { Features } from './components/Features';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -86,6 +87,7 @@ SubscriptionServer.create(
 
 export const reactServer = (
     <Server key="server">
+        <Features key="features" />
         <TestComponent key="test" />
         <Navigation key="navigation" />
         <HelloWorldExample1 key="hello-world-1" />
