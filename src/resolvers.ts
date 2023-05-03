@@ -1,4 +1,4 @@
-import { render, StateValue } from '@state-less/react-server';
+import { Dispatcher, render, StateValue } from '@state-less/react-server';
 
 import { globalInstance } from '@state-less/react-server/dist/lib/reactServer';
 
@@ -113,7 +113,9 @@ const callFunction = async (parent, args, context) => {
     const rendered = render(component, { context, clientProps: {} });
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
+        Dispatcher.getCurrent().addCurrentComponent(component);
         const result = fn(...fnArgs);
+        Dispatcher.getCurrent().popCurrentComponent();
         return result;
     }
 

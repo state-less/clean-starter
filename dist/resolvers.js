@@ -130,17 +130,19 @@ var callFunction = /*#__PURE__*/function () {
             clientProps: {}
           });
           if (!rendered.props[prop]) {
-            _context2.next = 7;
+            _context2.next = 9;
             break;
           }
           fn = rendered.props[prop].fn;
+          _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
+          _reactServer.Dispatcher.getCurrent().popCurrentComponent();
           return _context2.abrupt("return", result);
-        case 7:
+        case 9:
           return _context2.abrupt("return", {
             rendered: rendered
           });
-        case 8:
+        case 10:
         case "end":
           return _context2.stop();
       }

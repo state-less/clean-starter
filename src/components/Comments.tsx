@@ -1,11 +1,14 @@
 import {
     authenticate,
     ClientContext,
+    Dispatcher,
     IComponent,
     isClientContext,
     Scopes,
     useState,
 } from '@state-less/react-server';
+import { v4 } from 'uuid';
+
 import { JWT_SECRET } from '../config';
 import { ServerSideProps } from './ServerSideProps';
 import { admins } from '../lib/permissions';
@@ -69,6 +72,7 @@ export const Comments: IComponent<any> = (
         };
 
         const commentObj = {
+            id: v4(),
             message,
             identity: {
                 id: (context as ClientContext).headers['x-unique-id'],
@@ -120,15 +124,29 @@ export const Comments: IComponent<any> = (
             del={del}
         >
             {comments.map((cmt, i) => {
-                return <Comment key={`comment-${i}`} {...cmt} />;
+                return (
+                    <Comment
+                        key={`comment-${cmt.id}`}
+                        {...cmt}
+                        remove={() => del(i)}
+                    />
+                );
             })}
         </ServerSideProps>
     );
 };
 
-export const Comment = (props, { key }) => {
+export interface CommentProps {
+    remove: () => void;
+}
+export const Comment = (props: CommentProps, { key }) => {
+    const { remove } = props;
+    const del = () => {
+        Dispatcher.getCurrent().destroy();
+        remove();
+    };
     return (
-        <ServerSideProps key={`${key}-comment.props`} {...props}>
+        <ServerSideProps key={`${key}-props`} {...props} del={del}>
             <Votings
                 key={`votings-${key}`}
                 policies={[VotingPolicies.SingleVote]}

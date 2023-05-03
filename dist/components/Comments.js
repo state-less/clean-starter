@@ -9,6 +9,7 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _reactServer = require("@state-less/react-server");
+var _uuid = require("uuid");
 var _config = require("../config");
 var _ServerSideProps = require("./ServerSideProps");
 var _permissions = require("../lib/permissions");
@@ -72,6 +73,7 @@ var Comments = function Comments(_ref, _ref2) {
       name = _ref4$decoded.name,
       picture = _ref4$decoded.picture;
     var commentObj = {
+      id: (0, _uuid.v4)(),
       message: message,
       identity: {
         id: context.headers['x-unique-id'],
@@ -105,17 +107,27 @@ var Comments = function Comments(_ref, _ref2) {
     comment: comment,
     del: del,
     children: comments.map(function (cmt, i) {
-      return (0, _jsxRuntime.jsx)(Comment, _objectSpread({}, cmt), "comment-".concat(i));
+      return (0, _jsxRuntime.jsx)(Comment, _objectSpread(_objectSpread({}, cmt), {}, {
+        remove: function remove() {
+          return del(i);
+        }
+      }), "comment-".concat(cmt.id));
     })
   }, "comments-props");
 };
 exports.Comments = Comments;
 var Comment = function Comment(props, _ref5) {
   var key = _ref5.key;
+  var remove = props.remove;
+  var del = function del() {
+    _reactServer.Dispatcher.getCurrent().destroy();
+    remove();
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, props), {}, {
+    del: del,
     children: (0, _jsxRuntime.jsx)(_Votings.Votings, {
       policies: [_Votings.VotingPolicies.SingleVote]
     }, "votings-".concat(key))
-  }), "".concat(key, "-comment.props"));
+  }), "".concat(key, "-props"));
 };
 exports.Comment = Comment;
