@@ -30,7 +30,7 @@ exports.HelloWorldExample1 = HelloWorldExample1;
 var HelloWorldExample2 = function HelloWorldExample2() {
   var _useState3 = (0, _reactServer.useState)(0, {
       key: 'count',
-      scope: 'global'
+      scope: _reactServer.Scopes.Global
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     count = _useState4[0],

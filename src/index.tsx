@@ -28,6 +28,7 @@ import { Poll, PollActions } from './components/Poll';
 import { CommentPolicies, Comments } from './components/Comments';
 import logger from './lib/logger';
 import { Features } from './components/Features';
+import { ViewCounter } from './components/ViewCounter';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -87,6 +88,7 @@ SubscriptionServer.create(
 
 export const reactServer = (
     <Server key="server">
+        <ViewCounter key="view-counter" />
         <Features key="features" />
         <TestComponent key="test" />
         <Navigation key="navigation" />
