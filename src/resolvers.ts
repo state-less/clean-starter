@@ -1,4 +1,9 @@
-import { Dispatcher, render, StateValue } from '@state-less/react-server';
+import {
+    Dispatcher,
+    Initiator,
+    render,
+    StateValue,
+} from '@state-less/react-server';
 
 import { globalInstance } from '@state-less/react-server/dist/lib/reactServer';
 
@@ -85,7 +90,11 @@ const renderComponent = (parent, args, context) => {
 
     try {
         logger.log`Rendering compoenent ${key}.`;
-        const rendered = render(component, { clientProps: props, context });
+        const rendered = render(component, {
+            clientProps: props,
+            context,
+            initiator: Initiator.RenderClient,
+        });
         return {
             rendered,
         };
@@ -110,7 +119,11 @@ const setState: Resolver<unknown, State> = (parent, args) => {
 const callFunction = async (parent, args, context) => {
     const { key, prop, args: fnArgs } = args;
     const component = globalInstance.components.get(key);
-    const rendered = render(component, { context, clientProps: {} });
+    const rendered = render(component, {
+        context,
+        clientProps: {},
+        initiator: Initiator.FunctionCall,
+    });
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
         Dispatcher.getCurrent().addCurrentComponent(component);

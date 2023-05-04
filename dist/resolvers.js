@@ -93,7 +93,8 @@ var renderComponent = function renderComponent(parent, args, context) {
     _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", "."])), key);
     var rendered = (0, _reactServer.render)(component, {
       clientProps: props,
-      context: context
+      context: context,
+      initiator: _reactServer.Initiator.RenderClient
     });
     return {
       rendered: rendered
@@ -127,7 +128,8 @@ var callFunction = /*#__PURE__*/function () {
           component = _reactServer2.globalInstance.components.get(key);
           rendered = (0, _reactServer.render)(component, {
             context: context,
-            clientProps: {}
+            clientProps: {},
+            initiator: _reactServer.Initiator.FunctionCall
           });
           if (!rendered.props[prop]) {
             _context2.next = 9;
