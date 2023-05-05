@@ -2,7 +2,9 @@
 
 ![npm (scoped)](https://img.shields.io/npm/v/@state-less/react-server)
 
-`@state-less/react-server` is a powerful framework that allows you to build and manage server-rendered React applications with ease. It comes with built-in support for server-side state management, authentication, and more.
+The @state-less/clean-starter repository is designed to provide a starting point for developers exploring React Server. It includes essential backend components, utilities, and examples that illustrate the fundamental concepts and capabilities of React Server.
+
+React Server allows the creation of server-side React components using TSX, promoting a component-driven architecture for building robust and maintainable backend solutions. By using @state-less/clean-starter, developers can quickly get started with this innovative approach to full-stack development.
 
 For detailed documentation and in-depth guides, please visit the official website at [state-less.cloud](https://state-less.cloud).
 
