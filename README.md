@@ -1,4 +1,4 @@
-# @state-less/react-server
+# React Server
 
 ![npm (scoped)](https://img.shields.io/npm/v/@state-less/react-server)
 
