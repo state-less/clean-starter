@@ -29,8 +29,9 @@ var _Comments = require("./components/Comments");
 var _logger = _interopRequireDefault(require("./lib/logger"));
 var _Features = require("./components/Features");
 var _ViewCounter = require("./components/ViewCounter");
+var _ChatRoom = require("./components/ChatRoom");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var _templateObject, _templateObject2, _templateObject3;
+var _templateObject, _templateObject2;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
 var app = (0, _express["default"])();
@@ -57,33 +58,37 @@ var connections = _instances.store.createState(0, {
   scope: 'global'
 });
 // Create a WebSocket server for subscriptions
+var clients = new WeakMap();
 _subscriptionsTransportWs.SubscriptionServer.create({
   schema: schema,
   execute: _graphql.execute,
   subscribe: _graphql.subscribe,
-  onConnect: function onConnect(params) {
+  onConnect: function onConnect(params, socket) {
+    var _socket$upgradeReq$he, _socket$upgradeReq$he2;
     _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Client connected"])));
     connections.value += 1;
     _instances.pubsub.publish((0, _resolvers.generatePubSubKey)(connections), {
       updateState: connections
     });
+    console.log('Connnect', (_socket$upgradeReq$he = socket.upgradeReq.headers.cookie) === null || _socket$upgradeReq$he === void 0 ? void 0 : (_socket$upgradeReq$he2 = _socket$upgradeReq$he.match(/x-react-server-id=(.+?);/)) === null || _socket$upgradeReq$he2 === void 0 ? void 0 : _socket$upgradeReq$he2[1]);
     return {
       headers: params.headers
     };
   },
-  onDisconnect: function onDisconnect() {
+  onDisconnect: function onDisconnect(params, socket) {
+    var _socket$request$heade, _socket$request$heade2;
     connections.value = Math.max(0, connections.value - 1);
     _instances.pubsub.publish((0, _resolvers.generatePubSubKey)(connections), {
       updateState: connections
     });
-    _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Client disconnected"])));
+    console.log('Disconnect', (_socket$request$heade = socket.request.headers.cookie) === null || _socket$request$heade === void 0 ? void 0 : (_socket$request$heade2 = _socket$request$heade.match(/x-react-server-id=(.+?);/)) === null || _socket$request$heade2 === void 0 ? void 0 : _socket$request$heade2[1]);
   }
 }, {
   server: httpServer,
   path: apolloServer.graphqlPath
 });
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
   }, "votings"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
@@ -110,7 +115,7 @@ var node = (0, _reactServer.render)(reactServer, null, null);
           app: app
         });
         httpServer.listen(PORT, function () {
-          _logger["default"].log(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Server listening on port ", "."])), PORT);
+          _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Server listening on port ", "."])), PORT);
         });
       case 4:
       case "end":

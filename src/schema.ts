@@ -10,6 +10,8 @@ export const typeDefs = gql`
         hello: String
         getState(key: ID!, scope: String!): State
         renderComponent(key: ID!, props: JSON): Component
+        unmountComponent(key: ID!): Int
+        mountComponent(key: ID!, props: JSON): Boolean
     }
 
     type Component {

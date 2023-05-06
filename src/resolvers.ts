@@ -1,4 +1,5 @@
 import {
+    clientKey,
     Dispatcher,
     Initiator,
     render,
@@ -81,15 +82,58 @@ const useState = (parent, args) => {
     };
 };
 
+const lastClientProps: Record<string, Record<string, any>> = {};
+const renderedComponents: Record<string, string[]> = {};
+
+const unmountComponent = (parent, args, context) => {
+    const { key } = args;
+    const cleanup = Dispatcher.getCurrent().getCleanupFns(
+        clientKey(key, context)
+    );
+    console.log('Unmounting', key, cleanup?.length);
+    const len = cleanup?.length || 0;
+    cleanup.forEach((fn) => fn());
+    return len;
+};
+
+const mountComponent = (parent, args, context) => {
+    const { key, props } = args;
+
+    console.log('Mountint', key);
+    const component = globalInstance.components.get(key);
+
+    try {
+        logger.log`Rendering compoenent ${key} .`;
+
+        const rendered = render(component, {
+            clientProps: props,
+            context,
+            initiator: Initiator.Mount,
+        });
+
+        return true;
+    } catch (e) {
+        console.log('Error mounting component', e);
+        throw e;
+    }
+};
+
 const renderComponent = (parent, args, context) => {
     const { key, props } = args;
+    lastClientProps[clientKey(key, context)] = props;
     const component = globalInstance.components.get(key);
+
+    renderedComponents[clientKey('components-', context)] =
+        renderedComponents[clientKey('components-', context)] || [];
+    renderedComponents[clientKey('components-', context)].push(key);
+
     if (!component) {
         throw new Error('Component not found');
     }
 
     try {
-        logger.log`Rendering compoenent ${key}.`;
+        logger.log`Rendering compoenent ${key} .`;
+
         const rendered = render(component, {
             clientProps: props,
             context,
@@ -119,9 +163,10 @@ const setState: Resolver<unknown, State> = (parent, args) => {
 const callFunction = async (parent, args, context) => {
     const { key, prop, args: fnArgs } = args;
     const component = globalInstance.components.get(key);
+    const clientProps = lastClientProps[clientKey(key, context)];
     const rendered = render(component, {
         context,
-        clientProps: {},
+        clientProps,
         initiator: Initiator.FunctionCall,
     });
     if (rendered.props[prop]) {
@@ -227,6 +272,8 @@ export const resolvers = {
     Query: {
         getState: useState,
         renderComponent,
+        unmountComponent,
+        mountComponent,
     },
     Mutation: {
         setState,

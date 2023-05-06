@@ -1703,7 +1703,7 @@
 
 "@state-less/react-server@state-less/react-server":
   version "2.0.15"
-  resolved "https://codeload.github.com/state-less/react-server/tar.gz/cf7e89d2edb8a73aea4967c46b9e8996013e5364"
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/0e42961ddd65777c53288213ce9042804aa7e5fd"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"

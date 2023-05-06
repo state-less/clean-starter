@@ -29,6 +29,7 @@ import { CommentPolicies, Comments } from './components/Comments';
 import logger from './lib/logger';
 import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
+import { ChatApp } from './components/ChatRoom';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -45,6 +46,7 @@ const apolloServer = new ApolloServer({
     schema,
     context: ({ req }) => {
         const { headers } = req;
+
         return { headers };
     },
 });
@@ -57,27 +59,39 @@ const connections = store.createState(0, {
     scope: 'global',
 });
 // Create a WebSocket server for subscriptions
+const clients = new WeakMap();
 SubscriptionServer.create(
     {
         schema,
         execute,
         subscribe,
-        onConnect: (params) => {
+        onConnect: (params, socket) => {
             logger.log`Client connected`;
             connections.value += 1;
             pubsub.publish(generatePubSubKey(connections), {
                 updateState: connections,
             });
 
+            console.log(
+                'Connnect',
+                socket.upgradeReq.headers.cookie?.match(
+                    /x-react-server-id=(.+?);/
+                )?.[1]
+            );
             return { headers: params.headers };
         },
-        onDisconnect: () => {
+        onDisconnect: (params, socket) => {
             connections.value = Math.max(0, connections.value - 1);
             pubsub.publish(generatePubSubKey(connections), {
                 updateState: connections,
             });
 
-            logger.log`Client disconnected`;
+            console.log(
+                'Disconnect',
+                socket.request.headers.cookie?.match(
+                    /x-react-server-id=(.+?);/
+                )?.[1]
+            );
         },
     },
     {
@@ -88,6 +102,7 @@ SubscriptionServer.create(
 
 export const reactServer = (
     <Server key="server">
+        <ChatApp key="chat" />
         <ViewCounter key="view-counter" />
         <Features key="features" />
         <TestComponent key="test" />

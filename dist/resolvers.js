@@ -19,7 +19,7 @@ var _instances = require("./instances");
 var _TimestampType = _interopRequireDefault(require("./lib/TimestampType"));
 var _config = require("./config");
 var _logger = _interopRequireDefault(require("./lib/logger"));
-var _templateObject, _templateObject2;
+var _templateObject, _templateObject2, _templateObject3;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var AuthStrategy = /*#__PURE__*/function (AuthStrategy) {
@@ -82,15 +82,48 @@ var useState = function useState(parent, args) {
   });
   return _objectSpread({}, state);
 };
+var lastClientProps = {};
+var renderedComponents = {};
+var unmountComponent = function unmountComponent(parent, args, context) {
+  var key = args.key;
+  var cleanup = _reactServer.Dispatcher.getCurrent().getCleanupFns((0, _reactServer.clientKey)(key, context));
+  console.log('Unmounting', key, cleanup === null || cleanup === void 0 ? void 0 : cleanup.length);
+  var len = (cleanup === null || cleanup === void 0 ? void 0 : cleanup.length) || 0;
+  cleanup.forEach(function (fn) {
+    return fn();
+  });
+  return len;
+};
+var mountComponent = function mountComponent(parent, args, context) {
+  var key = args.key,
+    props = args.props;
+  console.log('Mountint', key);
+  var component = _reactServer2.globalInstance.components.get(key);
+  try {
+    _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", " ."])), key);
+    var rendered = (0, _reactServer.render)(component, {
+      clientProps: props,
+      context: context,
+      initiator: _reactServer.Initiator.Mount
+    });
+    return true;
+  } catch (e) {
+    console.log('Error mounting component', e);
+    throw e;
+  }
+};
 var renderComponent = function renderComponent(parent, args, context) {
   var key = args.key,
     props = args.props;
+  lastClientProps[(0, _reactServer.clientKey)(key, context)] = props;
   var component = _reactServer2.globalInstance.components.get(key);
+  renderedComponents[(0, _reactServer.clientKey)('components-', context)] = renderedComponents[(0, _reactServer.clientKey)('components-', context)] || [];
+  renderedComponents[(0, _reactServer.clientKey)('components-', context)].push(key);
   if (!component) {
     throw new Error('Component not found');
   }
   try {
-    _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", "."])), key);
+    _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", " ."])), key);
     var rendered = (0, _reactServer.render)(component, {
       clientProps: props,
       context: context,
@@ -120,19 +153,20 @@ var setState = function setState(parent, args) {
 };
 var callFunction = /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args, context) {
-    var key, prop, fnArgs, component, rendered, fn, result;
+    var key, prop, fnArgs, component, clientProps, rendered, fn, result;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           key = args.key, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
+          clientProps = lastClientProps[(0, _reactServer.clientKey)(key, context)];
           rendered = (0, _reactServer.render)(component, {
             context: context,
-            clientProps: {},
+            clientProps: clientProps,
             initiator: _reactServer.Initiator.FunctionCall
           });
           if (!rendered.props[prop]) {
-            _context2.next = 9;
+            _context2.next = 10;
             break;
           }
           fn = rendered.props[prop].fn;
@@ -140,11 +174,11 @@ var callFunction = /*#__PURE__*/function () {
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
           _reactServer.Dispatcher.getCurrent().popCurrentComponent();
           return _context2.abrupt("return", result);
-        case 9:
+        case 10:
           return _context2.abrupt("return", {
             rendered: rendered
           });
-        case 10:
+        case 11:
         case "end":
           return _context2.stop();
       }
@@ -268,7 +302,9 @@ var isValidAuthResponse = function isValidAuthResponse(auth) {
 var resolvers = {
   Query: {
     getState: useState,
-    renderComponent: renderComponent
+    renderComponent: renderComponent,
+    unmountComponent: unmountComponent,
+    mountComponent: mountComponent
   },
   Mutation: {
     setState: setState,
@@ -283,7 +319,7 @@ var resolvers = {
     },
     updateComponent: {
       subscribe: function subscribe(parent, args) {
-        _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Subscribing to component ", ""])), generateComponentPubSubKey(args));
+        _logger["default"].log(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Subscribing to component ", ""])), generateComponentPubSubKey(args));
         return _instances.pubsub.asyncIterator(generateComponentPubSubKey(args));
       }
     }

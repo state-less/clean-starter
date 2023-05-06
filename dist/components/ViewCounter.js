@@ -31,7 +31,6 @@ var ViewCounter = function ViewCounter(props, _ref) {
     setClients(clients + 1);
   }, []);
   (0, _reactServer.useClientEffect)(function () {
-    console.log('Client Effect', initiator);
     if (initiator !== _reactServer.Initiator.RenderClient) return;
     setViews(views + 1);
   });

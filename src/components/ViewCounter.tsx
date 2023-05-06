@@ -23,7 +23,6 @@ export const ViewCounter = (props, { key, initiator }: RenderOptions) => {
     }, []);
 
     useClientEffect(() => {
-        console.log('Client Effect', initiator);
         if (initiator !== Initiator.RenderClient) return;
         setViews(views + 1);
     });
