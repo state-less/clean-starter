@@ -30,6 +30,8 @@ import logger from './lib/logger';
 import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
+import { Platform } from './components/Forum';
+import { MyLists } from './components/Lists';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -111,6 +113,7 @@ export const reactServer = (
         <HelloWorldExample2 key="hello-world-2" />
         <Pages key="pages" />
         <DynamicPage key="page" />
+        <MyLists key="my-lists" />
         <Todos key="todos" />
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
         <Votings key="votings-multiple" policies={[]} />
@@ -137,6 +140,7 @@ export const reactServer = (
             policies={[PollActions.Revert]}
         />
         <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
+        <Platform key="platform" />
     </Server>
 );
 

@@ -1701,9 +1701,10 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@state-less/react-server":
-  version "2.0.15"
-  resolved "https://codeload.github.com/state-less/react-server/tar.gz/0e42961ddd65777c53288213ce9042804aa7e5fd"
+"@state-less/react-server@^2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.17.tgz#be50cc31f550b1009817733082cdf974ceb68584"
+  integrity sha512-JP7alR+v7GosxbPY8k+DnXdem6dNrQUN2b3D4hHuy14qiNedwqJNw3MJzx3FehHBtGWrIpG9OrOGhIipL7eLyA==
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"

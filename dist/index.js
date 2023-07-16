@@ -30,6 +30,8 @@ var _logger = _interopRequireDefault(require("./lib/logger"));
 var _Features = require("./components/Features");
 var _ViewCounter = require("./components/ViewCounter");
 var _ChatRoom = require("./components/ChatRoom");
+var _Forum = require("./components/Forum");
+var _Lists = require("./components/Lists");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _templateObject, _templateObject2;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
@@ -88,7 +90,7 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   path: apolloServer.graphqlPath
 });
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
   }, "votings"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
@@ -100,7 +102,7 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     policies: [_Poll.PollActions.Revert]
   }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
     policies: [_Comments.CommentPolicies.Authenticate]
-  }, "comments")]
+  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);

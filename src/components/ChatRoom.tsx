@@ -7,9 +7,25 @@ import {
     useClientEffect,
     useState,
 } from '@state-less/react-server';
-import { v4 } from 'uuid';
+
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
+
+const tryGetUser = (context) => {
+    try {
+        return authenticate((context as ClientContext).headers, JWT_SECRET);
+    } catch (e) {
+        return null;
+    }
+};
+
+export const ChatApp = (props, { key }) => {
+    return (
+        <ServerSideProps key={`${key}-props`}>
+            <Room key="room-global" />
+        </ServerSideProps>
+    );
+};
 
 export const Room = (
     props,
@@ -25,34 +41,21 @@ export const Room = (
     });
 
     useClientEffect(() => {
-        let user = null;
-        try {
-            user = authenticate((context as ClientContext).headers, JWT_SECRET);
-        } catch (e) {}
+        const user = tryGetUser(context);
         const client = {
             user,
             id: (context as ClientContext).headers['x-unique-id'],
         };
-        console.log('Initiator', initiator);
+
         if (initiator !== Initiator.Mount)
             return () => {
-                console.log(
-                    '!!! Unmounting client',
-                    client.id,
-                    clients.filter((c) => c.id !== client.id)
-                );
                 setClients(clients.filter((c) => c.id !== client.id));
             };
 
         if (!clients.find((c) => c.id === client.id))
-            setImmediate(setClients([...clients, client]));
+            setImmediate(setClients, [...clients, client]);
 
         return () => {
-            console.log(
-                '!!! Unmounting client',
-                client.id,
-                clients.filter((c) => c.id !== client.id)
-            );
             setClients(clients.filter((c) => c.id !== client.id));
         };
     });
@@ -64,10 +67,7 @@ export const Room = (
         if (message.length > 100) {
             throw new Error('Message too long');
         }
-        let user = null;
-        try {
-            user = authenticate((context as ClientContext).headers, JWT_SECRET);
-        } catch (e) {}
+        const user = tryGetUser(context);
         const client = {
             user,
             id: (context as ClientContext).headers['x-unique-id'],
@@ -79,7 +79,7 @@ export const Room = (
         };
         setMessages([...messages, messageObj]);
     };
-    console.log('Client Props', clientProps);
+
     return (
         <ServerSideProps
             key={`${key}-props`}
@@ -88,39 +88,5 @@ export const Room = (
             clients={clients}
             sendMessage={sendMessage}
         />
-    );
-};
-
-export const ChatApp = (props, { key, context }) => {
-    const [rooms, setRooms] = useState([], {
-        key: 'rooms',
-        scope: Scopes.Global,
-    });
-
-    const addRoom = () => {
-        let user = null;
-        try {
-            user = authenticate((context as ClientContext).headers, JWT_SECRET);
-        } catch (e) {}
-        const client = {
-            user,
-            id: (context as ClientContext).headers['x-unique-id'],
-        };
-
-        const room = {
-            id: v4(),
-            owner: client,
-        };
-
-        setRooms([...rooms, room]);
-    };
-
-    return (
-        <ServerSideProps key={`${key}-props`} addRoom={addRoom}>
-            <Room key="room-global" />
-            {rooms.map((room) => {
-                return <Room key={room.id} />;
-            })}
-        </ServerSideProps>
     );
 };
