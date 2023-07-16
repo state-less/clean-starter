@@ -34,7 +34,7 @@ export const Todo = ({ id, completed, title }: TodoObject) => {
     return <ServerSideProps key={`${id}-todo`} {...todo} toggle={toggle} />;
 };
 
-export const List = (_, { key }) => {
+export const List = ({ id }: { key?: string; id: string }, { key }) => {
     const [todos, setTodos] = useState<TodoObject[]>([], {
         key: 'todos',
         scope: `${key}.${Scopes.Client}`,
@@ -65,6 +65,7 @@ export const List = (_, { key }) => {
             remove={removeEntry}
             title={title}
             setTitle={setTitle}
+            id={id}
         >
             {todos.map((todo) => (
                 <Todo {...todo} />
