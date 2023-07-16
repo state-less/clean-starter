@@ -21,7 +21,7 @@ var _schema = require("./schema");
 var _Navigation = require("./components/Navigation");
 var _examples = require("./components/examples");
 var _Pages = require("./components/Pages");
-var _Todos = require("./components/Todos");
+var _Lists = require("./components/Lists");
 var _Votings = require("./components/Votings");
 var _Session = require("./components/Session");
 var _Poll = require("./components/Poll");
@@ -88,7 +88,7 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   path: apolloServer.graphqlPath
 });
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Todos.Todos, {}, "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.List, {}, "todos"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
   }, "votings"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []

@@ -21,7 +21,7 @@ import { typeDefs } from './schema';
 import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
-import { Todos } from './components/Todos';
+import { List, MyLists } from './components/Lists';
 import { VotingPolicies, Votings } from './components/Votings';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
@@ -111,7 +111,8 @@ export const reactServer = (
         <HelloWorldExample2 key="hello-world-2" />
         <Pages key="pages" />
         <DynamicPage key="page" />
-        <Todos key="todos" />
+        <List key="todos" />
+        <MyLists key="my-lists" />
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
         <Votings key="votings-multiple" policies={[]} />
         <Session key="session" />
