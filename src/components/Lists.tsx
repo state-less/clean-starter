@@ -34,18 +34,27 @@ export const Todo = ({ id, completed, title }: TodoObject) => {
     return <ServerSideProps key={`${id}-todo`} {...todo} toggle={toggle} />;
 };
 
-export const List = ({ id }: { key?: string; id: string }, { key }) => {
+export const List = (
+    { id, title: initialTitle }: { key?: string; id: string; title: string },
+    { key }
+) => {
     const [todos, setTodos] = useState<TodoObject[]>([], {
         key: 'todos',
         scope: `${key}.${Scopes.Client}`,
     });
-    const [title, setTitle] = useState('My List', {
+
+    const [labels, setLabels] = useState<TodoObject[]>([], {
+        key: 'labels',
+        scope: `${key}.${Scopes.Client}`,
+    });
+
+    const [title, setTitle] = useState(initialTitle, {
         key: 'title',
         scope: `${key}.${Scopes.Client}`,
     });
     const addEntry = (todo: TodoObject) => {
-        const id = v4();
-        const newTodo = { ...todo, id };
+        const todoId = v4();
+        const newTodo = { ...todo, id: todoId };
 
         if (!isValidTodo(newTodo)) {
             throw new Error('Invalid todo');
@@ -55,16 +64,38 @@ export const List = ({ id }: { key?: string; id: string }, { key }) => {
         return newTodo;
     };
 
-    const removeEntry = (id: string) => {
-        setTodos(todos.filter((todo) => todo.id !== id));
+    const removeEntry = (todoId: string) => {
+        setTodos(todos.filter((todo) => todo.id !== todoId));
     };
+
+    const addLabel = (label: TodoObject) => {
+        const labelId = v4();
+        const newLabel = { ...label, id: labelId };
+
+        if (!isValidLabel(newLabel)) {
+            throw new Error('Invalid todo');
+        }
+
+        setLabels([...labels, newLabel]);
+
+        return newLabel;
+    };
+
+    const removeLabel = (labelId: string) => {
+        setLabels(labels.filter((label) => label.id !== labelId));
+    };
+
     return (
         <ServerSideProps
             key={`${key}-props`}
             add={addEntry}
             remove={removeEntry}
+            addLabel={addLabel}
+            removeLabel={removeLabel}
             title={title}
             setTitle={setTitle}
+            labels={labels}
+            setLabels={setLabels}
             id={id}
         >
             {todos.map((todo) => (
@@ -111,4 +142,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 };
 const isValidTodo = (todo): todo is TodoObject => {
     return todo.id && todo.title && 'completed' in todo;
+};
+
+type LabelObjext = {
+    id: string;
+    title: string;
+};
+
+const isValidLabel = (label): label is LabelObjext => {
+    return label.id && label.title && Object.keys(label).length === 2;
 };
