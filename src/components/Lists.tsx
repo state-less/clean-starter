@@ -1,6 +1,7 @@
 import {
     Scopes,
     authenticate,
+    clientKey,
     isClientContext,
     useState,
 } from '@state-less/react-server';
@@ -9,12 +10,22 @@ import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
 
 type TodoObject = {
+    key?: string;
     id: string | null;
     title: string;
     completed: boolean;
 };
 
-export const Todo = ({ id, completed, title }: TodoObject) => {
+export const Todo = (
+    { id, completed, title }: TodoObject,
+    { key, context }
+) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
     const [todo, setTodo] = useState<TodoObject>(
         {
             id,
@@ -22,8 +33,8 @@ export const Todo = ({ id, completed, title }: TodoObject) => {
             title,
         },
         {
-            key: `page${id}`,
-            scope: Scopes.Client,
+            key: `todo-${id}`,
+            scope: `${key}.${user?.id || Scopes.Client}`,
         }
     );
 
@@ -31,26 +42,38 @@ export const Todo = ({ id, completed, title }: TodoObject) => {
         setTodo({ ...todo, completed: !todo.completed });
     };
 
-    return <ServerSideProps key={`${id}-todo`} {...todo} toggle={toggle} />;
+    return (
+        <ServerSideProps
+            key={clientKey(`${id}-todo`, context)}
+            {...todo}
+            toggle={toggle}
+        />
+    );
 };
 
 export const List = (
     { id, title: initialTitle }: { key?: string; id: string; title: string },
-    { key }
+    { key, context }
 ) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
     const [todos, setTodos] = useState<TodoObject[]>([], {
         key: 'todos',
-        scope: `${key}.${Scopes.Client}`,
+        scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
     const [labels, setLabels] = useState<TodoObject[]>([], {
         key: 'labels',
-        scope: `${key}.${Scopes.Client}`,
+        scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
     const [title, setTitle] = useState(initialTitle, {
         key: 'title',
-        scope: `${key}.${Scopes.Client}`,
+        scope: `${key}.${user?.id || Scopes.Client}`,
     });
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
@@ -87,7 +110,7 @@ export const List = (
 
     return (
         <ServerSideProps
-            key={`${key}-props`}
+            key={clientKey(`${key}-props`, context)}
             add={addEntry}
             remove={removeEntry}
             addLabel={addLabel}
@@ -99,7 +122,7 @@ export const List = (
             id={id}
         >
             {todos.map((todo) => (
-                <Todo {...todo} />
+                <Todo key={todo.id} {...todo} />
             ))}
         </ServerSideProps>
     );
@@ -130,7 +153,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
     return (
         <ServerSideProps
-            key="my-lists-props"
+            key={clientKey('my-lists-props', context)}
             add={addEntry}
             remove={removeEntry}
         >

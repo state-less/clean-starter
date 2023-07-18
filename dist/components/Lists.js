@@ -15,52 +15,67 @@ var _config = require("../config");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-var Todo = function Todo(_ref) {
+var Todo = function Todo(_ref, _ref2) {
+  var _user, _user2;
   var id = _ref.id,
     completed = _ref.completed,
     title = _ref.title;
+  var key = _ref2.key,
+    context = _ref2.context;
+  var user = null;
+  if ((0, _reactServer.isClientContext)(context)) try {
+    user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  } catch (e) {}
   var _useState = (0, _reactServer.useState)({
       id: id,
       completed: completed,
       title: title
     }, {
-      key: "page".concat(id),
-      scope: _reactServer.Scopes.Client
+      key: "todo-".concat(id),
+      scope: "".concat(key, ".").concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
     }),
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     todo = _useState2[0],
     setTodo = _useState2[1];
+  console.log('TODO', todo, "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client));
   var toggle = function toggle() {
+    console.log('TOGGLE');
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       completed: !todo.completed
     }));
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, todo), {}, {
     toggle: toggle
-  }), "".concat(id, "-todo"));
+  }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
-var List = function List(_ref2, _ref3) {
-  var id = _ref2.id,
-    initialTitle = _ref2.title;
-  var key = _ref3.key;
+var List = function List(_ref3, _ref4) {
+  var _user3, _user4, _user5;
+  var id = _ref3.id,
+    initialTitle = _ref3.title;
+  var key = _ref4.key,
+    context = _ref4.context;
+  var user = null;
+  if ((0, _reactServer.isClientContext)(context)) try {
+    user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  } catch (e) {}
   var _useState3 = (0, _reactServer.useState)([], {
       key: 'todos',
-      scope: "".concat(key, ".").concat(_reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user3 = user) === null || _user3 === void 0 ? void 0 : _user3.id) || _reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     todos = _useState4[0],
     setTodos = _useState4[1];
   var _useState5 = (0, _reactServer.useState)([], {
       key: 'labels',
-      scope: "".concat(key, ".").concat(_reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || _reactServer.Scopes.Client)
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
     labels = _useState6[0],
     setLabels = _useState6[1];
   var _useState7 = (0, _reactServer.useState)(initialTitle, {
       key: 'title',
-      scope: "".concat(key, ".").concat(_reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
     }),
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
     title = _useState8[0],
@@ -108,22 +123,22 @@ var List = function List(_ref2, _ref3) {
     setLabels: setLabels,
     id: id,
     children: todos.map(function (todo) {
-      return (0, _jsxRuntime.jsx)(Todo, _objectSpread({}, todo));
+      return (0, _jsxRuntime.jsx)(Todo, _objectSpread({}, todo), todo.id);
     })
-  }, "".concat(key, "-props"));
+  }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.List = List;
-var MyLists = function MyLists(_, _ref4) {
-  var _user;
-  var context = _ref4.context,
-    key = _ref4.key;
+var MyLists = function MyLists(_, _ref5) {
+  var _user6;
+  var context = _ref5.context,
+    key = _ref5.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var _useState9 = (0, _reactServer.useState)([], {
       key: 'lists',
-      scope: "".concat(key, ".").concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
     }),
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     lists = _useState10[0],
@@ -146,7 +161,7 @@ var MyLists = function MyLists(_, _ref4) {
     children: lists.map(function (list) {
       return (0, _jsxRuntime.jsx)(List, _objectSpread({}, list), "list-".concat(list.id));
     })
-  }, "my-lists-props");
+  }, (0, _reactServer.clientKey)('my-lists-props', context));
 };
 exports.MyLists = MyLists;
 var isValidTodo = function isValidTodo(todo) {
