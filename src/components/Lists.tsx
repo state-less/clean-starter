@@ -140,15 +140,22 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
+    const [order, setOrder] = useState([], {
+        key: 'order',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
+
     const addEntry = (todo: TodoObject) => {
         const id = v4();
         const newList = { ...todo, id };
 
         setLists([...lists, newList]);
+        setOrder([...lists, newList].map((list) => list.id));
     };
 
     const removeEntry = (id: string) => {
         setLists(lists.filter((list) => list.id !== id));
+        setOrder(order.filter((listId) => listId !== id));
     };
 
     return (
@@ -156,6 +163,8 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             key={clientKey('my-lists-props', context)}
             add={addEntry}
             remove={removeEntry}
+            order={order}
+            setOrder={setOrder}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
