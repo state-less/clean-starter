@@ -75,6 +75,12 @@ export const List = (
         key: 'title',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
+
+    const [order, setOrder] = useState([], {
+        key: 'order',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
+
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
         const newTodo = { ...todo, id: todoId };
@@ -83,12 +89,14 @@ export const List = (
             throw new Error('Invalid todo');
         }
         setTodos([...todos, newTodo]);
+        setOrder([...todos, newTodo].map((list) => list.id));
 
         return newTodo;
     };
 
     const removeEntry = (todoId: string) => {
         setTodos(todos.filter((todo) => todo.id !== todoId));
+        setOrder(order.filter((todoId) => todoId !== id));
     };
 
     const addLabel = (label: TodoObject) => {
@@ -120,6 +128,8 @@ export const List = (
             labels={labels}
             setLabels={setLabels}
             id={id}
+            order={order}
+            setOrder={setOrder}
         >
             {todos.map((todo) => (
                 <Todo key={todo.id} {...todo} />

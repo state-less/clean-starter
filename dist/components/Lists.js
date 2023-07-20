@@ -48,7 +48,7 @@ var Todo = function Todo(_ref, _ref2) {
 };
 exports.Todo = Todo;
 var List = function List(_ref3, _ref4) {
-  var _user2, _user3, _user4;
+  var _user2, _user3, _user4, _user5;
   var id = _ref3.id,
     initialTitle = _ref3.title;
   var key = _ref4.key,
@@ -78,6 +78,13 @@ var List = function List(_ref3, _ref4) {
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
     title = _useState8[0],
     setTitle = _useState8[1];
+  var _useState9 = (0, _reactServer.useState)([], {
+      key: 'order',
+      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
+    }),
+    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
+    order = _useState10[0],
+    setOrder = _useState10[1];
   var addEntry = function addEntry(todo) {
     var todoId = (0, _uuid.v4)();
     var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
@@ -87,11 +94,17 @@ var List = function List(_ref3, _ref4) {
       throw new Error('Invalid todo');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]));
+    setOrder([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]).map(function (list) {
+      return list.id;
+    }));
     return newTodo;
   };
   var removeEntry = function removeEntry(todoId) {
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
+    }));
+    setOrder(order.filter(function (todoId) {
+      return todoId !== id;
     }));
   };
   var addLabel = function addLabel(label) {
@@ -120,6 +133,8 @@ var List = function List(_ref3, _ref4) {
     labels: labels,
     setLabels: setLabels,
     id: id,
+    order: order,
+    setOrder: setOrder,
     children: todos.map(function (todo) {
       return (0, _jsxRuntime.jsx)(Todo, _objectSpread({}, todo), todo.id);
     })
@@ -127,27 +142,27 @@ var List = function List(_ref3, _ref4) {
 };
 exports.List = List;
 var MyLists = function MyLists(_, _ref5) {
-  var _user5, _user6;
+  var _user6, _user7;
   var context = _ref5.context,
     key = _ref5.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState9 = (0, _reactServer.useState)([], {
-      key: 'lists',
-      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
-    }),
-    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
-    lists = _useState10[0],
-    setLists = _useState10[1];
   var _useState11 = (0, _reactServer.useState)([], {
-      key: 'order',
+      key: 'lists',
       scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
     }),
     _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
-    order = _useState12[0],
-    setOrder = _useState12[1];
+    lists = _useState12[0],
+    setLists = _useState12[1];
+  var _useState13 = (0, _reactServer.useState)([], {
+      key: 'order',
+      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
+    }),
+    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
+    order = _useState14[0],
+    setOrder = _useState14[1];
   var addEntry = function addEntry(todo) {
     var id = (0, _uuid.v4)();
     var newList = _objectSpread(_objectSpread({}, todo), {}, {
