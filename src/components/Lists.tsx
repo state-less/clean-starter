@@ -208,8 +208,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         return exportData({ key, user });
     };
 
-    const importUserData = (data) => {
+    const importUserData = (data: Record<string, ListObject>) => {
         const lists = Object.values(data);
+
+        if (!lists.length || !lists.every(isValidList)) {
+            throw new Error('Invalid list');
+        }
+
         const order = lists.map((list) => list.id);
 
         setLists(lists);
@@ -242,4 +247,19 @@ type LabelObjext = {
 
 const isValidLabel = (label): label is LabelObjext => {
     return label.id && label.title && Object.keys(label).length === 2;
+};
+
+type ListObject = {
+    id: string;
+    title: string;
+    todos: TodoObject[];
+};
+
+const isValidList = (list: ListObject) => {
+    return (
+        list.id &&
+        list.title &&
+        list.todos &&
+        list.todos.every((todo) => isValidTodo)
+    );
 };

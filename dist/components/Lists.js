@@ -220,6 +220,9 @@ var MyLists = function MyLists(_, _ref6) {
   };
   var importUserData = function importUserData(data) {
     var lists = Object.values(data);
+    if (!lists.length || !lists.every(isValidList)) {
+      throw new Error('Invalid list');
+    }
     var order = lists.map(function (list) {
       return list.id;
     });
@@ -244,4 +247,9 @@ var isValidTodo = function isValidTodo(todo) {
 };
 var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
+};
+var isValidList = function isValidList(list) {
+  return list.id && list.title && list.todos && list.todos.every(function (todo) {
+    return isValidTodo;
+  });
 };
