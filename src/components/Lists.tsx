@@ -37,11 +37,10 @@ export const Todo = (
             title,
         },
         {
-            key: `todo-${id}`,
+            key: `todo`,
             scope: `${key}.${user?.id || Scopes.Client}`,
         }
     );
-
     const toggle = () => {
         setTodo({ ...todo, completed: !todo.completed });
     };
@@ -162,6 +161,15 @@ const exportData = ({ key, user }) => {
             key: 'todos',
             scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
         });
+
+        todos.value.forEach((todo) => {
+            const stored = store.getState(null, {
+                key: `todo`,
+                scope: `${todo.id}.${user?.id || Scopes.Client}`,
+            });
+            Object.assign(todo, stored.value);
+        });
+
         data[list.id] = { ...list, todos: todos.value };
     });
 

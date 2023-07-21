@@ -31,12 +31,17 @@ var Todo = function Todo(_ref, _ref2) {
       completed: completed,
       title: title
     }, {
-      key: "todo-".concat(id),
+      key: "todo",
       scope: "".concat(key, ".").concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
     }),
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     todo = _useState2[0],
     setTodo = _useState2[1];
+  console.log('Initial Todo', todo, {
+    id: id,
+    completed: completed,
+    title: title
+  });
   var toggle = function toggle() {
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       completed: !todo.completed
@@ -159,6 +164,13 @@ var exportData = function exportData(_ref5) {
       key: 'todos',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
     });
+    todos.value.forEach(function (todo) {
+      var stored = store.getState(null, {
+        key: "todo",
+        scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+      });
+      Object.assign(todo, stored.value);
+    });
     data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
       todos: todos.value
     });
@@ -220,7 +232,10 @@ var MyLists = function MyLists(_, _ref6) {
       throw new Error('Invalid list');
     }
     lists.forEach(function (list) {
-      return list.id = (0, _uuid.v4)();
+      list.id = (0, _uuid.v4)();
+      list.todos.forEach(function (todo) {
+        todo.id = (0, _uuid.v4)();
+      });
     });
     var order = lists.map(function (list) {
       return list.id;
