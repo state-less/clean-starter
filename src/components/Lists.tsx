@@ -4,6 +4,8 @@ import {
     authenticate,
     clientKey,
     isClientContext,
+    useClientEffect,
+    useEffect,
     useState,
 } from '@state-less/react-server';
 import { v4 } from 'uuid';
@@ -54,7 +56,11 @@ export const Todo = (
 };
 
 export const List = (
-    { id, title: initialTitle }: { key?: string; id: string; title: string },
+    {
+        id,
+        title: initialTitle,
+        todos: initialTodos = [],
+    }: { key?: string; id: string; title: string; todos: TodoObject[] },
     { key, context }
 ) => {
     let user = null;
@@ -63,7 +69,7 @@ export const List = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [todos, setTodos] = useState<TodoObject[]>([], {
+    const [todos, setTodos] = useState<TodoObject[]>(initialTodos, {
         key: 'todos',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
@@ -78,10 +84,19 @@ export const List = (
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
-    const [order, setOrder] = useState([], {
-        key: 'order',
-        scope: `${key}.${user?.id || Scopes.Client}`,
-    });
+    const [order, setOrder] = useState(
+        initialTodos.map((todo) => todo.id),
+        {
+            key: 'order',
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
+
+    useClientEffect(() => {
+        console.log('CLIENT EFFECT');
+        setTodos(initialTodos);
+        setOrder(initialTodos.map((todo) => todo.id));
+    }, [initialTodos]);
 
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
@@ -193,6 +208,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         return exportData({ key, user });
     };
 
+    const importUserData = (data) => {
+        const lists = Object.values(data);
+        const order = lists.map((list) => list.id);
+
+        setLists(lists);
+        setOrder(order);
+    };
     return (
         <ServerSideProps
             key={clientKey('my-lists-props', context)}
@@ -201,6 +223,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             order={order}
             setOrder={setOrder}
             exportUserData={exportUserData}
+            importUserData={importUserData}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
