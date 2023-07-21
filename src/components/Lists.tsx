@@ -95,8 +95,8 @@ export const List = (
     };
 
     const removeEntry = (todoId: string) => {
+        setOrder(order.filter((id) => id !== todoId));
         setTodos(todos.filter((todo) => todo.id !== todoId));
-        setOrder(order.filter((todoId) => todoId !== id));
     };
 
     const addLabel = (label: TodoObject) => {
