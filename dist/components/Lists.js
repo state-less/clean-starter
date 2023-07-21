@@ -100,11 +100,11 @@ var List = function List(_ref3, _ref4) {
     return newTodo;
   };
   var removeEntry = function removeEntry(todoId) {
+    setOrder(order.filter(function (id) {
+      return id !== todoId;
+    }));
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
-    }));
-    setOrder(order.filter(function (todoId) {
-      return todoId !== id;
     }));
   };
   var addLabel = function addLabel(label) {
@@ -141,10 +141,30 @@ var List = function List(_ref3, _ref4) {
   }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.List = List;
-var MyLists = function MyLists(_, _ref5) {
+var exportData = function exportData(_ref5) {
+  var key = _ref5.key,
+    user = _ref5.user;
+  var store = _reactServer.Dispatcher.getCurrent().getStore();
+  var data = {};
+  var lists = store.getState(null, {
+    key: 'lists',
+    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+  });
+  lists.value.forEach(function (list) {
+    var todos = store.getState(null, {
+      key: 'todos',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    });
+    data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
+      todos: todos.value
+    });
+  });
+  return data;
+};
+var MyLists = function MyLists(_, _ref6) {
   var _user6, _user7;
-  var context = _ref5.context,
-    key = _ref5.key;
+  var context = _ref6.context,
+    key = _ref6.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -181,11 +201,18 @@ var MyLists = function MyLists(_, _ref5) {
       return listId !== id;
     }));
   };
+  var exportUserData = function exportUserData() {
+    return exportData({
+      key: key,
+      user: user
+    });
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
     remove: removeEntry,
     order: order,
     setOrder: setOrder,
+    exportUserData: exportUserData,
     children: lists.map(function (list) {
       return (0, _jsxRuntime.jsx)(List, _objectSpread({}, list), "list-".concat(list.id));
     })

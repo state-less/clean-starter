@@ -1,4 +1,5 @@
 import {
+    Dispatcher,
     Scopes,
     authenticate,
     clientKey,
@@ -8,6 +9,7 @@ import {
 import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
+import { store } from '../instances';
 
 type TodoObject = {
     key?: string;
@@ -138,6 +140,25 @@ export const List = (
     );
 };
 
+const exportData = ({ key, user }) => {
+    const store = Dispatcher.getCurrent().getStore();
+    const data = {};
+    const lists = store.getState(null, {
+        key: 'lists',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
+
+    lists.value.forEach((list) => {
+        const todos = store.getState(null, {
+            key: 'todos',
+            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+        });
+        data[list.id] = { ...list, todos: todos.value };
+    });
+
+    return data;
+};
+
 export const MyLists = (_: { key?: string }, { context, key }) => {
     let user = null;
     if (isClientContext(context))
@@ -168,6 +189,10 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         setOrder(order.filter((listId) => listId !== id));
     };
 
+    const exportUserData = () => {
+        return exportData({ key, user });
+    };
+
     return (
         <ServerSideProps
             key={clientKey('my-lists-props', context)}
@@ -175,6 +200,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             remove={removeEntry}
             order={order}
             setOrder={setOrder}
+            exportUserData={exportUserData}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
