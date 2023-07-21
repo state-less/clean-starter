@@ -192,10 +192,13 @@ var MyLists = function MyLists(_, _ref6) {
     var newList = _objectSpread(_objectSpread({}, todo), {}, {
       id: id
     });
-    setLists([].concat((0, _toConsumableArray2["default"])(lists), [newList]));
-    setOrder([].concat((0, _toConsumableArray2["default"])(lists), [newList]).map(function (list) {
-      return list.id;
-    }));
+    var newLists = [].concat((0, _toConsumableArray2["default"])(order.map(function (listId) {
+      return lists.find(function (list) {
+        return list.id === listId;
+      });
+    })), [newList]);
+    setOrder([].concat((0, _toConsumableArray2["default"])(order), [id]));
+    setLists(newLists);
   };
   var removeEntry = function removeEntry(id) {
     setLists(lists.filter(function (list) {

@@ -188,9 +188,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     const addEntry = (todo: TodoObject) => {
         const id = v4();
         const newList = { ...todo, id };
-
-        setLists([...lists, newList]);
-        setOrder([...lists, newList].map((list) => list.id));
+        const newLists = [
+            ...order.map((listId) => lists.find((list) => list.id === listId)),
+            newList,
+        ];
+        setOrder([...order, id]);
+        setLists(newLists);
     };
 
     const removeEntry = (id: string) => {
@@ -211,7 +214,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
         lists.forEach((list) => (list.id = v4()));
         const order = lists.map((list) => list.id);
-
 
         setLists(lists);
         setOrder(order);
