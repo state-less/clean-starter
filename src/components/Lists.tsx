@@ -212,7 +212,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             throw new Error('Invalid list');
         }
 
-        lists.forEach((list) => (list.id = v4()));
+        lists.forEach((list) => {
+            list.id = v4();
+            list.todos.forEach((todo) => {
+                todo.id = v4();
+            });
+        });
         const order = lists.map((list) => list.id);
 
         setLists(lists);
