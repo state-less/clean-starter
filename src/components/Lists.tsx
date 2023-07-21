@@ -92,12 +92,6 @@ export const List = (
         }
     );
 
-    useClientEffect(() => {
-        console.log('CLIENT EFFECT');
-        setTodos(initialTodos);
-        setOrder(initialTodos.map((todo) => todo.id));
-    }, [initialTodos]);
-
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
         const newTodo = { ...todo, id: todoId };
@@ -215,7 +209,9 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             throw new Error('Invalid list');
         }
 
+        lists.forEach((list) => (list.id = v4()));
         const order = lists.map((list) => list.id);
+
 
         setLists(lists);
         setOrder(order);

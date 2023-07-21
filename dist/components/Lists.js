@@ -89,13 +89,6 @@ var List = function List(_ref3, _ref4) {
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     order = _useState10[0],
     setOrder = _useState10[1];
-  (0, _reactServer.useClientEffect)(function () {
-    console.log('CLIENT EFFECT');
-    setTodos(initialTodos);
-    setOrder(initialTodos.map(function (todo) {
-      return todo.id;
-    }));
-  }, [initialTodos]);
   var addEntry = function addEntry(todo) {
     var todoId = (0, _uuid.v4)();
     var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
@@ -223,6 +216,9 @@ var MyLists = function MyLists(_, _ref6) {
     if (!lists.length || !lists.every(isValidList)) {
       throw new Error('Invalid list');
     }
+    lists.forEach(function (list) {
+      return list.id = (0, _uuid.v4)();
+    });
     var order = lists.map(function (list) {
       return list.id;
     });
