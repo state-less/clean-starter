@@ -73,6 +73,28 @@ export const List = (
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
+    const [color, _setColor] = useState('white', {
+        key: 'color',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
+
+    const setColor = (color: string) => {
+        const colors = [
+            'white',
+            'darkred',
+            'blue',
+            'green',
+            'yellow',
+            'orange',
+            'purple',
+        ];
+
+        // if (!colors.includes(color)) {
+        //     throw new Error('Invalid color');
+        // }
+
+        _setColor(color);
+    };
     const [labels, setLabels] = useState<TodoObject[]>([], {
         key: 'labels',
         scope: `${key}.${user?.id || Scopes.Client}`,
@@ -140,6 +162,8 @@ export const List = (
             id={id}
             order={order}
             setOrder={setOrder}
+            color={color}
+            setColor={setColor}
         >
             {todos.map((todo) => (
                 <Todo key={todo.id} {...todo} />
