@@ -19,10 +19,12 @@ type TodoObject = {
     title: string;
     completed: boolean;
     archived: boolean;
+    lastModified?: number;
+    reset?: number;
 };
 
 export const Todo = (
-    { id, completed, title, archived }: TodoObject,
+    { id, completed, title, archived, reset = null }: TodoObject,
     { key, context }
 ) => {
     let user = null;
@@ -37,14 +39,23 @@ export const Todo = (
             completed,
             title,
             archived,
+            reset,
         },
         {
             key: `todo`,
             scope: `${key}.${user?.id || Scopes.Client}`,
         }
     );
+    const comp =
+        todo.completed &&
+        (todo.reset === null || todo.lastModified + todo.reset > Date.now());
+
     const toggle = () => {
-        setTodo({ ...todo, completed: !todo.completed });
+        setTodo({
+            ...todo,
+            completed: !comp,
+            lastModified: Date.now(),
+        });
     };
 
     const archive = () => {
@@ -53,13 +64,37 @@ export const Todo = (
             archived: true,
         });
     };
-    
+
+    const setReset = (reset) => {
+        if (
+            reset === 0 ||
+            reset === null ||
+            reset === undefined ||
+            reset === '' ||
+            reset === '-'
+        ) {
+            setTodo({
+                ...todo,
+                reset: null,
+            });
+            return;
+        }
+
+        if (reset < 0 || reset > 14) throw new Error('Invalid reset value');
+
+        setTodo({
+            ...todo,
+            reset: 1000 * 60 * 60 * 24 * reset,
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-todo`, context)}
             {...todo}
             toggle={toggle}
             archive={archive}
+            completed={comp}
+            setReset={setReset}
         />
     );
 };

@@ -20,7 +20,9 @@ var Todo = function Todo(_ref, _ref2) {
   var id = _ref.id,
     completed = _ref.completed,
     title = _ref.title,
-    archived = _ref.archived;
+    archived = _ref.archived,
+    _ref$reset = _ref.reset,
+    reset = _ref$reset === void 0 ? null : _ref$reset;
   var key = _ref2.key,
     context = _ref2.context;
   var user = null;
@@ -31,7 +33,8 @@ var Todo = function Todo(_ref, _ref2) {
       id: id,
       completed: completed,
       title: title,
-      archived: archived
+      archived: archived,
+      reset: reset
     }, {
       key: "todo",
       scope: "".concat(key, ".").concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
@@ -39,21 +42,35 @@ var Todo = function Todo(_ref, _ref2) {
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     todo = _useState2[0],
     setTodo = _useState2[1];
+  var comp = todo.completed && (todo.reset === null || todo.lastModified + todo.reset > Date.now());
   var toggle = function toggle() {
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
-      completed: !todo.completed
+      completed: !comp,
+      lastModified: Date.now()
     }));
   };
   var archive = function archive() {
-    console.log("Archiving");
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       archived: true
+    }));
+  };
+  var setReset = function setReset(reset) {
+    if (reset === 0 || reset === null || reset === undefined || reset === '' || reset === '-') {
+      setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+        reset: null
+      }));
+      return;
+    }
+    if (reset < 0 || reset > 14) throw new Error('Invalid reset value');
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      reset: 1000 * 60 * 60 * 24 * reset
     }));
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, todo), {}, {
     toggle: toggle,
     archive: archive,
-    archived: todo.archived || false
+    completed: comp,
+    setReset: setReset
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
