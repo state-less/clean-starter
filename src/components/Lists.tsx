@@ -18,10 +18,11 @@ type TodoObject = {
     id: string | null;
     title: string;
     completed: boolean;
+    archived: boolean;
 };
 
 export const Todo = (
-    { id, completed, title }: TodoObject,
+    { id, completed, title, archived }: TodoObject,
     { key, context }
 ) => {
     let user = null;
@@ -35,6 +36,7 @@ export const Todo = (
             id,
             completed,
             title,
+            archived,
         },
         {
             key: `todo`,
@@ -45,11 +47,19 @@ export const Todo = (
         setTodo({ ...todo, completed: !todo.completed });
     };
 
+    const archive = () => {
+        setTodo({
+            ...todo,
+            archived: true,
+        });
+    };
+    
     return (
         <ServerSideProps
             key={clientKey(`${id}-todo`, context)}
             {...todo}
             toggle={toggle}
+            archive={archive}
         />
     );
 };
@@ -59,7 +69,14 @@ export const List = (
         id,
         title: initialTitle,
         todos: initialTodos = [],
-    }: { key?: string; id: string; title: string; todos: TodoObject[] },
+        archived: initialArchived = false,
+    }: {
+        key?: string;
+        id: string;
+        title: string;
+        todos: TodoObject[];
+        archived: boolean;
+    },
     { key, context }
 ) => {
     let user = null;
@@ -75,6 +92,11 @@ export const List = (
 
     const [color, _setColor] = useState('white', {
         key: 'color',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
+
+    const [archived, setArchived] = useState(initialArchived, {
+        key: 'archived',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
@@ -148,6 +170,9 @@ export const List = (
         setLabels(labels.filter((label) => label.id !== labelId));
     };
 
+    const archive = () => {
+        setArchived(true);
+    };
     return (
         <ServerSideProps
             key={clientKey(`${key}-props`, context)}
@@ -164,6 +189,8 @@ export const List = (
             setOrder={setOrder}
             color={color}
             setColor={setColor}
+            archived={archived}
+            archive={archive}
         >
             {todos.map((todo) => (
                 <Todo key={todo.id} {...todo} />
