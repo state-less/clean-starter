@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Todo = exports.MyLists = exports.List = void 0;
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
@@ -12,7 +13,9 @@ var _reactServer = require("@state-less/react-server");
 var _uuid = require("uuid");
 var _ServerSideProps = require("./ServerSideProps");
 var _config = require("../config");
+var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
+var _excluded = ["signed", "points", "order"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var Todo = function Todo(_ref, _ref2) {
@@ -115,6 +118,7 @@ var List = function List(_ref3, _ref4) {
     initialTitle = _ref3.title,
     _ref3$todos = _ref3.todos,
     initialTodos = _ref3$todos === void 0 ? [] : _ref3$todos,
+    initialOrder = _ref3.order,
     _ref3$archived = _ref3.archived,
     initialArchived = _ref3$archived === void 0 ? false : _ref3$archived,
     _ref3$color = _ref3.color,
@@ -187,9 +191,7 @@ var List = function List(_ref3, _ref4) {
     _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
     title = _useState18[0],
     setTitle = _useState18[1];
-  var _useState19 = (0, _reactServer.useState)(initialTodos.map(function (todo) {
-      return todo.id;
-    }), {
+  var _useState19 = (0, _reactServer.useState)(initialOrder, {
       key: 'order',
       scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
     }),
@@ -288,9 +290,21 @@ var exportData = function exportData(_ref5) {
     key: 'lists',
     scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
   });
+  var order = store.getState(null, {
+    key: 'order',
+    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+  });
   lists.value.forEach(function (list) {
     var todos = store.getState(null, {
       key: 'todos',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    });
+    var order = store.getState(null, {
+      key: 'order',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    });
+    var color = store.getState(null, {
+      key: 'color',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
     });
     todos.value.forEach(function (todo) {
@@ -301,10 +315,23 @@ var exportData = function exportData(_ref5) {
       Object.assign(todo, stored.value);
     });
     data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
+      color: color.value,
+      order: order.value,
       todos: todos.value
     });
   });
-  return data;
+  var points = store.getState(null, {
+    key: 'points',
+    scope: "".concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+  });
+  var signed = _jsonwebtoken["default"].sign(_objectSpread(_objectSpread({}, data), {}, {
+    points: points
+  }), _config.JWT_SECRET);
+  return _objectSpread(_objectSpread({}, data), {}, {
+    points: points.value,
+    order: order.value,
+    signed: signed
+  });
 };
 var MyLists = function MyLists(_, _ref6) {
   var _user12, _user13, _user14;
@@ -362,22 +389,40 @@ var MyLists = function MyLists(_, _ref6) {
       user: user
     });
   };
-  var importUserData = function importUserData(data) {
+  var importUserData = function importUserData(raw) {
+    var signed = raw.signed,
+      points = raw.points,
+      order = raw.order,
+      data = (0, _objectWithoutProperties2["default"])(raw, _excluded);
     var lists = Object.values(data);
+    if (!signed) {
+      throw new Error('Unsigned data');
+    }
+    _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET);
     if (!lists.length || !lists.every(isValidList)) {
-      throw new Error('Invalid list');
+      throw new Error('Invalid data');
+    }
+    if (!(order !== null && order !== void 0 && order.every(function (id) {
+      return typeof id === 'string';
+    }))) {
+      throw new Error('Invalid order');
     }
     lists.forEach(function (list) {
-      list.id = (0, _uuid.v4)();
+      var newId = (0, _uuid.v4)();
+      var oldId = list.id;
+      list.id = newId;
+      order[order.indexOf(oldId)] = newId;
       list.todos.forEach(function (todo) {
-        todo.id = (0, _uuid.v4)();
+        var oldId = todo.id;
+        var newId = (0, _uuid.v4)();
+        todo.id = newId;
+        list.order[list.order.indexOf(oldId)] = newId;
       });
     });
-    var order = lists.map(function (list) {
-      return list.id;
-    });
+    console.log('List', order);
     setLists(lists);
     setOrder(order);
+    setPoints(points);
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
@@ -400,7 +445,9 @@ var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
 };
 var isValidList = function isValidList(list) {
-  return list.id && list.title && list.todos && list.todos.every(function (todo) {
+  return list.id && list.title && list.todos && list.order && list.order.every(function (id) {
+    return typeof id === 'string';
+  }) && list.todos.every(function (todo) {
     return isValidTodo;
   });
 };

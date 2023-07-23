@@ -12,7 +12,7 @@ import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
 import { store } from '../instances';
-
+import jwt from 'jsonwebtoken';
 type TodoObject = {
     key?: string;
     id: string | null;
@@ -150,6 +150,7 @@ export const List = (
         id,
         title: initialTitle,
         todos: initialTodos = [],
+        order: initialOrder, // = initialTodos.map((_, i) => i),
         archived: initialArchived = false,
         color: initialColor = 'white',
         points: initialPoints = 0,
@@ -162,6 +163,7 @@ export const List = (
         color: string;
         points: number;
         settings: ListSettings;
+        order: string[];
     },
     { key, context }
 ) => {
@@ -228,13 +230,10 @@ export const List = (
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
-    const [order, setOrder] = useState(
-        initialTodos.map((todo) => todo.id),
-        {
-            key: 'order',
-            scope: `${key}.${user?.id || Scopes.Client}`,
-        }
-    );
+    const [order, setOrder] = useState(initialOrder, {
+        key: 'order',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
 
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
@@ -332,13 +331,23 @@ const exportData = ({ key, user }) => {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
-
+    const order = store.getState(null, {
+        key: 'order',
+        scope: `${key}.${user?.id || Scopes.Client}`,
+    });
     lists.value.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
             scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
         });
-
+        const order = store.getState(null, {
+            key: 'order',
+            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+        });
+        const color = store.getState(null, {
+            key: 'color',
+            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+        });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
                 key: `todo`,
@@ -347,10 +356,21 @@ const exportData = ({ key, user }) => {
             Object.assign(todo, stored.value);
         });
 
-        data[list.id] = { ...list, todos: todos.value };
+        data[list.id] = {
+            ...list,
+            color: color.value,
+            order: order.value,
+            todos: todos.value,
+        };
     });
 
-    return data;
+    const points = store.getState(null, {
+        key: 'points',
+        scope: `${user?.id || Scopes.Client}`,
+    });
+
+    const signed = jwt.sign({ ...data, points }, JWT_SECRET);
+    return { ...data, points: points.value, order: order.value, signed };
 };
 
 export const MyLists = (_: { key?: string }, { context, key }) => {
@@ -394,23 +414,48 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         return exportData({ key, user });
     };
 
-    const importUserData = (data: Record<string, ListObject>) => {
+    const importUserData = (
+        raw: { signed: string; points: number; order: string[] } & Record<
+            string,
+            ListObject
+        >
+    ) => {
+        const { signed, points, order, ...data } = raw;
         const lists = Object.values(data);
 
+        if (!signed) {
+            throw new Error('Unsigned data');
+        }
+
+        jwt.verify(signed, JWT_SECRET);
+
         if (!lists.length || !lists.every(isValidList)) {
-            throw new Error('Invalid list');
+            throw new Error('Invalid data');
+        }
+
+        if (!order?.every((id) => typeof id === 'string')) {
+            throw new Error('Invalid order');
         }
 
         lists.forEach((list) => {
-            list.id = v4();
+            const newId = v4();
+            const oldId = list.id;
+
+            list.id = newId;
+            order[order.indexOf(oldId)] = newId;
             list.todos.forEach((todo) => {
-                todo.id = v4();
+                const oldId = todo.id;
+                const newId = v4();
+                todo.id = newId
+                list.order[list.order.indexOf(oldId)] = newId;
             });
         });
-        const order = lists.map((list) => list.id);
+
+        console.log('List', order);
 
         setLists(lists);
         setOrder(order);
+        setPoints(points);
     };
     return (
         <ServerSideProps
@@ -446,6 +491,7 @@ type ListObject = {
     id: string;
     title: string;
     todos: TodoObject[];
+    order: string[];
 };
 
 const isValidList = (list: ListObject) => {
@@ -453,6 +499,8 @@ const isValidList = (list: ListObject) => {
         list.id &&
         list.title &&
         list.todos &&
+        list.order &&
+        list.order.every((id) => typeof id === 'string') &&
         list.todos.every((todo) => isValidTodo)
     );
 };
