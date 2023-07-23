@@ -16,43 +16,68 @@ var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var Todo = function Todo(_ref, _ref2) {
-  var _user;
+  var _user, _user2;
   var id = _ref.id,
     completed = _ref.completed,
     title = _ref.title,
     archived = _ref.archived,
     _ref$reset = _ref.reset,
-    reset = _ref$reset === void 0 ? null : _ref$reset;
+    reset = _ref$reset === void 0 ? null : _ref$reset,
+    _ref$valuePoints = _ref.valuePoints,
+    valuePoints = _ref$valuePoints === void 0 ? 0 : _ref$valuePoints,
+    _ref$creditedValuePoi = _ref.creditedValuePoints,
+    creditedValuePoints = _ref$creditedValuePoi === void 0 ? 0 : _ref$creditedValuePoi,
+    _ref$negativePoints = _ref.negativePoints,
+    negativePoints = _ref$negativePoints === void 0 ? 0 : _ref$negativePoints,
+    _ref$dueDate = _ref.dueDate,
+    dueDate = _ref$dueDate === void 0 ? null : _ref$dueDate,
+    _ref$defaultValuePoin = _ref.defaultValuePoints,
+    defaultValuePoints = _ref$defaultValuePoin === void 0 ? 0 : _ref$defaultValuePoin;
   var key = _ref2.key,
     context = _ref2.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState = (0, _reactServer.useState)({
+  var _useState = (0, _reactServer.useState)(0, {
+      key: "points",
+      scope: "".concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
+    }),
+    _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
+    points = _useState2[0],
+    setPoints = _useState2[1];
+  var _useState3 = (0, _reactServer.useState)({
       id: id,
       completed: completed,
       title: title,
       archived: archived,
-      reset: reset
+      reset: reset,
+      valuePoints: valuePoints,
+      creditedValuePoints: creditedValuePoints,
+      negativePoints: negativePoints,
+      dueDate: dueDate
     }, {
       key: "todo",
-      scope: "".concat(key, ".").concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
     }),
-    _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
-    todo = _useState2[0],
-    setTodo = _useState2[1];
+    _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
+    todo = _useState4[0],
+    setTodo = _useState4[1];
   var comp = todo.completed && (todo.reset === null || todo.lastModified + todo.reset > Date.now());
   var toggle = function toggle() {
+    var valuePoints = todo.valuePoints || defaultValuePoints || 0;
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       completed: !comp,
-      lastModified: Date.now()
+      lastModified: Date.now(),
+      creditedValuePoints: comp ? 0 : valuePoints
     }));
+    setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
   };
   var archive = function archive() {
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       archived: true
     }));
+    setPoints(points + 1);
   };
   var setReset = function setReset(reset) {
     if (reset === 0 || reset === null || reset === undefined || reset === '' || reset === '-') {
@@ -66,49 +91,79 @@ var Todo = function Todo(_ref, _ref2) {
       reset: 1000 * 60 * 60 * 24 * reset
     }));
   };
+  var setValuePoints = function setValuePoints(valuePoints) {
+    if (typeof valuePoints !== 'number' && valuePoints < 0 || valuePoints > 100) {
+      throw new Error('Invalid value points');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      valuePoints: valuePoints,
+      negativePoints: -valuePoints
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, todo), {}, {
     toggle: toggle,
     archive: archive,
     completed: comp,
-    setReset: setReset
+    setReset: setReset,
+    setValuePoints: setValuePoints
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
 var List = function List(_ref3, _ref4) {
-  var _user2, _user3, _user4, _user5, _user6, _user7;
+  var _user3, _user4, _user5, _user6, _user7, _user8, _user9, _user10;
   var id = _ref3.id,
     initialTitle = _ref3.title,
     _ref3$todos = _ref3.todos,
     initialTodos = _ref3$todos === void 0 ? [] : _ref3$todos,
     _ref3$archived = _ref3.archived,
-    initialArchived = _ref3$archived === void 0 ? false : _ref3$archived;
+    initialArchived = _ref3$archived === void 0 ? false : _ref3$archived,
+    _ref3$color = _ref3.color,
+    initialColor = _ref3$color === void 0 ? 'white' : _ref3$color,
+    _ref3$points = _ref3.points,
+    initialPoints = _ref3$points === void 0 ? 0 : _ref3$points;
   var key = _ref4.key,
     context = _ref4.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState3 = (0, _reactServer.useState)(initialTodos, {
-      key: 'todos',
-      scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
-    }),
-    _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
-    todos = _useState4[0],
-    setTodos = _useState4[1];
-  var _useState5 = (0, _reactServer.useState)('white', {
-      key: 'color',
-      scope: "".concat(key, ".").concat(((_user3 = user) === null || _user3 === void 0 ? void 0 : _user3.id) || _reactServer.Scopes.Client)
+  var _useState5 = (0, _reactServer.useState)(0, {
+      key: "points",
+      scope: "".concat(((_user3 = user) === null || _user3 === void 0 ? void 0 : _user3.id) || _reactServer.Scopes.Client)
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
-    color = _useState6[0],
-    _setColor = _useState6[1];
-  var _useState7 = (0, _reactServer.useState)(initialArchived, {
-      key: 'archived',
+    points = _useState6[0],
+    setPoints = _useState6[1];
+  var _useState7 = (0, _reactServer.useState)(initialTodos, {
+      key: 'todos',
       scope: "".concat(key, ".").concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || _reactServer.Scopes.Client)
     }),
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
-    archived = _useState8[0],
-    setArchived = _useState8[1];
+    todos = _useState8[0],
+    setTodos = _useState8[1];
+  var _useState9 = (0, _reactServer.useState)('white', {
+      key: 'color',
+      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
+    }),
+    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
+    color = _useState10[0],
+    _setColor = _useState10[1];
+  var _useState11 = (0, _reactServer.useState)(initialArchived, {
+      key: 'archived',
+      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
+    }),
+    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
+    archived = _useState12[0],
+    setArchived = _useState12[1];
+  var _useState13 = (0, _reactServer.useState)({
+      defaultValuePoints: 1
+    }, {
+      key: 'settings',
+      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
+    }),
+    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
+    settings = _useState14[0],
+    setSettings = _useState14[1];
   var setColor = function setColor(color) {
     var colors = ['white', 'darkred', 'blue', 'green', 'yellow', 'orange', 'purple'];
 
@@ -118,29 +173,29 @@ var List = function List(_ref3, _ref4) {
 
     _setColor(color);
   };
-  var _useState9 = (0, _reactServer.useState)([], {
+  var _useState15 = (0, _reactServer.useState)([], {
       key: 'labels',
-      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
     }),
-    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
-    labels = _useState10[0],
-    setLabels = _useState10[1];
-  var _useState11 = (0, _reactServer.useState)(initialTitle, {
+    _useState16 = (0, _slicedToArray2["default"])(_useState15, 2),
+    labels = _useState16[0],
+    setLabels = _useState16[1];
+  var _useState17 = (0, _reactServer.useState)(initialTitle, {
       key: 'title',
-      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
     }),
-    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
-    title = _useState12[0],
-    setTitle = _useState12[1];
-  var _useState13 = (0, _reactServer.useState)(initialTodos.map(function (todo) {
+    _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
+    title = _useState18[0],
+    setTitle = _useState18[1];
+  var _useState19 = (0, _reactServer.useState)(initialTodos.map(function (todo) {
       return todo.id;
     }), {
       key: 'order',
-      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
     }),
-    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
-    order = _useState14[0],
-    setOrder = _useState14[1];
+    _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
+    order = _useState20[0],
+    setOrder = _useState20[1];
   var addEntry = function addEntry(todo) {
     var todoId = (0, _uuid.v4)();
     var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
@@ -153,15 +208,23 @@ var List = function List(_ref3, _ref4) {
     setOrder([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]).map(function (list) {
       return list.id;
     }));
+    setPoints(points + 1);
     return newTodo;
   };
   var removeEntry = function removeEntry(todoId) {
+    var _user11, _todo$value, _todo$value2;
+    var store = _reactServer.Dispatcher.getCurrent().getStore();
+    var todo = store.getState(null, {
+      key: "todo-".concat(todoId),
+      scope: "".concat(todoId, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
+    });
     setOrder(order.filter(function (id) {
       return id !== todoId;
     }));
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
     }));
+    setPoints(points - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - (todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0);
   };
   var addLabel = function addLabel(label) {
     var labelId = (0, _uuid.v4)();
@@ -172,15 +235,23 @@ var List = function List(_ref3, _ref4) {
       throw new Error('Invalid todo');
     }
     setLabels([].concat((0, _toConsumableArray2["default"])(labels), [newLabel]));
+    setPoints(points + 1);
     return newLabel;
   };
   var removeLabel = function removeLabel(labelId) {
     setLabels(labels.filter(function (label) {
       return label.id !== labelId;
     }));
+    setPoints(points - 1);
   };
   var archive = function archive() {
     setArchived(true);
+  };
+  var updateSettings = function updateSettings(settings) {
+    if (!isValidSettings(settings)) {
+      throw new Error('Invalid settings');
+    }
+    setSettings(settings);
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
@@ -198,8 +269,12 @@ var List = function List(_ref3, _ref4) {
     setColor: setColor,
     archived: archived,
     archive: archive,
+    settings: settings,
+    updateSettings: updateSettings,
     children: todos.map(function (todo) {
-      return (0, _jsxRuntime.jsx)(Todo, _objectSpread({}, todo), todo.id);
+      return (0, _jsxRuntime.jsx)(Todo, _objectSpread(_objectSpread({}, todo), {}, {
+        defaultValuePoints: settings === null || settings === void 0 ? void 0 : settings.defaultValuePoints
+      }), todo.id);
     })
   }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
@@ -232,27 +307,34 @@ var exportData = function exportData(_ref5) {
   return data;
 };
 var MyLists = function MyLists(_, _ref6) {
-  var _user8, _user9;
+  var _user12, _user13, _user14;
   var context = _ref6.context,
     key = _ref6.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState15 = (0, _reactServer.useState)([], {
+  var _useState21 = (0, _reactServer.useState)(0, {
+      key: "points",
+      scope: "".concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
+    }),
+    _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
+    points = _useState22[0],
+    setPoints = _useState22[1];
+  var _useState23 = (0, _reactServer.useState)([], {
       key: 'lists',
-      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
     }),
-    _useState16 = (0, _slicedToArray2["default"])(_useState15, 2),
-    lists = _useState16[0],
-    setLists = _useState16[1];
-  var _useState17 = (0, _reactServer.useState)([], {
+    _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
+    lists = _useState24[0],
+    setLists = _useState24[1];
+  var _useState25 = (0, _reactServer.useState)([], {
       key: 'order',
-      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
     }),
-    _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
-    order = _useState18[0],
-    setOrder = _useState18[1];
+    _useState26 = (0, _slicedToArray2["default"])(_useState25, 2),
+    order = _useState26[0],
+    setOrder = _useState26[1];
   var addEntry = function addEntry(todo) {
     var id = (0, _uuid.v4)();
     var newList = _objectSpread(_objectSpread({}, todo), {}, {
@@ -304,6 +386,7 @@ var MyLists = function MyLists(_, _ref6) {
     setOrder: setOrder,
     exportUserData: exportUserData,
     importUserData: importUserData,
+    points: points,
     children: lists.map(function (list) {
       return (0, _jsxRuntime.jsx)(List, _objectSpread({}, list), "list-".concat(list.id));
     })
@@ -320,4 +403,7 @@ var isValidList = function isValidList(list) {
   return list.id && list.title && list.todos && list.todos.every(function (todo) {
     return isValidTodo;
   });
+};
+var isValidSettings = function isValidSettings(settings) {
+  return 'defaultValuePoints' in settings;
 };

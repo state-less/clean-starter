@@ -21,10 +21,26 @@ type TodoObject = {
     archived: boolean;
     lastModified?: number;
     reset?: number;
+    valuePoints?: number;
+    negativePoints?: number;
+    creditedValuePoints?: number;
+    dueDate?: number | null;
+    defaultValuePoints?: number;
 };
 
 export const Todo = (
-    { id, completed, title, archived, reset = null }: TodoObject,
+    {
+        id,
+        completed,
+        title,
+        archived,
+        reset = null,
+        valuePoints = 0,
+        creditedValuePoints = 0,
+        negativePoints = 0,
+        dueDate = null,
+        defaultValuePoints = 0,
+    }: TodoObject,
     { key, context }
 ) => {
     let user = null;
@@ -33,6 +49,10 @@ export const Todo = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
+    const [points, setPoints] = useState(0, {
+        key: `points`,
+        scope: `${user?.id || Scopes.Client}`,
+    });
     const [todo, setTodo] = useState<TodoObject>(
         {
             id,
@@ -40,6 +60,10 @@ export const Todo = (
             title,
             archived,
             reset,
+            valuePoints,
+            creditedValuePoints,
+            negativePoints,
+            dueDate,
         },
         {
             key: `todo`,
@@ -51,11 +75,14 @@ export const Todo = (
         (todo.reset === null || todo.lastModified + todo.reset > Date.now());
 
     const toggle = () => {
+        const valuePoints = todo.valuePoints || defaultValuePoints || 0;
         setTodo({
             ...todo,
             completed: !comp,
             lastModified: Date.now(),
+            creditedValuePoints: comp ? 0 : valuePoints,
         });
+        setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
     };
 
     const archive = () => {
@@ -63,6 +90,7 @@ export const Todo = (
             ...todo,
             archived: true,
         });
+        setPoints(points + 1);
     };
 
     const setReset = (reset) => {
@@ -87,6 +115,20 @@ export const Todo = (
             reset: 1000 * 60 * 60 * 24 * reset,
         });
     };
+
+    const setValuePoints = (valuePoints) => {
+        if (
+            (typeof valuePoints !== 'number' && valuePoints < 0) ||
+            valuePoints > 100
+        ) {
+            throw new Error('Invalid value points');
+        }
+        setTodo({
+            ...todo,
+            valuePoints,
+            negativePoints: -valuePoints,
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-todo`, context)}
@@ -95,22 +137,31 @@ export const Todo = (
             archive={archive}
             completed={comp}
             setReset={setReset}
+            setValuePoints={setValuePoints}
         />
     );
 };
 
+type ListSettings = {
+    defaultValuePoints: number;
+};
 export const List = (
     {
         id,
         title: initialTitle,
         todos: initialTodos = [],
         archived: initialArchived = false,
+        color: initialColor = 'white',
+        points: initialPoints = 0,
     }: {
         key?: string;
         id: string;
         title: string;
         todos: TodoObject[];
         archived: boolean;
+        color: string;
+        points: number;
+        settings: ListSettings;
     },
     { key, context }
 ) => {
@@ -119,6 +170,11 @@ export const List = (
         try {
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
+
+    const [points, setPoints] = useState(0, {
+        key: `points`,
+        scope: `${user?.id || Scopes.Client}`,
+    });
 
     const [todos, setTodos] = useState<TodoObject[]>(initialTodos, {
         key: 'todos',
@@ -134,6 +190,16 @@ export const List = (
         key: 'archived',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
+
+    const [settings, setSettings] = useState(
+        {
+            defaultValuePoints: 1,
+        },
+        {
+            key: 'settings',
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
 
     const setColor = (color: string) => {
         const colors = [
@@ -179,13 +245,24 @@ export const List = (
         }
         setTodos([...todos, newTodo]);
         setOrder([...todos, newTodo].map((list) => list.id));
-
+        setPoints(points + 1);
         return newTodo;
     };
 
     const removeEntry = (todoId: string) => {
+        const store = Dispatcher.getCurrent().getStore();
+        const todo = store.getState<TodoObject>(null, {
+            key: `todo-${todoId}`,
+            scope: `${todoId}.${user?.id || Scopes.Client}`,
+        });
         setOrder(order.filter((id) => id !== todoId));
         setTodos(todos.filter((todo) => todo.id !== todoId));
+        setPoints(
+            points -
+                1 -
+                (todo?.value?.archived ? 1 : 0) -
+                todo?.value?.valuePoints || 0
+        );
     };
 
     const addLabel = (label: TodoObject) => {
@@ -197,16 +274,24 @@ export const List = (
         }
 
         setLabels([...labels, newLabel]);
-
+        setPoints(points + 1);
         return newLabel;
     };
 
     const removeLabel = (labelId: string) => {
         setLabels(labels.filter((label) => label.id !== labelId));
+        setPoints(points - 1);
     };
 
     const archive = () => {
         setArchived(true);
+    };
+
+    const updateSettings = (settings) => {
+        if (!isValidSettings(settings)) {
+            throw new Error('Invalid settings');
+        }
+        setSettings(settings);
     };
     return (
         <ServerSideProps
@@ -226,9 +311,15 @@ export const List = (
             setColor={setColor}
             archived={archived}
             archive={archive}
+            settings={settings}
+            updateSettings={updateSettings}
         >
             {todos.map((todo) => (
-                <Todo key={todo.id} {...todo} />
+                <Todo
+                    key={todo.id}
+                    {...todo}
+                    defaultValuePoints={settings?.defaultValuePoints}
+                />
             ))}
         </ServerSideProps>
     );
@@ -269,6 +360,10 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
+    const [points, setPoints] = useState(0, {
+        key: `points`,
+        scope: `${user?.id || Scopes.Client}`,
+    });
     const [lists, setLists] = useState([], {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
@@ -326,6 +421,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             setOrder={setOrder}
             exportUserData={exportUserData}
             importUserData={importUserData}
+            points={points}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
@@ -359,4 +455,8 @@ const isValidList = (list: ListObject) => {
         list.todos &&
         list.todos.every((todo) => isValidTodo)
     );
+};
+
+const isValidSettings = (settings: ListSettings): settings is ListSettings => {
+    return 'defaultValuePoints' in settings;
 };
