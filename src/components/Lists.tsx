@@ -49,10 +49,12 @@ export const Todo = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
+
     const [todo, setTodo] = useState<TodoObject>(
         {
             id,
@@ -82,7 +84,12 @@ export const Todo = (
             lastModified: Date.now(),
             creditedValuePoints: comp ? 0 : valuePoints,
         });
-        setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
+
+        points.value =
+            points.value + (comp ? -todo.creditedValuePoints : valuePoints);
+        // points.setValue(
+        // );
+        // setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
     };
 
     const archive = () => {
@@ -90,7 +97,7 @@ export const Todo = (
             ...todo,
             archived: true,
         });
-        setPoints(points + 1);
+        points.value = points.value + 1;
     };
 
     const setReset = (reset) => {
@@ -173,7 +180,8 @@ export const List = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
@@ -244,7 +252,7 @@ export const List = (
         }
         setTodos([...todos, newTodo]);
         setOrder([...todos, newTodo].map((list) => list.id));
-        setPoints(points + 1);
+        points.value += points.value + 1;
         return newTodo;
     };
 
@@ -256,12 +264,11 @@ export const List = (
         });
         setOrder(order.filter((id) => id !== todoId));
         setTodos(todos.filter((todo) => todo.id !== todoId));
-        setPoints(
-            points -
-                1 -
-                (todo?.value?.archived ? 1 : 0) -
-                todo?.value?.valuePoints || 0
-        );
+        points.value =
+            points.value -
+            1 -
+            (todo?.value?.archived ? 1 : 0) -
+            (todo?.value?.valuePoints || 0);
     };
 
     const addLabel = (label: TodoObject) => {
@@ -273,13 +280,13 @@ export const List = (
         }
 
         setLabels([...labels, newLabel]);
-        setPoints(points + 1);
+        points.value += points.value + 1;
         return newLabel;
     };
 
     const removeLabel = (labelId: string) => {
         setLabels(labels.filter((label) => label.id !== labelId));
-        setPoints(points - 1);
+        points.value = points.value - 1;
     };
 
     const archive = () => {
@@ -380,10 +387,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
+    
     const [lists, setLists] = useState([], {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
@@ -396,7 +405,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
     const addEntry = (todo: TodoObject) => {
         const id = v4();
-        const newList = { ...todo, id };
+        const newList = { ...todo, order: [], id };
         const newLists = [
             ...order.map((listId) => lists.find((list) => list.id === listId)),
             newList,
@@ -420,7 +429,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ListObject
         >
     ) => {
-        const { signed, points, order, ...data } = raw;
+        const { signed, points: storedPoints, order, ...data } = raw;
         const lists = Object.values(data);
 
         if (!signed) {
@@ -455,7 +464,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
         setLists(lists);
         setOrder(order);
-        setPoints(points);
+        points.value = storedPoints;
     };
     return (
         <ServerSideProps
@@ -466,7 +475,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             setOrder={setOrder}
             exportUserData={exportUserData}
             importUserData={importUserData}
-            points={points}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
@@ -495,6 +503,14 @@ type ListObject = {
 };
 
 const isValidList = (list: ListObject) => {
+    console.log(
+        list.id,
+        list.title,
+        list.todos,
+        list.order,
+        list.order?.every((id) => typeof id === 'string'),
+        list.todos?.every((todo) => isValidTodo(todo))
+    );
     return (
         list.id &&
         list.title &&
@@ -507,4 +523,18 @@ const isValidList = (list: ListObject) => {
 
 const isValidSettings = (settings: ListSettings): settings is ListSettings => {
     return 'defaultValuePoints' in settings;
+};
+
+export const Points = (props, { key, context }) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
+    const [points, setPoints] = useState(0, {
+        key: `points`,
+        scope: `${user?.id || Scopes.Client}`,
+    });
+    return <ServerSideProps points={points}></ServerSideProps>;
 };

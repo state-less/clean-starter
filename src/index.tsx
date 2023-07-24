@@ -31,7 +31,7 @@ import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
 import { Platform } from './components/Forum';
-import { MyLists } from './components/Lists';
+import { MyLists, Points } from './components/Lists';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -114,6 +114,7 @@ export const reactServer = (
         <Pages key="pages" />
         <DynamicPage key="page" />
         <MyLists key="my-lists" />
+        <Points key="my-lists-points"  />
         <Todos key="todos" />
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
         <Votings key="votings-multiple" policies={[]} />
