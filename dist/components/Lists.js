@@ -284,33 +284,34 @@ exports.List = List;
 var exportData = function exportData(_ref5) {
   var key = _ref5.key,
     user = _ref5.user;
+  var clientId = _reactServer.Dispatcher.getCurrent()._renderOptions.context.headers['x-unique-id'];
   var store = _reactServer.Dispatcher.getCurrent().getStore();
   var data = {};
   var lists = store.getState(null, {
     key: 'lists',
-    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
   });
   var order = store.getState(null, {
     key: 'order',
-    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    scope: "".concat(key, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
   });
   lists.value.forEach(function (list) {
     var todos = store.getState(null, {
       key: 'todos',
-      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
     var order = store.getState(null, {
       key: 'order',
-      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
     var color = store.getState(null, {
       key: 'color',
-      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
     todos.value.forEach(function (todo) {
       var stored = store.getState(null, {
         key: "todo",
-        scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+        scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
       });
       Object.assign(todo, stored.value);
     });
@@ -322,7 +323,7 @@ var exportData = function exportData(_ref5) {
   });
   var points = store.getState(null, {
     key: 'points',
-    scope: "".concat((user === null || user === void 0 ? void 0 : user.id) || _reactServer.Scopes.Client)
+    scope: "".concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
   });
   var signed = _jsonwebtoken["default"].sign(_objectSpread(_objectSpread({}, data), {}, {
     points: points

@@ -332,33 +332,36 @@ export const List = (
 };
 
 const exportData = ({ key, user }) => {
+    const clientId =
+        Dispatcher.getCurrent()._renderOptions.context.headers['x-unique-id'];
+    
     const store = Dispatcher.getCurrent().getStore();
     const data = {};
     const lists = store.getState(null, {
         key: 'lists',
-        scope: `${key}.${user?.id || Scopes.Client}`,
+        scope: `${key}.${user?.id || clientId}`,
     });
     const order = store.getState(null, {
         key: 'order',
-        scope: `${key}.${user?.id || Scopes.Client}`,
+        scope: `${key}.${user?.id || clientId}`,
     });
     lists.value.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const order = store.getState(null, {
             key: 'order',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const color = store.getState(null, {
             key: 'color',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
                 key: `todo`,
-                scope: `${todo.id}.${user?.id || Scopes.Client}`,
+                scope: `${todo.id}.${user?.id || clientId}`,
             });
             Object.assign(todo, stored.value);
         });
@@ -373,7 +376,7 @@ const exportData = ({ key, user }) => {
 
     const points = store.getState(null, {
         key: 'points',
-        scope: `${user?.id || Scopes.Client}`,
+        scope: `${user?.id || clientId}`,
     });
 
     const signed = jwt.sign({ ...data, points }, JWT_SECRET);
@@ -392,7 +395,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
-    
+
     const [lists, setLists] = useState([], {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
