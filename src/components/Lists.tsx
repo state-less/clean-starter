@@ -446,7 +446,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             list.todos.forEach((todo) => {
                 const oldId = todo.id;
                 const newId = v4();
-                todo.id = newId
+                todo.id = newId;
                 list.order[list.order.indexOf(oldId)] = newId;
             });
         });
@@ -501,7 +501,7 @@ const isValidList = (list: ListObject) => {
         list.todos &&
         list.order &&
         list.order.every((id) => typeof id === 'string') &&
-        list.todos.every((todo) => isValidTodo)
+        list.todos.every((todo) => isValidTodo(todo))
     );
 };
 
