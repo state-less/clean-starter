@@ -29,7 +29,8 @@ var limits = {
   '5': [DAY * 7, 7],
   '3': [DAY, 1],
   '2': [DAY, 10],
-  '1': [DAY, 20]
+  '1': [DAY, 20],
+  '0': [DAY, 1000]
 };
 var checkLimits = function checkLimits(items, todo) {
   var _ref = limits[todo.valuePoints] || [0, 1],
@@ -39,7 +40,6 @@ var checkLimits = function checkLimits(items, todo) {
   var within = (items || []).filter(function (i) {
     return i.lastModified + interval > Date.now();
   });
-  console.log('WIthin', within, [interval, times]);
   var reachedLimit = within.length >= times;
   return !reachedLimit;
 };
@@ -111,7 +111,8 @@ var Todo = function Todo(_ref3, _ref4) {
       return i.id !== todo.id;
     });
     var filtered = newItems.filter(function (item) {
-      return item.lastModified + limits[valuePoints][0] > Date.now();
+      var _limits$valuePoints;
+      return item.lastModified + (((_limits$valuePoints = limits[valuePoints]) === null || _limits$valuePoints === void 0 ? void 0 : _limits$valuePoints[0]) || 0) > Date.now();
     });
     lastCompleted.setValue(_objectSpread(_objectSpread({}, lastCompleted.value || {}), {}, (0, _defineProperty2["default"])({}, valuePoints, filtered)));
     points.value = points.value + (comp ? -todo.creditedValuePoints : valuePoints);
@@ -489,12 +490,6 @@ var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
 };
 var isValidList = function isValidList(list) {
-  var _list$order, _list$todos;
-  console.log(list.id, list.title, list.todos, list.order, (_list$order = list.order) === null || _list$order === void 0 ? void 0 : _list$order.every(function (id) {
-    return typeof id === 'string';
-  }), (_list$todos = list.todos) === null || _list$todos === void 0 ? void 0 : _list$todos.every(function (todo) {
-    return isValidTodo(todo);
-  }));
   return list.id && list.title && list.todos && list.order && list.order.every(function (id) {
     return typeof id === 'string';
   }) && list.todos.every(function (todo) {

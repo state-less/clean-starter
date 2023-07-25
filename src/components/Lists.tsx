@@ -40,6 +40,7 @@ const limits = {
     '3': [DAY, 1],
     '2': [DAY, 10],
     '1': [DAY, 20],
+    '0': [DAY, 1000],
 };
 
 const checkLimits = (items, todo) => {
@@ -47,7 +48,6 @@ const checkLimits = (items, todo) => {
     const within = (items || []).filter(
         (i) => i.lastModified + interval > Date.now()
     );
-    console.log('WIthin', within, [interval, times]);
     const reachedLimit = within.length >= times;
 
     return !reachedLimit;
@@ -128,7 +128,9 @@ export const Todo = (
                   (i) => i.id !== todo.id
               );
         const filtered = newItems.filter((item) => {
-            return item.lastModified + limits[valuePoints][0] > Date.now();
+            return (
+                item.lastModified + (limits[valuePoints]?.[0] || 0) > Date.now()
+            );
         });
         lastCompleted.setValue({
             ...(lastCompleted.value || {}),
@@ -561,14 +563,6 @@ type ListObject = {
 };
 
 const isValidList = (list: ListObject) => {
-    console.log(
-        list.id,
-        list.title,
-        list.todos,
-        list.order,
-        list.order?.every((id) => typeof id === 'string'),
-        list.todos?.every((todo) => isValidTodo(todo))
-    );
     return (
         list.id &&
         list.title &&
