@@ -114,14 +114,14 @@ var Todo = function Todo(_ref3, _ref4) {
       var _limits$valuePoints;
       return item.lastModified + (((_limits$valuePoints = limits[valuePoints]) === null || _limits$valuePoints === void 0 ? void 0 : _limits$valuePoints[0]) || 0) > Date.now();
     });
-    lastCompleted.setValue(_objectSpread(_objectSpread({}, lastCompleted.value || {}), {}, (0, _defineProperty2["default"])({}, valuePoints, filtered)));
-    points.value = points.value + (comp ? -todo.creditedValuePoints : valuePoints);
+    lastCompleted.value = _objectSpread(_objectSpread({}, lastCompleted.value || {}), {}, (0, _defineProperty2["default"])({}, valuePoints, filtered));
+    points.value += comp ? -todo.creditedValuePoints : valuePoints;
   };
   var archive = function archive() {
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       archived: true
     }));
-    points.value = points.value + 1;
+    points.value += 1;
   };
   var setReset = function setReset(reset) {
     if (reset === 0 || reset === null || reset === undefined || reset === '' || reset === '-') {
@@ -173,7 +173,7 @@ var List = function List(_ref5, _ref6) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
-  var points = store.getState(null, {
+  var points = store.getState(initialPoints, {
     key: "points",
     scope: "".concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || _reactServer.Scopes.Client)
   });
@@ -184,7 +184,7 @@ var List = function List(_ref5, _ref6) {
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     todos = _useState4[0],
     setTodos = _useState4[1];
-  var _useState5 = (0, _reactServer.useState)('white', {
+  var _useState5 = (0, _reactServer.useState)(initialColor, {
       key: 'color',
       scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
     }),
@@ -209,7 +209,9 @@ var List = function List(_ref5, _ref6) {
     setSettings = _useState10[1];
   var setColor = function setColor(color) {
     var colors = ['white', 'darkred', 'blue', 'green', 'yellow', 'orange', 'purple'];
-
+    if (typeof color !== 'string') {
+      throw new Error('Invalid color');
+    }
     // if (!colors.includes(color)) {
     //     throw new Error('Invalid color');
     // }

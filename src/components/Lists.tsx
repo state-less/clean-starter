@@ -4,14 +4,11 @@ import {
     authenticate,
     clientKey,
     isClientContext,
-    useClientEffect,
-    useEffect,
     useState,
 } from '@state-less/react-server';
 import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
-import { store } from '../instances';
 import jwt from 'jsonwebtoken';
 type TodoObject = {
     key?: string;
@@ -132,13 +129,12 @@ export const Todo = (
                 item.lastModified + (limits[valuePoints]?.[0] || 0) > Date.now()
             );
         });
-        lastCompleted.setValue({
+        lastCompleted.value = {
             ...(lastCompleted.value || {}),
             [valuePoints]: filtered,
-        });
+        };
 
-        points.value =
-            points.value + (comp ? -todo.creditedValuePoints : valuePoints);
+        points.value += comp ? -todo.creditedValuePoints : valuePoints;
     };
 
     const archive = () => {
@@ -146,7 +142,7 @@ export const Todo = (
             ...todo,
             archived: true,
         });
-        points.value = points.value + 1;
+        points.value += 1;
     };
 
     const setReset = (reset) => {
@@ -230,7 +226,7 @@ export const List = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
-    const points = store.getState<number>(null, {
+    const points = store.getState<number>(initialPoints, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
@@ -240,7 +236,7 @@ export const List = (
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
-    const [color, _setColor] = useState('white', {
+    const [color, _setColor] = useState(initialColor, {
         key: 'color',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
@@ -271,6 +267,9 @@ export const List = (
             'purple',
         ];
 
+        if (typeof color !== 'string') {
+            throw new Error('Invalid color');
+        }
         // if (!colors.includes(color)) {
         //     throw new Error('Invalid color');
         // }
