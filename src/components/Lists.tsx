@@ -300,7 +300,7 @@ export const List = (
         }
         setTodos([...todos, newTodo]);
         setOrder([...todos, newTodo].map((list) => list.id));
-        points.value += points.value + 1;
+        points.value += 1;
         return newTodo;
     };
 
