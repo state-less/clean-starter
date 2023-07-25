@@ -165,7 +165,8 @@ var List = function List(_ref5, _ref6) {
     _ref5$color = _ref5.color,
     initialColor = _ref5$color === void 0 ? 'white' : _ref5$color,
     _ref5$points = _ref5.points,
-    initialPoints = _ref5$points === void 0 ? 0 : _ref5$points;
+    initialPoints = _ref5$points === void 0 ? 0 : _ref5$points,
+    initialSettings = _ref5.settings;
   var key = _ref6.key,
     context = _ref6.context;
   var user = null;
@@ -199,7 +200,7 @@ var List = function List(_ref5, _ref6) {
     archived = _useState8[0],
     setArchived = _useState8[1];
   var _useState9 = (0, _reactServer.useState)({
-      defaultValuePoints: 1
+      defaultValuePoints: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultValuePoints) || 0
     }, {
       key: 'settings',
       scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
@@ -349,6 +350,10 @@ var exportData = function exportData(_ref7) {
       key: 'color',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
+    var settings = store.getState(null, {
+      key: 'settings',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
+    });
     todos.value.forEach(function (todo) {
       var stored = store.getState(null, {
         key: "todo",
@@ -359,7 +364,8 @@ var exportData = function exportData(_ref7) {
     data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
       color: color.value,
       order: order.value,
-      todos: todos.value
+      todos: todos.value,
+      settings: settings.value
     });
   });
   var points = store.getState(null, {

@@ -206,6 +206,7 @@ export const List = (
         archived: initialArchived = false,
         color: initialColor = 'white',
         points: initialPoints = 0,
+        settings: initialSettings,
     }: {
         key?: string;
         id: string;
@@ -248,7 +249,7 @@ export const List = (
 
     const [settings, setSettings] = useState(
         {
-            defaultValuePoints: 1,
+            defaultValuePoints: initialSettings?.defaultValuePoints || 0,
         },
         {
             key: 'settings',
@@ -406,6 +407,10 @@ const exportData = ({ key, user }) => {
             key: 'color',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
+        const settings = store.getState(null, {
+            key: 'settings',
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
+        });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
                 key: `todo`,
@@ -419,6 +424,7 @@ const exportData = ({ key, user }) => {
             color: color.value,
             order: order.value,
             todos: todos.value,
+            settings: settings.value,
         };
     });
 
