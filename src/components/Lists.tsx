@@ -9,7 +9,7 @@ import {
 import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
-import jwt from 'jsonwebtoken';
+import jwt, { decode } from 'jsonwebtoken';
 type TodoObject = {
     key?: string;
     id: string | null;
@@ -486,14 +486,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ListObject
         >
     ) => {
-        const { signed, points: storedPoints, order, ...data } = raw;
-        const lists = Object.values(data);
-
+        const { signed, points: storedPoints, order } = raw;
         if (!signed) {
             throw new Error('Unsigned data');
         }
+        const { points, iat, ...data } = jwt.verify(signed, JWT_SECRET) as any;
 
-        jwt.verify(signed, JWT_SECRET);
+        const lists = Object.values(data);
 
         if (!lists.length || !lists.every(isValidList)) {
             throw new Error('Invalid data');

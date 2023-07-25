@@ -15,7 +15,7 @@ var _ServerSideProps = require("./ServerSideProps");
 var _config = require("../config");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var _excluded = ["signed", "points", "order"];
+var _excluded = ["points", "iat"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var DAY = 1000 * 60 * 60 * 24;
@@ -439,13 +439,15 @@ var MyLists = function MyLists(_, _ref8) {
   var importUserData = function importUserData(raw) {
     var signed = raw.signed,
       storedPoints = raw.points,
-      order = raw.order,
-      data = (0, _objectWithoutProperties2["default"])(raw, _excluded);
-    var lists = Object.values(data);
+      order = raw.order;
     if (!signed) {
       throw new Error('Unsigned data');
     }
-    _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET);
+    var _ref9 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
+      points = _ref9.points,
+      iat = _ref9.iat,
+      data = (0, _objectWithoutProperties2["default"])(_ref9, _excluded);
+    var lists = Object.values(data);
     if (!lists.length || !lists.every(isValidList)) {
       throw new Error('Invalid data');
     }
@@ -500,10 +502,10 @@ var isValidList = function isValidList(list) {
 var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
-var MyListsMeta = function MyListsMeta(props, _ref9) {
+var MyListsMeta = function MyListsMeta(props, _ref10) {
   var _user16, _user17;
-  var key = _ref9.key,
-    context = _ref9.context;
+  var key = _ref10.key,
+    context = _ref10.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
