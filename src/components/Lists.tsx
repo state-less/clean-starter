@@ -443,13 +443,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
-    const [lastCompleted] = useState(
-        {},
-        {
-            key: `lastCompleted`,
-            scope: `${user?.id || Scopes.Client}`,
-        }
-    );
 
     const [lists, setLists] = useState([], {
         key: 'lists',
@@ -533,7 +526,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             setOrder={setOrder}
             exportUserData={exportUserData}
             importUserData={importUserData}
-            lastCompleted={lastCompleted}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
@@ -576,7 +568,7 @@ const isValidSettings = (settings: ListSettings): settings is ListSettings => {
     return 'defaultValuePoints' in settings;
 };
 
-export const Points = (props, { key, context }) => {
+export const MyListsMeta = (props, { key, context }) => {
     let user = null;
     if (isClientContext(context))
         try {
@@ -587,5 +579,14 @@ export const Points = (props, { key, context }) => {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
-    return <ServerSideProps points={points} />;
+
+    const [lastCompleted] = useState(
+        {},
+        {
+            key: `lastCompleted`,
+            scope: `${user?.id || Scopes.Client}`,
+        }
+    );
+
+    return <ServerSideProps points={points} lastCompleted={lastCompleted} />;
 };

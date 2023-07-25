@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Todo = exports.Points = exports.MyLists = exports.List = void 0;
+exports.Todo = exports.MyListsMeta = exports.MyLists = exports.List = void 0;
 var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
@@ -251,7 +251,7 @@ var List = function List(_ref5, _ref6) {
     setOrder([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]).map(function (list) {
       return list.id;
     }));
-    points.value += points.value + 1;
+    points.value += 1;
     return newTodo;
   };
   var removeEntry = function removeEntry(todoId) {
@@ -376,7 +376,7 @@ var exportData = function exportData(_ref7) {
   });
 };
 var MyLists = function MyLists(_, _ref8) {
-  var _user13, _user14, _user15, _user16;
+  var _user13, _user14, _user15;
   var context = _ref8.context,
     key = _ref8.key;
   var user = null;
@@ -388,26 +388,20 @@ var MyLists = function MyLists(_, _ref8) {
     key: "points",
     scope: "".concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
   });
-  var _useState17 = (0, _reactServer.useState)({}, {
-      key: "lastCompleted",
-      scope: "".concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
-    }),
-    _useState18 = (0, _slicedToArray2["default"])(_useState17, 1),
-    lastCompleted = _useState18[0];
-  var _useState19 = (0, _reactServer.useState)([], {
+  var _useState17 = (0, _reactServer.useState)([], {
       key: 'lists',
+      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
+    }),
+    _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
+    lists = _useState18[0],
+    setLists = _useState18[1];
+  var _useState19 = (0, _reactServer.useState)([], {
+      key: 'order',
       scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
     }),
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
-    lists = _useState20[0],
-    setLists = _useState20[1];
-  var _useState21 = (0, _reactServer.useState)([], {
-      key: 'order',
-      scope: "".concat(key, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
-    }),
-    _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
-    order = _useState22[0],
-    setOrder = _useState22[1];
+    order = _useState20[0],
+    setOrder = _useState20[1];
   var addEntry = function addEntry(todo) {
     var id = (0, _uuid.v4)();
     var newList = _objectSpread(_objectSpread({}, todo), {}, {
@@ -478,7 +472,6 @@ var MyLists = function MyLists(_, _ref8) {
     setOrder: setOrder,
     exportUserData: exportUserData,
     importUserData: importUserData,
-    lastCompleted: lastCompleted,
     children: lists.map(function (list) {
       return (0, _jsxRuntime.jsx)(List, _objectSpread({}, list), "list-".concat(list.id));
     })
@@ -501,23 +494,30 @@ var isValidList = function isValidList(list) {
 var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
-var Points = function Points(props, _ref9) {
-  var _user17;
+var MyListsMeta = function MyListsMeta(props, _ref9) {
+  var _user16, _user17;
   var key = _ref9.key,
     context = _ref9.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState23 = (0, _reactServer.useState)(0, {
+  var _useState21 = (0, _reactServer.useState)(0, {
       key: "points",
+      scope: "".concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
+    }),
+    _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
+    points = _useState22[0],
+    setPoints = _useState22[1];
+  var _useState23 = (0, _reactServer.useState)({}, {
+      key: "lastCompleted",
       scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
     }),
-    _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
-    points = _useState24[0],
-    setPoints = _useState24[1];
+    _useState24 = (0, _slicedToArray2["default"])(_useState23, 1),
+    lastCompleted = _useState24[0];
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
-    points: points
+    points: points,
+    lastCompleted: lastCompleted
   });
 };
-exports.Points = Points;
+exports.MyListsMeta = MyListsMeta;
