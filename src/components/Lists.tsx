@@ -73,7 +73,8 @@ export const Todo = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
@@ -129,13 +130,13 @@ export const Todo = (
         const filtered = newItems.filter((item) => {
             return item.lastModified + limits[valuePoints][0] > Date.now();
         });
-        console.log('ITEMS', newItems, filtered);
         lastCompleted.setValue({
             ...(lastCompleted.value || {}),
             [valuePoints]: filtered,
         });
 
-        setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
+        points.value =
+            points.value + (comp ? -todo.creditedValuePoints : valuePoints);
     };
 
     const archive = () => {
@@ -143,7 +144,7 @@ export const Todo = (
             ...todo,
             archived: true,
         });
-        setPoints(points + 1);
+        points.value = points.value + 1;
     };
 
     const setReset = (reset) => {
@@ -226,7 +227,8 @@ export const List = (
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
@@ -297,7 +299,7 @@ export const List = (
         }
         setTodos([...todos, newTodo]);
         setOrder([...todos, newTodo].map((list) => list.id));
-        setPoints(points + 1);
+        points.value += points.value + 1;
         return newTodo;
     };
 
@@ -309,12 +311,11 @@ export const List = (
         });
         setOrder(order.filter((id) => id !== todoId));
         setTodos(todos.filter((todo) => todo.id !== todoId));
-        setPoints(
-            points -
-                1 -
-                (todo?.value?.archived ? 1 : 0) -
-                todo?.value?.valuePoints || 0
-        );
+        points.value =
+            points.value -
+            1 -
+            (todo?.value?.archived ? 1 : 0) -
+            (todo?.value?.valuePoints || 0);
     };
 
     const addLabel = (label: TodoObject) => {
@@ -326,13 +327,13 @@ export const List = (
         }
 
         setLabels([...labels, newLabel]);
-        setPoints(points + 1);
+        points.value += points.value + 1;
         return newLabel;
     };
 
     const removeLabel = (labelId: string) => {
         setLabels(labels.filter((label) => label.id !== labelId));
-        setPoints(points - 1);
+        points.value = points.value - 1;
     };
 
     const archive = () => {
@@ -378,33 +379,36 @@ export const List = (
 };
 
 const exportData = ({ key, user }) => {
+    const clientId =
+        Dispatcher.getCurrent()._renderOptions.context.headers['x-unique-id'];
+
     const store = Dispatcher.getCurrent().getStore();
     const data = {};
     const lists = store.getState(null, {
         key: 'lists',
-        scope: `${key}.${user?.id || Scopes.Client}`,
+        scope: `${key}.${user?.id || clientId}`,
     });
     const order = store.getState(null, {
         key: 'order',
-        scope: `${key}.${user?.id || Scopes.Client}`,
+        scope: `${key}.${user?.id || clientId}`,
     });
     lists.value.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const order = store.getState(null, {
             key: 'order',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const color = store.getState(null, {
             key: 'color',
-            scope: `${`list-${list.id}`}.${user?.id || Scopes.Client}`,
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
                 key: `todo`,
-                scope: `${todo.id}.${user?.id || Scopes.Client}`,
+                scope: `${todo.id}.${user?.id || clientId}`,
             });
             Object.assign(todo, stored.value);
         });
@@ -419,7 +423,7 @@ const exportData = ({ key, user }) => {
 
     const points = store.getState(null, {
         key: 'points',
-        scope: `${user?.id || Scopes.Client}`,
+        scope: `${user?.id || clientId}`,
     });
 
     const signed = jwt.sign({ ...data, points }, JWT_SECRET);
@@ -433,7 +437,8 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
-    const [points, setPoints] = useState(0, {
+    const store = Dispatcher.getCurrent().getStore();
+    const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
@@ -444,6 +449,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             scope: `${user?.id || Scopes.Client}`,
         }
     );
+
     const [lists, setLists] = useState([], {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
@@ -456,7 +462,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
     const addEntry = (todo: TodoObject) => {
         const id = v4();
-        const newList = { ...todo, id };
+        const newList = { ...todo, order: [], id };
         const newLists = [
             ...order.map((listId) => lists.find((list) => list.id === listId)),
             newList,
@@ -480,7 +486,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ListObject
         >
     ) => {
-        const { signed, points, order, ...data } = raw;
+        const { signed, points: storedPoints, order, ...data } = raw;
         const lists = Object.values(data);
 
         if (!signed) {
@@ -515,7 +521,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
         setLists(lists);
         setOrder(order);
-        setPoints(points);
+        points.value = storedPoints;
     };
     return (
         <ServerSideProps
@@ -526,7 +532,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             setOrder={setOrder}
             exportUserData={exportUserData}
             importUserData={importUserData}
-            points={points}
             lastCompleted={lastCompleted}
         >
             {lists.map((list) => (
@@ -556,13 +561,21 @@ type ListObject = {
 };
 
 const isValidList = (list: ListObject) => {
+    console.log(
+        list.id,
+        list.title,
+        list.todos,
+        list.order,
+        list.order?.every((id) => typeof id === 'string'),
+        list.todos?.every((todo) => isValidTodo(todo))
+    );
     return (
         list.id &&
         list.title &&
         list.todos &&
         list.order &&
         list.order.every((id) => typeof id === 'string') &&
-        list.todos.every((todo) => isValidTodo)
+        list.todos.every((todo) => isValidTodo(todo))
     );
 };
 
@@ -570,36 +583,16 @@ const isValidSettings = (settings: ListSettings): settings is ListSettings => {
     return 'defaultValuePoints' in settings;
 };
 
-const features = [
-    {
-        id: 1,
-        name: 'Colors',
-        desc: 'Choose colors for your lists',
-        price: 1000,
-    },
-    {
-        id: 1,
-        name: 'Labels',
-        desc: 'Choose colors for your lists',
-        price: 10,
-    },
-    {
-        id: 0,
-        name: 'Reorder',
-        desc: 'Create multiple lists and items',
-        price: 200,
-    },
-];
-export const Store = (props, { context }) => {
+export const Points = (props, { key, context }) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
     const [points, setPoints] = useState(0, {
         key: `points`,
-        scope: `${context?.user?.id || Scopes.Client}`,
+        scope: `${user?.id || Scopes.Client}`,
     });
-
-    const [features, setFeatures] = useState({
-        key: 'features',
-        scope: `${context?.user?.id || Scopes.Client}`,
-    });
-
-    return <ServerSideProps key={clientKey('my-lists-props', context)} />;
+    return <ServerSideProps points={points} />;
 };
