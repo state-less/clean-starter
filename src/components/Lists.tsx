@@ -28,6 +28,30 @@ type TodoObject = {
     defaultValuePoints?: number;
 };
 
+const DAY = 1000 * 60 * 60 * 24;
+const limits = {
+    '100': [DAY * 90, 1],
+    '65': [DAY * 30, 1],
+    '44': [DAY * 14, 2],
+    '21': [DAY * 7, 2],
+    '13': [DAY * 7, 3],
+    '8': [DAY * 7, 4],
+    '5': [DAY * 7, 7],
+    '3': [DAY, 1],
+    '2': [DAY, 10],
+    '1': [DAY, 20],
+};
+
+const checkLimits = (items, todo) => {
+    const [interval, times] = limits[todo.valuePoints] || [0, 1];
+    const within = (items || []).filter(
+        (i) => i.lastModified + interval > Date.now()
+    );
+    console.log('WIthin', within, [interval, times]);
+    const reachedLimit = within.length >= times;
+
+    return !reachedLimit;
+};
 export const Todo = (
     {
         id,
@@ -35,11 +59,11 @@ export const Todo = (
         title,
         archived,
         reset = null,
-        valuePoints = 0,
+        defaultValuePoints = 0,
+        valuePoints = defaultValuePoints,
         creditedValuePoints = 0,
         negativePoints = 0,
         dueDate = null,
-        defaultValuePoints = 0,
     }: TodoObject,
     { key, context }
 ) => {
@@ -53,6 +77,7 @@ export const Todo = (
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
+
     const [todo, setTodo] = useState<TodoObject>(
         {
             id,
@@ -75,13 +100,41 @@ export const Todo = (
         (todo.reset === null || todo.lastModified + todo.reset > Date.now());
 
     const toggle = () => {
-        const valuePoints = todo.valuePoints || defaultValuePoints || 0;
-        setTodo({
+        const store = Dispatcher.getCurrent().getStore();
+        const lastCompleted = store.getState(
+            {},
+            {
+                key: `lastCompleted`,
+                scope: `${user?.id || Scopes.Client}`,
+            }
+        );
+        const { valuePoints } = todo;
+        if (!comp && !checkLimits(lastCompleted.value[valuePoints], todo)) {
+            throw new Error('Can be completed only n times within interval');
+        }
+
+        const newTodo = {
             ...todo,
             completed: !comp,
             lastModified: Date.now(),
             creditedValuePoints: comp ? 0 : valuePoints,
+        };
+        setTodo(newTodo);
+
+        const newItems = !comp
+            ? [...(lastCompleted.value[valuePoints] || []), newTodo]
+            : (lastCompleted.value[valuePoints] || []).filter(
+                  (i) => i.id !== todo.id
+              );
+        const filtered = newItems.filter((item) => {
+            return item.lastModified + limits[valuePoints][0] > Date.now();
         });
+        console.log('ITEMS', newItems, filtered);
+        lastCompleted.setValue({
+            ...(lastCompleted.value || {}),
+            [valuePoints]: filtered,
+        });
+
         setPoints(points + (comp ? -todo.creditedValuePoints : valuePoints));
     };
 
@@ -384,6 +437,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         key: `points`,
         scope: `${user?.id || Scopes.Client}`,
     });
+    const [lastCompleted] = useState(
+        {},
+        {
+            key: `lastCompleted`,
+            scope: `${user?.id || Scopes.Client}`,
+        }
+    );
     const [lists, setLists] = useState([], {
         key: 'lists',
         scope: `${key}.${user?.id || Scopes.Client}`,
@@ -446,7 +506,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             list.todos.forEach((todo) => {
                 const oldId = todo.id;
                 const newId = v4();
-                todo.id = newId
+                todo.id = newId;
                 list.order[list.order.indexOf(oldId)] = newId;
             });
         });
@@ -467,6 +527,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             exportUserData={exportUserData}
             importUserData={importUserData}
             points={points}
+            lastCompleted={lastCompleted}
         >
             {lists.map((list) => (
                 <List key={`list-${list.id}`} {...list} />
@@ -507,4 +568,38 @@ const isValidList = (list: ListObject) => {
 
 const isValidSettings = (settings: ListSettings): settings is ListSettings => {
     return 'defaultValuePoints' in settings;
+};
+
+const features = [
+    {
+        id: 1,
+        name: 'Colors',
+        desc: 'Choose colors for your lists',
+        price: 1000,
+    },
+    {
+        id: 1,
+        name: 'Labels',
+        desc: 'Choose colors for your lists',
+        price: 10,
+    },
+    {
+        id: 0,
+        name: 'Reorder',
+        desc: 'Create multiple lists and items',
+        price: 200,
+    },
+];
+export const Store = (props, { context }) => {
+    const [points, setPoints] = useState(0, {
+        key: `points`,
+        scope: `${context?.user?.id || Scopes.Client}`,
+    });
+
+    const [features, setFeatures] = useState({
+        key: 'features',
+        scope: `${context?.user?.id || Scopes.Client}`,
+    });
+
+    return <ServerSideProps key={clientKey('my-lists-props', context)} />;
 };
