@@ -19,6 +19,11 @@ var _excluded = ["order", "points", "iat"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var DAY = 1000 * 60 * 60 * 24;
+var DEFAULT_VALUE_POINTS = 0;
+
+/**
+ * Limits for how many times a todo can be completed within a given interval //[interval, times]
+ */
 var limits = {
   '100': [DAY * 90, 1],
   '65': [DAY * 30, 1],
@@ -32,6 +37,10 @@ var limits = {
   '1': [DAY, 20],
   '0': [DAY, 1000]
 };
+
+/**
+ * Checks if a todo can be completed based on the limits
+ */
 var checkLimits = function checkLimits(items, todo) {
   var _ref = limits[todo.valuePoints] || [0, 1],
     _ref2 = (0, _slicedToArray2["default"])(_ref, 2),
@@ -69,6 +78,9 @@ var Todo = function Todo(_ref3, _ref4) {
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
   var clientId = context.headers['x-unique-id'];
+
+  // We need to obtain the client id manually since we are not using useState
+  // We are not using use state because of a bug that prevents multiple state updates in the same function
   var points = store.getState(null, {
     key: "points",
     scope: "".concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || clientId)
@@ -245,15 +257,14 @@ var List = function List(_ref5, _ref6) {
   var addEntry = function addEntry(todo) {
     var todoId = (0, _uuid.v4)();
     var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
-      id: todoId
+      id: todoId,
+      createdAt: Date.now()
     });
     if (!isValidTodo(newTodo)) {
       throw new Error('Invalid todo');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]));
-    setOrder([].concat((0, _toConsumableArray2["default"])(todos), [newTodo]).map(function (list) {
-      return list.id;
-    }));
+    setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
     points.value += 1;
     return newTodo;
   };
@@ -299,6 +310,9 @@ var List = function List(_ref5, _ref6) {
     }
     setSettings(settings);
   };
+  var filtered = todos.filter(function (todo) {
+    return todo.createdAt > Date.now() - DAY * 90 && !todo.completed;
+  });
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
     remove: removeEntry,
@@ -412,14 +426,15 @@ var MyLists = function MyLists(_, _ref8) {
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
     order = _useState20[0],
     setOrder = _useState20[1];
-  var addEntry = function addEntry(todo) {
+  var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
-    var newList = _objectSpread(_objectSpread({}, todo), {}, {
+    var newList = _objectSpread(_objectSpread({}, list), {}, {
       order: [],
       id: id,
       settings: {
-        defaultValuePoints: 1
-      }
+        defaultValuePoints: DEFAULT_VALUE_POINTS
+      },
+      createdAt: Date.now()
     });
     var newLists = [].concat((0, _toConsumableArray2["default"])(order.map(function (listId) {
       return lists.find(function (list) {

@@ -23,9 +23,15 @@ type TodoObject = {
     creditedValuePoints?: number;
     dueDate?: number | null;
     defaultValuePoints?: number;
+    createdAt?: number;
 };
 
 const DAY = 1000 * 60 * 60 * 24;
+const DEFAULT_VALUE_POINTS = 0;
+
+/**
+ * Limits for how many times a todo can be completed within a given interval //[interval, times]
+ */
 const limits = {
     '100': [DAY * 90, 1],
     '65': [DAY * 30, 1],
@@ -40,6 +46,9 @@ const limits = {
     '0': [DAY, 1000],
 };
 
+/**
+ * Checks if a todo can be completed based on the limits
+ */
 const checkLimits = (items, todo) => {
     const [interval, times] = limits[todo.valuePoints] || [0, 1];
     const within = (items || []).filter(
@@ -49,6 +58,7 @@ const checkLimits = (items, todo) => {
 
     return !reachedLimit;
 };
+
 export const Todo = (
     {
         id,
@@ -73,6 +83,8 @@ export const Todo = (
     const store = Dispatcher.getCurrent().getStore();
     const clientId = context.headers['x-unique-id'];
 
+    // We need to obtain the client id manually since we are not using useState
+    // We are not using use state because of a bug that prevents multiple state updates in the same function
     const points = store.getState<number>(null, {
         key: `points`,
         scope: `${user?.id || clientId}`,
@@ -298,13 +310,13 @@ export const List = (
 
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
-        const newTodo = { ...todo, id: todoId };
+        const newTodo = { ...todo, id: todoId, createdAt: Date.now() };
 
         if (!isValidTodo(newTodo)) {
             throw new Error('Invalid todo');
         }
         setTodos([...todos, newTodo]);
-        setOrder([...todos, newTodo].map((list) => list.id));
+        setOrder([todoId, ...order]);
         points.value += 1;
         return newTodo;
     };
@@ -352,6 +364,10 @@ export const List = (
         }
         setSettings(settings);
     };
+
+    const filtered = todos.filter(
+        (todo) => todo.createdAt > Date.now() - DAY * 90 && !todo.completed
+    );
     return (
         <ServerSideProps
             key={clientKey(`${key}-props`, context)}
@@ -469,13 +485,14 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
-    const addEntry = (todo: TodoObject) => {
+    const addEntry = (list: ListObject) => {
         const id = v4();
         const newList = {
-            ...todo,
+            ...list,
             order: [],
             id,
-            settings: { defaultValuePoints: 1 },
+            settings: { defaultValuePoints: DEFAULT_VALUE_POINTS },
+            createdAt: Date.now(),
         };
         const newLists = [
             ...order.map((listId) => lists.find((list) => list.id === listId)),
