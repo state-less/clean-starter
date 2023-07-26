@@ -444,15 +444,13 @@ var MyLists = function MyLists(_, _ref8) {
     });
   };
   var importUserData = function importUserData(raw) {
-    var signed = raw.signed,
-      storedPoints = raw.points,
-      order = raw.order;
+    var signed = raw.signed;
     if (!signed) {
       throw new Error('Unsigned data');
     }
     var _ref9 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
-      _ = _ref9.order,
-      __ = _ref9.points,
+      order = _ref9.order,
+      storedPoints = _ref9.points,
       iat = _ref9.iat,
       data = (0, _objectWithoutProperties2["default"])(_ref9, _excluded);
     var lists = Object.values(data);

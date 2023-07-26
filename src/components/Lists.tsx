@@ -500,13 +500,13 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ListObject
         >
     ) => {
-        const { signed, points: storedPoints, order } = raw;
+        const { signed } = raw;
         if (!signed) {
             throw new Error('Unsigned data');
         }
         const {
-            order: _,
-            points: __,
+            order,
+            points: storedPoints,
             iat,
             ...data
         } = jwt.verify(signed, JWT_SECRET) as any;
