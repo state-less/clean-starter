@@ -133,6 +133,7 @@ var Todo = function Todo(_ref3, _ref4) {
     points.value += comp ? -todo.creditedValuePoints : valuePoints;
   };
   var archive = function archive() {
+    if (todo.archived) return;
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       archived: true
     }));
@@ -243,7 +244,6 @@ var Counter = function Counter(_ref5, _ref6) {
       count: counter.count - 1,
       lastModified: Date.now()
     });
-    console.log('New count', newTodo);
     setCounter(newTodo);
   };
   var archive = function archive() {
@@ -389,7 +389,7 @@ var List = function List(_ref7, _ref8) {
       throw new Error('Invalid todo');
     }
     setLabels([].concat((0, _toConsumableArray2["default"])(labels), [newLabel]));
-    points.value += points.value + 1;
+    points.value += 1;
     return newLabel;
   };
   var removeLabel = function removeLabel(labelId) {
@@ -577,12 +577,8 @@ var MyLists = function MyLists(_, _ref10) {
       },
       createdAt: Date.now()
     });
-    var newLists = [].concat((0, _toConsumableArray2["default"])(order.map(function (listId) {
-      return lists.find(function (list) {
-        return list.id === listId;
-      });
-    })), [newList]);
-    setOrder([].concat((0, _toConsumableArray2["default"])(order), [id]));
+    var newLists = [newList].concat((0, _toConsumableArray2["default"])(lists));
+    setOrder([id].concat((0, _toConsumableArray2["default"])(order)));
     setLists(newLists);
   };
   var removeEntry = function removeEntry(id) {

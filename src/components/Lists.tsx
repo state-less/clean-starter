@@ -677,11 +677,8 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             settings: { defaultValuePoints: DEFAULT_VALUE_POINTS },
             createdAt: Date.now(),
         };
-        const newLists = [
-            ...order.map((listId) => lists.find((list) => list.id === listId)),
-            newList,
-        ];
-        setOrder([...order, id]);
+        const newLists = [newList, ...lists];
+        setOrder([id, ...order]);
         setLists(newLists);
     };
 
