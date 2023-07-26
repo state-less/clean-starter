@@ -589,14 +589,11 @@ const exportData = ({ key, user }) => {
 
     const store = Dispatcher.getCurrent().getStore();
     const data = {};
-    const lists = store.getState(null, {
-        key: 'lists',
+    const state = store.getState(null, {
+        key: 'state',
         scope: `${key}.${user?.id || clientId}`,
     });
-    const order = store.getState(null, {
-        key: 'order',
-        scope: `${key}.${user?.id || clientId}`,
-    });
+    const { lists, order } = state.value;
     lists.value.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
@@ -658,16 +655,17 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         scope: `${user?.id || clientId}`,
     });
 
-    const [lists, setLists] = useState([], {
-        key: 'lists',
-        scope: `${key}.${user?.id || Scopes.Client}`,
-    });
-
-    const [order, setOrder] = useState([], {
-        key: 'order',
-        scope: `${key}.${user?.id || Scopes.Client}`,
-    });
-
+    const [state, setState] = useState(
+        {
+            lists: [],
+            order: [],
+        },
+        {
+            key: 'state',
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
+    const { lists, order } = state;
     const addEntry = (list: ListObject) => {
         const id = v4();
         const newList = {
@@ -677,14 +675,15 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             settings: { defaultValuePoints: DEFAULT_VALUE_POINTS },
             createdAt: Date.now(),
         };
-        const newLists = [newList, ...lists];
-        setOrder([id, ...order]);
-        setLists(newLists);
+        const newLists = [newList, ...state.lists];
+        setState({ order: [id, ...state.order], lists: newLists });
     };
 
     const removeEntry = (id: string) => {
-        setLists(lists.filter((list) => list.id !== id));
-        setOrder(order.filter((listId) => listId !== id));
+        setState({
+            lists: state.lists.filter((list) => list.id !== id),
+            order: state.order.filter((listId) => listId !== id),
+        });
     };
 
     const exportUserData = () => {
@@ -732,9 +731,14 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             });
         });
 
-        setLists(lists);
-        setOrder(order);
+        setState({ lists, order });
         points.value = storedPoints;
+    };
+    const setOrder = (order) => {
+        if (!order.every((id) => typeof id === 'string')) {
+            throw new Error('Invalid order');
+        }
+        setState({ order, lists: state.lists });
     };
     return (
         <ServerSideProps
