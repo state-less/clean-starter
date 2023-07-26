@@ -472,7 +472,7 @@ export const List = (
         }
 
         setLabels([...labels, newLabel]);
-        points.value += points.value + 1;
+        points.value += 1;
         return newLabel;
     };
 
