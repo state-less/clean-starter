@@ -71,9 +71,11 @@ export const Todo = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
+    const clientId = context.headers['x-unique-id'];
+
     const points = store.getState<number>(null, {
         key: `points`,
-        scope: `${user?.id || Scopes.Client}`,
+        scope: `${user?.id || clientId}`,
     });
 
     const [todo, setTodo] = useState<TodoObject>(
@@ -227,9 +229,11 @@ export const List = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
+    const clientId = context.headers['x-unique-id'];
+
     const points = store.getState<number>(initialPoints, {
         key: `points`,
-        scope: `${user?.id || Scopes.Client}`,
+        scope: `${user?.id || clientId}`,
     });
 
     const [todos, setTodos] = useState<TodoObject[]>(initialTodos, {
@@ -445,10 +449,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
-    const points = store.getState<number>(null, {
-        key: `points`,
-        scope: `${user?.id || Scopes.Client}`,
-    });
 
     const [lists, setLists] = useState([], {
         key: 'lists',
@@ -462,7 +462,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
 
     const addEntry = (todo: TodoObject) => {
         const id = v4();
-        const newList = { ...todo, order: [], id };
+        const newList = {
+            ...todo,
+            order: [],
+            id,
+            settings: { defaultValuePoints: 1 },
+        };
         const newLists = [
             ...order.map((listId) => lists.find((list) => list.id === listId)),
             newList,
