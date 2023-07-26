@@ -24,6 +24,26 @@ type TodoObject = {
     dueDate?: number | null;
     defaultValuePoints?: number;
     createdAt?: number;
+    type: string;
+    changeType?: (id: string, type: string) => void;
+};
+
+type CounterObject = {
+    key?: string;
+    id: string | null;
+    title: string;
+    count: number;
+    archived: number;
+    lastModified?: number;
+    reset?: number;
+    valuePoints?: number;
+    negativePoints?: number;
+    creditedValuePoints?: number;
+    dueDate?: number | null;
+    defaultValuePoints?: number;
+    createdAt?: number;
+    type: string;
+    changeType?: (id: string, type: string) => void;
 };
 
 const DAY = 1000 * 60 * 60 * 24;
@@ -71,6 +91,7 @@ export const Todo = (
         creditedValuePoints = 0,
         negativePoints = 0,
         dueDate = null,
+        changeType,
     }: TodoObject,
     { key, context }
 ) => {
@@ -101,6 +122,7 @@ export const Todo = (
             creditedValuePoints,
             negativePoints,
             dueDate,
+            type: 'Todo',
         },
         {
             key: `todo`,
@@ -204,10 +226,106 @@ export const Todo = (
             completed={comp}
             setReset={setReset}
             setValuePoints={setValuePoints}
+            changeType={(type) => changeType(id, type)}
+            type="Todo"
         />
     );
 };
 
+export const Counter = (
+    {
+        id,
+        count = 0,
+        title,
+        archived,
+        reset = null,
+        defaultValuePoints = 0,
+        valuePoints = defaultValuePoints,
+        creditedValuePoints = 0,
+        negativePoints = 0,
+        dueDate = null,
+        changeType,
+    }: CounterObject,
+    { key, context }
+) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
+    const store = Dispatcher.getCurrent().getStore();
+    const clientId = context.headers['x-unique-id'];
+
+    // We need to obtain the client id manually since we are not using useState
+    // We are not using use state because of a bug that prevents multiple state updates in the same function
+    const points = store.getState<number>(null, {
+        key: `points`,
+        scope: `${user?.id || clientId}`,
+    });
+
+    const [counter, setCounter] = useState<CounterObject>(
+        {
+            id,
+            count,
+            title,
+            archived,
+            reset,
+            valuePoints,
+            creditedValuePoints,
+            negativePoints,
+            dueDate,
+            type: 'Counter',
+        },
+        {
+            key: `counter`,
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
+
+    const increase = () => {
+        if (counter.archived) {
+            throw new Error('Cannot increase archived counter');
+        }
+        const newTodo = {
+            ...counter,
+            count: counter.count + 1,
+            lastModified: Date.now(),
+        };
+        setCounter(newTodo);
+    };
+
+    const decrease = () => {
+        if (counter.archived) {
+            throw new Error('Cannot decrease archived counter');
+        }
+        const newTodo = {
+            ...counter,
+            count: counter.count - 1,
+            lastModified: Date.now(),
+        };
+        setCounter(newTodo);
+    };
+
+    const archive = () => {
+        setCounter({
+            ...counter,
+            archived: Date.now(),
+        });
+    };
+
+    return (
+        <ServerSideProps
+            key={clientKey(`${id}-counter`, context)}
+            {...counter}
+            archive={archive}
+            increase={increase}
+            decrease={decrease}
+            changeType={(type) => changeType(id, type)}
+            type="Counter"
+        />
+    );
+};
 type ListSettings = {
     defaultValuePoints: number;
 };
@@ -248,10 +366,13 @@ export const List = (
         scope: `${user?.id || clientId}`,
     });
 
-    const [todos, setTodos] = useState<TodoObject[]>(initialTodos, {
-        key: 'todos',
-        scope: `${key}.${user?.id || Scopes.Client}`,
-    });
+    const [todos, setTodos] = useState<Array<TodoObject | CounterObject>>(
+        initialTodos,
+        {
+            key: 'todos',
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
 
     const [color, _setColor] = useState(initialColor, {
         key: 'color',
@@ -310,7 +431,12 @@ export const List = (
 
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
-        const newTodo = { ...todo, id: todoId, createdAt: Date.now() };
+        const newTodo = {
+            ...todo,
+            id: todoId,
+            createdAt: Date.now(),
+            type: todo.type || 'Todo',
+        };
 
         if (!isValidTodo(newTodo)) {
             throw new Error('Invalid todo');
@@ -365,8 +491,55 @@ export const List = (
         setSettings(settings);
     };
 
+    const changeType = (id: string, type: string) => {
+        if (!['Todo', 'Counter'].includes(type)) {
+            throw new Error('Invalid type');
+        }
+
+        const todo = todos.find((todo) => todo.id === id);
+        if (!todo) {
+            throw new Error('Invalid todo');
+        }
+        if (todo.type === type) {
+            return;
+        }
+        if (type === 'Todo') {
+            const newTodo = { ...todo, completed: false, type: 'Todo' };
+            if (!isValidTodo(newTodo)) {
+                throw new Error('Invalid todo');
+            }
+            const newTodos = [...todos];
+            newTodos.splice(
+                todos.findIndex((todo) => todo.id === id),
+                1,
+                newTodo
+            );
+            setTodos(newTodos);
+        } else if (type === 'Counter') {
+            const newCounter = {
+                ...todo,
+                count: (todo as CounterObject).count || 0,
+                type: 'Counter',
+            };
+            if (!isValidCounter(newCounter)) {
+                throw new Error('Invalid counter');
+            }
+            const newTodos = [...todos];
+            newTodos.splice(
+                todos.findIndex((todo) => todo.id === id),
+                1,
+                newCounter
+            );
+            setTodos(newTodos);
+        }
+    };
     const filtered = todos.filter(
-        (todo) => todo.createdAt > Date.now() - DAY * 90 && !todo.completed
+        (todo) =>
+            !(
+                todo.createdAt < Date.now() - DAY * 90 &&
+                'completed' in todo &&
+                todo.completed
+            )
     );
     return (
         <ServerSideProps
@@ -389,13 +562,22 @@ export const List = (
             settings={settings}
             updateSettings={updateSettings}
         >
-            {todos.map((todo) => (
-                <Todo
-                    key={todo.id}
-                    {...todo}
-                    defaultValuePoints={settings?.defaultValuePoints}
-                />
-            ))}
+            {filtered.map((item) =>
+                item.type !== 'Counter' ? (
+                    <Todo
+                        key={item.id}
+                        {...(item as TodoObject)}
+                        defaultValuePoints={settings?.defaultValuePoints}
+                        changeType={changeType}
+                    />
+                ) : (
+                    <Counter
+                        key={item.id}
+                        {...(item as CounterObject)}
+                        changeType={changeType}
+                    />
+                )
+            )}
         </ServerSideProps>
     );
 };
@@ -433,7 +615,7 @@ const exportData = ({ key, user }) => {
         });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
-                key: `todo`,
+                key: todo.type !== 'Counter' ? `todo` : 'counter',
                 scope: `${todo.id}.${user?.id || clientId}`,
             });
             Object.assign(todo, stored.value);
@@ -576,6 +758,9 @@ const isValidTodo = (todo): todo is TodoObject => {
     return todo.id && todo.title && 'completed' in todo;
 };
 
+const isValidCounter = (counter): counter is CounterObject => {
+    return counter.id && 'count' in counter && counter.type === 'Counter';
+};
 type LabelObjext = {
     id: string;
     title: string;

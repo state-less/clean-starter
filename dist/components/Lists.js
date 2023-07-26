@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Todo = exports.MyListsMeta = exports.MyLists = exports.List = void 0;
+exports.Todo = exports.MyListsMeta = exports.MyLists = exports.List = exports.Counter = void 0;
 var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
@@ -69,7 +69,8 @@ var Todo = function Todo(_ref3, _ref4) {
     _ref3$negativePoints = _ref3.negativePoints,
     negativePoints = _ref3$negativePoints === void 0 ? 0 : _ref3$negativePoints,
     _ref3$dueDate = _ref3.dueDate,
-    dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate;
+    dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
+    _changeType = _ref3.changeType;
   var key = _ref4.key,
     context = _ref4.context;
   var user = null;
@@ -94,7 +95,8 @@ var Todo = function Todo(_ref3, _ref4) {
       valuePoints: valuePoints,
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
-      dueDate: dueDate
+      dueDate: dueDate,
+      type: 'Todo'
     }, {
       key: "todo",
       scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
@@ -162,24 +164,34 @@ var Todo = function Todo(_ref3, _ref4) {
     archive: archive,
     completed: comp,
     setReset: setReset,
-    setValuePoints: setValuePoints
+    setValuePoints: setValuePoints,
+    changeType: function changeType(type) {
+      return _changeType(id, type);
+    },
+    type: "Todo"
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
-var List = function List(_ref5, _ref6) {
-  var _user4, _user5, _user6, _user7, _user8, _user9, _user10, _user11;
+var Counter = function Counter(_ref5, _ref6) {
+  var _user4, _user5;
   var id = _ref5.id,
-    initialTitle = _ref5.title,
-    _ref5$todos = _ref5.todos,
-    initialTodos = _ref5$todos === void 0 ? [] : _ref5$todos,
-    initialOrder = _ref5.order,
-    _ref5$archived = _ref5.archived,
-    initialArchived = _ref5$archived === void 0 ? false : _ref5$archived,
-    _ref5$color = _ref5.color,
-    initialColor = _ref5$color === void 0 ? 'white' : _ref5$color,
-    _ref5$points = _ref5.points,
-    initialPoints = _ref5$points === void 0 ? 0 : _ref5$points,
-    initialSettings = _ref5.settings;
+    _ref5$count = _ref5.count,
+    count = _ref5$count === void 0 ? 0 : _ref5$count,
+    title = _ref5.title,
+    archived = _ref5.archived,
+    _ref5$reset = _ref5.reset,
+    reset = _ref5$reset === void 0 ? null : _ref5$reset,
+    _ref5$defaultValuePoi = _ref5.defaultValuePoints,
+    defaultValuePoints = _ref5$defaultValuePoi === void 0 ? 0 : _ref5$defaultValuePoi,
+    _ref5$valuePoints = _ref5.valuePoints,
+    valuePoints = _ref5$valuePoints === void 0 ? defaultValuePoints : _ref5$valuePoints,
+    _ref5$creditedValuePo = _ref5.creditedValuePoints,
+    creditedValuePoints = _ref5$creditedValuePo === void 0 ? 0 : _ref5$creditedValuePo,
+    _ref5$negativePoints = _ref5.negativePoints,
+    negativePoints = _ref5$negativePoints === void 0 ? 0 : _ref5$negativePoints,
+    _ref5$dueDate = _ref5.dueDate,
+    dueDate = _ref5$dueDate === void 0 ? null : _ref5$dueDate,
+    _changeType2 = _ref5.changeType;
   var key = _ref6.key,
     context = _ref6.context;
   var user = null;
@@ -188,40 +200,124 @@ var List = function List(_ref5, _ref6) {
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
   var clientId = context.headers['x-unique-id'];
-  var points = store.getState(initialPoints, {
+
+  // We need to obtain the client id manually since we are not using useState
+  // We are not using use state because of a bug that prevents multiple state updates in the same function
+  var points = store.getState(null, {
     key: "points",
     scope: "".concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || clientId)
   });
-  var _useState3 = (0, _reactServer.useState)(initialTodos, {
-      key: 'todos',
+  var _useState3 = (0, _reactServer.useState)({
+      id: id,
+      count: count,
+      title: title,
+      archived: archived,
+      reset: reset,
+      valuePoints: valuePoints,
+      creditedValuePoints: creditedValuePoints,
+      negativePoints: negativePoints,
+      dueDate: dueDate,
+      type: 'Counter'
+    }, {
+      key: "counter",
       scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
-    todos = _useState4[0],
-    setTodos = _useState4[1];
-  var _useState5 = (0, _reactServer.useState)(initialColor, {
-      key: 'color',
-      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
-    }),
-    _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
-    color = _useState6[0],
-    _setColor = _useState6[1];
-  var _useState7 = (0, _reactServer.useState)(initialArchived, {
-      key: 'archived',
+    counter = _useState4[0],
+    setCounter = _useState4[1];
+  var increase = function increase() {
+    if (counter.archived) {
+      throw new Error('Cannot increase archived counter');
+    }
+    var newTodo = _objectSpread(_objectSpread({}, counter), {}, {
+      count: counter.count + 1,
+      lastModified: Date.now()
+    });
+    setCounter(newTodo);
+  };
+  var decrease = function decrease() {
+    if (counter.archived) {
+      throw new Error('Cannot decrease archived counter');
+    }
+    var newTodo = _objectSpread(_objectSpread({}, counter), {}, {
+      count: counter.count - 1,
+      lastModified: Date.now()
+    });
+    console.log('New count', newTodo);
+    setCounter(newTodo);
+  };
+  var archive = function archive() {
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      archived: Date.now()
+    }));
+  };
+  return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, counter), {}, {
+    archive: archive,
+    increase: increase,
+    decrease: decrease,
+    changeType: function changeType(type) {
+      return _changeType2(id, type);
+    },
+    type: "Counter"
+  }), (0, _reactServer.clientKey)("".concat(id, "-counter"), context));
+};
+exports.Counter = Counter;
+var List = function List(_ref7, _ref8) {
+  var _user6, _user7, _user8, _user9, _user10, _user11, _user12, _user13;
+  var id = _ref7.id,
+    initialTitle = _ref7.title,
+    _ref7$todos = _ref7.todos,
+    initialTodos = _ref7$todos === void 0 ? [] : _ref7$todos,
+    initialOrder = _ref7.order,
+    _ref7$archived = _ref7.archived,
+    initialArchived = _ref7$archived === void 0 ? false : _ref7$archived,
+    _ref7$color = _ref7.color,
+    initialColor = _ref7$color === void 0 ? 'white' : _ref7$color,
+    _ref7$points = _ref7.points,
+    initialPoints = _ref7$points === void 0 ? 0 : _ref7$points,
+    initialSettings = _ref7.settings;
+  var key = _ref8.key,
+    context = _ref8.context;
+  var user = null;
+  if ((0, _reactServer.isClientContext)(context)) try {
+    user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  } catch (e) {}
+  var store = _reactServer.Dispatcher.getCurrent().getStore();
+  var clientId = context.headers['x-unique-id'];
+  var points = store.getState(initialPoints, {
+    key: "points",
+    scope: "".concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || clientId)
+  });
+  var _useState5 = (0, _reactServer.useState)(initialTodos, {
+      key: 'todos',
       scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
     }),
+    _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
+    todos = _useState6[0],
+    setTodos = _useState6[1];
+  var _useState7 = (0, _reactServer.useState)(initialColor, {
+      key: 'color',
+      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
+    }),
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
-    archived = _useState8[0],
-    setArchived = _useState8[1];
-  var _useState9 = (0, _reactServer.useState)({
+    color = _useState8[0],
+    _setColor = _useState8[1];
+  var _useState9 = (0, _reactServer.useState)(initialArchived, {
+      key: 'archived',
+      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
+    }),
+    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
+    archived = _useState10[0],
+    setArchived = _useState10[1];
+  var _useState11 = (0, _reactServer.useState)({
       defaultValuePoints: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultValuePoints) || 0
     }, {
       key: 'settings',
-      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
     }),
-    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
-    settings = _useState10[0],
-    setSettings = _useState10[1];
+    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
+    settings = _useState12[0],
+    setSettings = _useState12[1];
   var setColor = function setColor(color) {
     var colors = ['white', 'darkred', 'blue', 'green', 'yellow', 'orange', 'purple'];
     if (typeof color !== 'string') {
@@ -233,32 +329,33 @@ var List = function List(_ref5, _ref6) {
 
     _setColor(color);
   };
-  var _useState11 = (0, _reactServer.useState)([], {
+  var _useState13 = (0, _reactServer.useState)([], {
       key: 'labels',
-      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
-    }),
-    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
-    labels = _useState12[0],
-    setLabels = _useState12[1];
-  var _useState13 = (0, _reactServer.useState)(initialTitle, {
-      key: 'title',
-      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
-    }),
-    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
-    title = _useState14[0],
-    setTitle = _useState14[1];
-  var _useState15 = (0, _reactServer.useState)(initialOrder, {
-      key: 'order',
       scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
     }),
+    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
+    labels = _useState14[0],
+    setLabels = _useState14[1];
+  var _useState15 = (0, _reactServer.useState)(initialTitle, {
+      key: 'title',
+      scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
+    }),
     _useState16 = (0, _slicedToArray2["default"])(_useState15, 2),
-    order = _useState16[0],
-    setOrder = _useState16[1];
+    title = _useState16[0],
+    setTitle = _useState16[1];
+  var _useState17 = (0, _reactServer.useState)(initialOrder, {
+      key: 'order',
+      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
+    }),
+    _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
+    order = _useState18[0],
+    setOrder = _useState18[1];
   var addEntry = function addEntry(todo) {
     var todoId = (0, _uuid.v4)();
     var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
       id: todoId,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      type: todo.type || 'Todo'
     });
     if (!isValidTodo(newTodo)) {
       throw new Error('Invalid todo');
@@ -269,11 +366,11 @@ var List = function List(_ref5, _ref6) {
     return newTodo;
   };
   var removeEntry = function removeEntry(todoId) {
-    var _user12, _todo$value, _todo$value2;
+    var _user14, _todo$value, _todo$value2;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
     var todo = store.getState(null, {
       key: "todo-".concat(todoId),
-      scope: "".concat(todoId, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
+      scope: "".concat(todoId, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
     });
     setOrder(order.filter(function (id) {
       return id !== todoId;
@@ -310,8 +407,49 @@ var List = function List(_ref5, _ref6) {
     }
     setSettings(settings);
   };
+  var changeType = function changeType(id, type) {
+    if (!['Todo', 'Counter'].includes(type)) {
+      throw new Error('Invalid type');
+    }
+    var todo = todos.find(function (todo) {
+      return todo.id === id;
+    });
+    if (!todo) {
+      throw new Error('Invalid todo');
+    }
+    if (todo.type === type) {
+      return;
+    }
+    if (type === 'Todo') {
+      var newTodo = _objectSpread(_objectSpread({}, todo), {}, {
+        completed: false,
+        type: 'Todo'
+      });
+      if (!isValidTodo(newTodo)) {
+        throw new Error('Invalid todo');
+      }
+      var newTodos = (0, _toConsumableArray2["default"])(todos);
+      newTodos.splice(todos.findIndex(function (todo) {
+        return todo.id === id;
+      }), 1, newTodo);
+      setTodos(newTodos);
+    } else if (type === 'Counter') {
+      var newCounter = _objectSpread(_objectSpread({}, todo), {}, {
+        count: todo.count || 0,
+        type: 'Counter'
+      });
+      if (!isValidCounter(newCounter)) {
+        throw new Error('Invalid counter');
+      }
+      var _newTodos = (0, _toConsumableArray2["default"])(todos);
+      _newTodos.splice(todos.findIndex(function (todo) {
+        return todo.id === id;
+      }), 1, newCounter);
+      setTodos(_newTodos);
+    }
+  };
   var filtered = todos.filter(function (todo) {
-    return todo.createdAt > Date.now() - DAY * 90 && !todo.completed;
+    return !(todo.createdAt < Date.now() - DAY * 90 && 'completed' in todo && todo.completed);
   });
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
@@ -331,17 +469,20 @@ var List = function List(_ref5, _ref6) {
     archive: archive,
     settings: settings,
     updateSettings: updateSettings,
-    children: todos.map(function (todo) {
-      return (0, _jsxRuntime.jsx)(Todo, _objectSpread(_objectSpread({}, todo), {}, {
-        defaultValuePoints: settings === null || settings === void 0 ? void 0 : settings.defaultValuePoints
-      }), todo.id);
+    children: filtered.map(function (item) {
+      return item.type !== 'Counter' ? (0, _jsxRuntime.jsx)(Todo, _objectSpread(_objectSpread({}, item), {}, {
+        defaultValuePoints: settings === null || settings === void 0 ? void 0 : settings.defaultValuePoints,
+        changeType: changeType
+      }), item.id) : (0, _jsxRuntime.jsx)(Counter, _objectSpread(_objectSpread({}, item), {}, {
+        changeType: changeType
+      }), item.id);
     })
   }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.List = List;
-var exportData = function exportData(_ref7) {
-  var key = _ref7.key,
-    user = _ref7.user;
+var exportData = function exportData(_ref9) {
+  var key = _ref9.key,
+    user = _ref9.user;
   var clientId = _reactServer.Dispatcher.getCurrent()._renderOptions.context.headers['x-unique-id'];
   var store = _reactServer.Dispatcher.getCurrent().getStore();
   var data = {};
@@ -372,7 +513,7 @@ var exportData = function exportData(_ref7) {
     });
     todos.value.forEach(function (todo) {
       var stored = store.getState(null, {
-        key: "todo",
+        key: todo.type !== 'Counter' ? "todo" : 'counter',
         scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
       });
       Object.assign(todo, stored.value);
@@ -398,10 +539,10 @@ var exportData = function exportData(_ref7) {
     signed: signed
   });
 };
-var MyLists = function MyLists(_, _ref8) {
-  var _context$headers, _user13, _user14, _user15;
-  var context = _ref8.context,
-    key = _ref8.key;
+var MyLists = function MyLists(_, _ref10) {
+  var _context$headers, _user15, _user16, _user17;
+  var context = _ref10.context,
+    key = _ref10.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -410,22 +551,22 @@ var MyLists = function MyLists(_, _ref8) {
   var clientId = ((_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
   var points = store.getState(null, {
     key: 'points',
-    scope: "".concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || clientId)
+    scope: "".concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || clientId)
   });
-  var _useState17 = (0, _reactServer.useState)([], {
-      key: 'lists',
-      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
-    }),
-    _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
-    lists = _useState18[0],
-    setLists = _useState18[1];
   var _useState19 = (0, _reactServer.useState)([], {
-      key: 'order',
-      scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
+      key: 'lists',
+      scope: "".concat(key, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     }),
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
-    order = _useState20[0],
-    setOrder = _useState20[1];
+    lists = _useState20[0],
+    setLists = _useState20[1];
+  var _useState21 = (0, _reactServer.useState)([], {
+      key: 'order',
+      scope: "".concat(key, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
+    }),
+    _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
+    order = _useState22[0],
+    setOrder = _useState22[1];
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
     var newList = _objectSpread(_objectSpread({}, list), {}, {
@@ -463,11 +604,11 @@ var MyLists = function MyLists(_, _ref8) {
     if (!signed) {
       throw new Error('Unsigned data');
     }
-    var _ref9 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
-      order = _ref9.order,
-      storedPoints = _ref9.points,
-      iat = _ref9.iat,
-      data = (0, _objectWithoutProperties2["default"])(_ref9, _excluded);
+    var _ref11 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
+      order = _ref11.order,
+      storedPoints = _ref11.points,
+      iat = _ref11.iat,
+      data = (0, _objectWithoutProperties2["default"])(_ref11, _excluded);
     var lists = Object.values(data);
     if (!lists.length || !lists.every(isValidList)) {
       throw new Error('Invalid data');
@@ -509,6 +650,9 @@ exports.MyLists = MyLists;
 var isValidTodo = function isValidTodo(todo) {
   return todo.id && todo.title && 'completed' in todo;
 };
+var isValidCounter = function isValidCounter(counter) {
+  return counter.id && 'count' in counter && counter.type === 'Counter';
+};
 var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
 };
@@ -522,27 +666,27 @@ var isValidList = function isValidList(list) {
 var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
-var MyListsMeta = function MyListsMeta(props, _ref10) {
-  var _user16, _user17;
-  var key = _ref10.key,
-    context = _ref10.context;
+var MyListsMeta = function MyListsMeta(props, _ref12) {
+  var _user18, _user19;
+  var key = _ref12.key,
+    context = _ref12.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState21 = (0, _reactServer.useState)(0, {
+  var _useState23 = (0, _reactServer.useState)(0, {
       key: "points",
-      scope: "".concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || _reactServer.Scopes.Client)
     }),
-    _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
-    points = _useState22[0],
-    setPoints = _useState22[1];
-  var _useState23 = (0, _reactServer.useState)({}, {
+    _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
+    points = _useState24[0],
+    setPoints = _useState24[1];
+  var _useState25 = (0, _reactServer.useState)({}, {
       key: "lastCompleted",
-      scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || _reactServer.Scopes.Client)
     }),
-    _useState24 = (0, _slicedToArray2["default"])(_useState23, 1),
-    lastCompleted = _useState24[0];
+    _useState26 = (0, _slicedToArray2["default"])(_useState25, 1),
+    lastCompleted = _useState26[0];
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     points: points,
     lastCompleted: lastCompleted
