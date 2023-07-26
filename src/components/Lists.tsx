@@ -437,7 +437,10 @@ const exportData = ({ key, user }) => {
         scope: `${user?.id || clientId}`,
     });
 
-    const signed = jwt.sign({ ...data, points }, JWT_SECRET);
+    const signed = jwt.sign(
+        { ...data, points: points.value, order: order.value },
+        JWT_SECRET
+    );
     return { ...data, points: points.value, order: order.value, signed };
 };
 
@@ -449,6 +452,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
+    const clientId = context.headers?.['x-unique-id'] || 'server';
+
+    const points = store.getState(null, {
+        key: 'points',
+        scope: `${user?.id || clientId}`,
+    });
 
     const [lists, setLists] = useState([], {
         key: 'lists',
@@ -495,7 +504,12 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         if (!signed) {
             throw new Error('Unsigned data');
         }
-        const { points, iat, ...data } = jwt.verify(signed, JWT_SECRET) as any;
+        const {
+            order: _,
+            points: __,
+            iat,
+            ...data
+        } = jwt.verify(signed, JWT_SECRET) as any;
 
         const lists = Object.values(data);
 
@@ -520,8 +534,6 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
                 list.order[list.order.indexOf(oldId)] = newId;
             });
         });
-
-        console.log('List', order);
 
         setLists(lists);
         setOrder(order);

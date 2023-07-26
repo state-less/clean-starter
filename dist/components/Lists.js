@@ -15,7 +15,7 @@ var _ServerSideProps = require("./ServerSideProps");
 var _config = require("../config");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var _excluded = ["points", "iat"];
+var _excluded = ["order", "points", "iat"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var DAY = 1000 * 60 * 60 * 24;
@@ -375,7 +375,8 @@ var exportData = function exportData(_ref7) {
     scope: "".concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
   });
   var signed = _jsonwebtoken["default"].sign(_objectSpread(_objectSpread({}, data), {}, {
-    points: points
+    points: points.value,
+    order: order.value
   }), _config.JWT_SECRET);
   return _objectSpread(_objectSpread({}, data), {}, {
     points: points.value,
@@ -384,7 +385,7 @@ var exportData = function exportData(_ref7) {
   });
 };
 var MyLists = function MyLists(_, _ref8) {
-  var _user13, _user14;
+  var _context$headers, _user13, _user14, _user15;
   var context = _ref8.context,
     key = _ref8.key;
   var user = null;
@@ -392,16 +393,21 @@ var MyLists = function MyLists(_, _ref8) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
+  var clientId = ((_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
+  var points = store.getState(null, {
+    key: 'points',
+    scope: "".concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || clientId)
+  });
   var _useState17 = (0, _reactServer.useState)([], {
       key: 'lists',
-      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
     }),
     _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
     lists = _useState18[0],
     setLists = _useState18[1];
   var _useState19 = (0, _reactServer.useState)([], {
       key: 'order',
-      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
     }),
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
     order = _useState20[0],
@@ -445,7 +451,8 @@ var MyLists = function MyLists(_, _ref8) {
       throw new Error('Unsigned data');
     }
     var _ref9 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
-      points = _ref9.points,
+      _ = _ref9.order,
+      __ = _ref9.points,
       iat = _ref9.iat,
       data = (0, _objectWithoutProperties2["default"])(_ref9, _excluded);
     var lists = Object.values(data);
@@ -469,7 +476,6 @@ var MyLists = function MyLists(_, _ref8) {
         list.order[list.order.indexOf(oldId)] = newId;
       });
     });
-    console.log('List', order);
     setLists(lists);
     setOrder(order);
     points.value = storedPoints;
@@ -504,7 +510,7 @@ var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
 var MyListsMeta = function MyListsMeta(props, _ref10) {
-  var _user15, _user16;
+  var _user16, _user17;
   var key = _ref10.key,
     context = _ref10.context;
   var user = null;
@@ -513,14 +519,14 @@ var MyListsMeta = function MyListsMeta(props, _ref10) {
   } catch (e) {}
   var _useState21 = (0, _reactServer.useState)(0, {
       key: "points",
-      scope: "".concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     }),
     _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
     points = _useState22[0],
     setPoints = _useState22[1];
   var _useState23 = (0, _reactServer.useState)({}, {
       key: "lastCompleted",
-      scope: "".concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
     }),
     _useState24 = (0, _slicedToArray2["default"])(_useState23, 1),
     lastCompleted = _useState24[0];
