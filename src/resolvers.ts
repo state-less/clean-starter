@@ -172,7 +172,10 @@ const callFunction = async (parent, args, context) => {
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
         Dispatcher.getCurrent().addCurrentComponent(component);
+        const start = Date.now();
         const result = fn(...fnArgs);
+        const end = Date.now();
+        console.log('Function call took', end - start, 'ms');
         Dispatcher.getCurrent().popCurrentComponent();
         return result;
     }
