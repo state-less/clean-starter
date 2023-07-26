@@ -174,6 +174,7 @@ export const Todo = (
     };
 
     const archive = () => {
+        if (todo.archived) return;
         setTodo({
             ...todo,
             archived: true,
