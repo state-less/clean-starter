@@ -277,6 +277,8 @@ var List = function List(_ref7, _ref8) {
     initialColor = _ref7$color === void 0 ? 'white' : _ref7$color,
     _ref7$points = _ref7.points,
     initialPoints = _ref7$points === void 0 ? 0 : _ref7$points,
+    _ref7$labels = _ref7.labels,
+    initialLabels = _ref7$labels === void 0 ? [] : _ref7$labels,
     initialSettings = _ref7.settings,
     createdAt = _ref7.createdAt;
   var key = _ref8.key,
@@ -338,7 +340,7 @@ var List = function List(_ref7, _ref8) {
 
     _setColor(color);
   };
-  var _useState13 = (0, _reactServer.useState)([], {
+  var _useState13 = (0, _reactServer.useState)(initialLabels, {
       key: 'labels',
       scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
     }),
@@ -514,6 +516,10 @@ var exportData = function exportData(_ref9) {
       key: 'order',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
+    var labels = store.getState(null, {
+      key: 'labels',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
+    });
     var color = store.getState(null, {
       key: 'color',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
@@ -533,7 +539,8 @@ var exportData = function exportData(_ref9) {
       color: color.value,
       order: order.value,
       todos: todos.value,
-      settings: settings.value
+      settings: settings.value,
+      labels: labels.value
     });
   });
   var points = store.getState(null, {

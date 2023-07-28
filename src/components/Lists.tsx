@@ -342,6 +342,7 @@ export const List = (
         archived: initialArchived = false,
         color: initialColor = 'white',
         points: initialPoints = 0,
+        labels: initialLabels = [],
         settings: initialSettings,
         createdAt,
     }: {
@@ -354,6 +355,7 @@ export const List = (
         pinned: boolean;
         createdAt: number;
         points: number;
+        labels: string[];
         settings: ListSettings;
         order: string[];
     },
@@ -428,7 +430,7 @@ export const List = (
 
         _setColor(color);
     };
-    const [labels, setLabels] = useState<TodoObject[]>([], {
+    const [labels, setLabels] = useState<TodoObject[]>(initialLabels, {
         key: 'labels',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
@@ -619,6 +621,10 @@ const exportData = ({ key, user }) => {
             key: 'order',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
+        const labels = store.getState(null, {
+            key: 'labels',
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
+        });
         const color = store.getState(null, {
             key: 'color',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
@@ -641,6 +647,7 @@ const exportData = ({ key, user }) => {
             order: order.value,
             todos: todos.value,
             settings: settings.value,
+            labels: labels.value,
         };
     });
 
