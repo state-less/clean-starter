@@ -672,7 +672,10 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ...list,
             order: [],
             id,
-            settings: { defaultValuePoints: DEFAULT_VALUE_POINTS },
+            settings: {
+                defaultValuePoints: DEFAULT_VALUE_POINTS,
+                defaultType: 'Todo',
+            },
             createdAt: Date.now(),
         };
         const newLists = [newList, ...state.lists];

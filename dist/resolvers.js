@@ -153,7 +153,7 @@ var setState = function setState(parent, args) {
 };
 var callFunction = /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args, context) {
-    var key, prop, fnArgs, component, clientProps, rendered, fn, result;
+    var key, prop, fnArgs, component, clientProps, rendered, fn, start, result, end;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
@@ -166,19 +166,22 @@ var callFunction = /*#__PURE__*/function () {
             initiator: _reactServer.Initiator.FunctionCall
           });
           if (!rendered.props[prop]) {
-            _context2.next = 10;
+            _context2.next = 13;
             break;
           }
           fn = rendered.props[prop].fn;
           _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
+          start = Date.now();
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
+          end = Date.now();
+          console.log('Function call took', end - start, 'ms');
           _reactServer.Dispatcher.getCurrent().popCurrentComponent();
           return _context2.abrupt("return", result);
-        case 10:
+        case 13:
           return _context2.abrupt("return", {
             rendered: rendered
           });
-        case 11:
+        case 14:
         case "end":
           return _context2.stop();
       }
