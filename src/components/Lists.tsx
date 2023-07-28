@@ -198,11 +198,12 @@ export const Todo = (
             return;
         }
 
-        if (reset < 0 || reset > 14) throw new Error('Invalid reset value');
+        if (reset < 0 || reset > 14 * 24)
+            throw new Error('Invalid reset value');
 
         setTodo({
             ...todo,
-            reset: 1000 * 60 * 60 * 24 * reset,
+            reset: 1000 * 60 * 60 * reset,
         });
     };
 
