@@ -949,7 +949,7 @@ const isValidList = (list: ListObject) => {
         list.order &&
         list.order.every((id) => typeof id === 'string') &&
         list.todos.every((todo) => {
-            isValidItem(todo);
+            return isValidItem(todo);
         })
     );
 };

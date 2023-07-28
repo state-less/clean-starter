@@ -439,7 +439,7 @@ var List = function List(_ref9, _ref10) {
     });
     var isValid = validationFunctions[newItem.type];
     if (!isValid(newItem)) {
-      throw new Error('Invalid todo');
+      throw new Error('Invalid item');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
     setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
@@ -693,6 +693,7 @@ var MyLists = function MyLists(_, _ref12) {
       id: id,
       settings: {
         defaultValuePoints: DEFAULT_VALUE_POINTS,
+        defaultType: 'Todo',
         pinned: false
       },
       createdAt: Date.now()
@@ -796,7 +797,7 @@ var isValidList = function isValidList(list) {
   return list.id && list.title && list.todos && list.order && list.order.every(function (id) {
     return typeof id === 'string';
   }) && list.todos.every(function (todo) {
-    return isValidTodo(todo);
+    return isValidItem(todo);
   });
 };
 var isValidSettings = function isValidSettings(settings) {
@@ -833,4 +834,8 @@ var validationFunctions = {
   Todo: isValidTodo,
   Counter: isValidCounter,
   Expense: isValidExpense
+};
+var isValidItem = function isValidItem(item) {
+  var isValid = validationFunctions[item.type];
+  return isValid && isValid(item);
 };
