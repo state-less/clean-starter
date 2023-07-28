@@ -46,6 +46,24 @@ type CounterObject = {
     changeType?: (id: string, type: string) => void;
 };
 
+type ExpenseObject = {
+    key?: string;
+    id: string | null;
+    title: string;
+    value: number;
+    archived: number;
+    lastModified?: number;
+    reset?: number;
+    valuePoints?: number;
+    negativePoints?: number;
+    creditedValuePoints?: number;
+    dueDate?: number | null;
+    defaultValuePoints?: number;
+    createdAt?: number;
+    type: string;
+    changeType?: (id: string, type: string) => void;
+};
+
 const DAY = 1000 * 60 * 60 * 24;
 const DEFAULT_VALUE_POINTS = 0;
 
@@ -92,6 +110,7 @@ export const Todo = (
         negativePoints = 0,
         dueDate = null,
         changeType,
+        createdAt,
     }: TodoObject,
     { key, context }
 ) => {
@@ -197,11 +216,12 @@ export const Todo = (
             return;
         }
 
-        if (reset < 0 || reset > 14) throw new Error('Invalid reset value');
+        if (reset < 0 || reset > 14 * 24)
+            throw new Error('Invalid reset value');
 
         setTodo({
             ...todo,
-            reset: 1000 * 60 * 60 * 24 * reset,
+            reset: 1000 * 60 * 60 * reset,
         });
     };
 
@@ -229,6 +249,7 @@ export const Todo = (
             setValuePoints={setValuePoints}
             changeType={(type) => changeType(id, type)}
             type="Todo"
+            createdAt={createdAt}
         />
     );
 };
@@ -327,8 +348,79 @@ export const Counter = (
         />
     );
 };
+
+export const Expense = (
+    {
+        id,
+        value = 0,
+        title,
+        archived,
+        reset = null,
+        defaultValuePoints = 0,
+        valuePoints = defaultValuePoints,
+        creditedValuePoints = 0,
+        negativePoints = 0,
+        dueDate = null,
+        changeType,
+    }: ExpenseObject,
+    { key, context }
+) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
+    const [expense, setExpense] = useState<ExpenseObject>(
+        {
+            id,
+            value,
+            title,
+            archived,
+            reset,
+            valuePoints,
+            creditedValuePoints,
+            negativePoints,
+            dueDate,
+            type: 'Expense',
+        },
+        {
+            key: `value`,
+            scope: `${key}.${user?.id || Scopes.Client}`,
+        }
+    );
+
+    const archive = () => {
+        setExpense({
+            ...expense,
+            archived: Date.now(),
+        });
+    };
+    const setValue = (val: number) => {
+        if (typeof +val !== 'number') {
+            throw new Error('Invalid value');
+        }
+        setExpense({
+            ...expense,
+            value: val,
+            lastModified: Date.now(),
+        });
+    };
+    return (
+        <ServerSideProps
+            key={clientKey(`${id}-expense`, context)}
+            {...expense}
+            archive={archive}
+            changeType={(type) => changeType(id, type)}
+            setValue={setValue}
+            type="Expense"
+        />
+    );
+};
 type ListSettings = {
     defaultValuePoints: number;
+    pinned: boolean;
+    defaultType: string;
 };
 export const List = (
     {
@@ -339,7 +431,9 @@ export const List = (
         archived: initialArchived = false,
         color: initialColor = 'white',
         points: initialPoints = 0,
+        labels: initialLabels = [],
         settings: initialSettings,
+        createdAt,
     }: {
         key?: string;
         id: string;
@@ -347,7 +441,10 @@ export const List = (
         todos: TodoObject[];
         archived: boolean;
         color: string;
+        pinned: boolean;
+        createdAt: number;
         points: number;
+        labels: string[];
         settings: ListSettings;
         order: string[];
     },
@@ -388,6 +485,8 @@ export const List = (
     const [settings, setSettings] = useState(
         {
             defaultValuePoints: initialSettings?.defaultValuePoints || 0,
+            pinned: initialSettings?.pinned || false,
+            defaultType: initialSettings?.defaultType || 'Todo',
         },
         {
             key: 'settings',
@@ -395,6 +494,12 @@ export const List = (
         }
     );
 
+    const togglePinned = () => {
+        setSettings({
+            ...settings,
+            pinned: !settings.pinned,
+        });
+    };
     const setColor = (color: string) => {
         const colors = [
             'white',
@@ -415,7 +520,7 @@ export const List = (
 
         _setColor(color);
     };
-    const [labels, setLabels] = useState<TodoObject[]>([], {
+    const [labels, setLabels] = useState<TodoObject[]>(initialLabels, {
         key: 'labels',
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
@@ -432,20 +537,21 @@ export const List = (
 
     const addEntry = (todo: TodoObject) => {
         const todoId = v4();
-        const newTodo = {
+        const newItem = {
             ...todo,
             id: todoId,
             createdAt: Date.now(),
-            type: todo.type || 'Todo',
+            type: todo.type || settings?.defaultType || 'Todo',
         };
 
-        if (!isValidTodo(newTodo)) {
-            throw new Error('Invalid todo');
+        const isValid = validationFunctions[newItem.type];
+        if (!isValid(newItem)) {
+            throw new Error('Invalid item');
         }
-        setTodos([...todos, newTodo]);
+        setTodos([...todos, newItem]);
         setOrder([todoId, ...order]);
         points.value += 1;
-        return newTodo;
+        return newItem;
     };
 
     const removeEntry = (todoId: string) => {
@@ -493,7 +599,7 @@ export const List = (
     };
 
     const changeType = (id: string, type: string) => {
-        if (!['Todo', 'Counter'].includes(type)) {
+        if (!['Todo', 'Counter', 'Expense'].includes(type)) {
             throw new Error('Invalid type');
         }
 
@@ -532,16 +638,25 @@ export const List = (
                 newCounter
             );
             setTodos(newTodos);
+        } else if (type === 'Expense') {
+            const newTodo = {
+                ...todo,
+                value: (todo as ExpenseObject).value || 0,
+                type: 'Expense',
+            };
+            if (!isValidExpense(newTodo)) {
+                throw new Error('Invalid counter');
+            }
+            const newTodos = [...todos];
+            newTodos.splice(
+                todos.findIndex((expense) => expense.id === id),
+                1,
+                newTodo
+            );
+            setTodos(newTodos);
         }
     };
-    const filtered = todos.filter(
-        (todo) =>
-            !(
-                todo.createdAt < Date.now() - DAY * 90 &&
-                'completed' in todo &&
-                todo.completed
-            )
-    );
+    const filtered = todos;
     return (
         <ServerSideProps
             key={clientKey(`${key}-props`, context)}
@@ -562,23 +677,55 @@ export const List = (
             archive={archive}
             settings={settings}
             updateSettings={updateSettings}
+            togglePinned={togglePinned}
+            createdAt={createdAt}
         >
-            {filtered.map((item) =>
-                item.type !== 'Counter' ? (
-                    <Todo
-                        key={item.id}
-                        {...(item as TodoObject)}
-                        defaultValuePoints={settings?.defaultValuePoints}
-                        changeType={changeType}
-                    />
-                ) : (
-                    <Counter
-                        key={item.id}
-                        {...(item as CounterObject)}
-                        changeType={changeType}
-                    />
-                )
-            )}
+            {filtered.map((item) => {
+                switch (item.type) {
+                    case 'Todo': {
+                        return (
+                            <Todo
+                                key={item.id}
+                                {...(item as TodoObject)}
+                                defaultValuePoints={
+                                    settings?.defaultValuePoints
+                                }
+                                changeType={changeType}
+                            />
+                        );
+                    }
+                    case 'Counter': {
+                        return (
+                            <Counter
+                                key={item.id}
+                                {...(item as CounterObject)}
+                                changeType={changeType}
+                            />
+                        );
+                    }
+                    case 'Expense': {
+                        return (
+                            <Expense
+                                key={item.id}
+                                {...(item as CounterObject)}
+                                changeType={changeType}
+                            />
+                        );
+                    }
+                    default: {
+                        return (
+                            <Todo
+                                key={item.id}
+                                {...(item as TodoObject)}
+                                defaultValuePoints={
+                                    settings?.defaultValuePoints
+                                }
+                                changeType={changeType}
+                            />
+                        );
+                    }
+                }
+            })}
         </ServerSideProps>
     );
 };
@@ -594,13 +741,18 @@ const exportData = ({ key, user }) => {
         scope: `${key}.${user?.id || clientId}`,
     });
     const { lists, order } = state.value;
-    lists.value.forEach((list) => {
+    console.log('Lists', lists);
+    lists.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const order = store.getState(null, {
             key: 'order',
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
+        });
+        const labels = store.getState(null, {
+            key: 'labels',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
         const color = store.getState(null, {
@@ -625,6 +777,7 @@ const exportData = ({ key, user }) => {
             order: order.value,
             todos: todos.value,
             settings: settings.value,
+            labels: labels.value,
         };
     });
 
@@ -634,10 +787,10 @@ const exportData = ({ key, user }) => {
     });
 
     const signed = jwt.sign(
-        { ...data, points: points.value, order: order.value },
+        { ...data, points: points.value, order },
         JWT_SECRET
     );
-    return { ...data, points: points.value, order: order.value, signed };
+    return { ...data, points: points.value, order, signed };
 };
 
 export const MyLists = (_: { key?: string }, { context, key }) => {
@@ -675,6 +828,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             settings: {
                 defaultValuePoints: DEFAULT_VALUE_POINTS,
                 defaultType: 'Todo',
+                pinned: false,
             },
             createdAt: Date.now(),
         };
@@ -766,6 +920,11 @@ const isValidTodo = (todo): todo is TodoObject => {
 const isValidCounter = (counter): counter is CounterObject => {
     return counter.id && 'count' in counter && counter.type === 'Counter';
 };
+
+const isValidExpense = (expense): expense is ExpenseObject => {
+    return expense.id && 'value' in expense;
+};
+
 type LabelObjext = {
     id: string;
     title: string;
@@ -818,4 +977,10 @@ export const MyListsMeta = (props, { key, context }) => {
     );
 
     return <ServerSideProps points={points} lastCompleted={lastCompleted} />;
+};
+
+const validationFunctions = {
+    Todo: isValidTodo,
+    Counter: isValidCounter,
+    Expense: isValidExpense,
 };
