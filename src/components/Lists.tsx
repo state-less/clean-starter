@@ -948,7 +948,9 @@ const isValidList = (list: ListObject) => {
         list.todos &&
         list.order &&
         list.order.every((id) => typeof id === 'string') &&
-        list.todos.every((todo) => isValidTodo(todo))
+        list.todos.every((todo) => {
+            isValidItem(todo);
+        })
     );
 };
 
@@ -983,4 +985,9 @@ const validationFunctions = {
     Todo: isValidTodo,
     Counter: isValidCounter,
     Expense: isValidExpense,
+};
+
+const isValidItem = (item) => {
+    const isValid = validationFunctions[item.type];
+    return isValid && isValid(item);
 };
