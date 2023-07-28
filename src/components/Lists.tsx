@@ -594,7 +594,8 @@ const exportData = ({ key, user }) => {
         scope: `${key}.${user?.id || clientId}`,
     });
     const { lists, order } = state.value;
-    lists.value.forEach((list) => {
+    console.log('Lists', lists);
+    lists.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
@@ -634,10 +635,10 @@ const exportData = ({ key, user }) => {
     });
 
     const signed = jwt.sign(
-        { ...data, points: points.value, order: order.value },
+        { ...data, points: points.value, order },
         JWT_SECRET
     );
-    return { ...data, points: points.value, order: order.value, signed };
+    return { ...data, points: points.value, order, signed };
 };
 
 export const MyLists = (_: { key?: string }, { context, key }) => {

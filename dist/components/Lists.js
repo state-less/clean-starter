@@ -493,7 +493,8 @@ var exportData = function exportData(_ref9) {
   var _state$value = state.value,
     lists = _state$value.lists,
     order = _state$value.order;
-  lists.value.forEach(function (list) {
+  console.log('Lists', lists);
+  lists.forEach(function (list) {
     var todos = store.getState(null, {
       key: 'todos',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
@@ -530,11 +531,11 @@ var exportData = function exportData(_ref9) {
   });
   var signed = _jsonwebtoken["default"].sign(_objectSpread(_objectSpread({}, data), {}, {
     points: points.value,
-    order: order.value
+    order: order
   }), _config.JWT_SECRET);
   return _objectSpread(_objectSpread({}, data), {}, {
     points: points.value,
-    order: order.value,
+    order: order,
     signed: signed
   });
 };
