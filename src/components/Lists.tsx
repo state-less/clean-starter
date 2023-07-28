@@ -92,6 +92,7 @@ export const Todo = (
         negativePoints = 0,
         dueDate = null,
         changeType,
+        createdAt,
     }: TodoObject,
     { key, context }
 ) => {
@@ -229,6 +230,7 @@ export const Todo = (
             setValuePoints={setValuePoints}
             changeType={(type) => changeType(id, type)}
             type="Todo"
+            createdAt={createdAt}
         />
     );
 };
@@ -329,6 +331,7 @@ export const Counter = (
 };
 type ListSettings = {
     defaultValuePoints: number;
+    pinned: boolean;
 };
 export const List = (
     {
@@ -340,6 +343,7 @@ export const List = (
         color: initialColor = 'white',
         points: initialPoints = 0,
         settings: initialSettings,
+        createdAt,
     }: {
         key?: string;
         id: string;
@@ -347,6 +351,8 @@ export const List = (
         todos: TodoObject[];
         archived: boolean;
         color: string;
+        pinned: boolean;
+        createdAt: number;
         points: number;
         settings: ListSettings;
         order: string[];
@@ -388,6 +394,7 @@ export const List = (
     const [settings, setSettings] = useState(
         {
             defaultValuePoints: initialSettings?.defaultValuePoints || 0,
+            pinned: initialSettings?.pinned || false,
         },
         {
             key: 'settings',
@@ -395,6 +402,12 @@ export const List = (
         }
     );
 
+    const togglePinned = () => {
+        setSettings({
+            ...settings,
+            pinned: !settings.pinned,
+        });
+    };
     const setColor = (color: string) => {
         const colors = [
             'white',
@@ -562,6 +575,8 @@ export const List = (
             archive={archive}
             settings={settings}
             updateSettings={updateSettings}
+            togglePinned={togglePinned}
+            createdAt={createdAt}
         >
             {filtered.map((item) =>
                 item.type !== 'Counter' ? (
@@ -673,7 +688,10 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             ...list,
             order: [],
             id,
-            settings: { defaultValuePoints: DEFAULT_VALUE_POINTS },
+            settings: {
+                defaultValuePoints: DEFAULT_VALUE_POINTS,
+                pinned: false,
+            },
             createdAt: Date.now(),
         };
         const newLists = [newList, ...state.lists];

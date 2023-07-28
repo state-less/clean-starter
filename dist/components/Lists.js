@@ -70,7 +70,8 @@ var Todo = function Todo(_ref3, _ref4) {
     negativePoints = _ref3$negativePoints === void 0 ? 0 : _ref3$negativePoints,
     _ref3$dueDate = _ref3.dueDate,
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
-    _changeType = _ref3.changeType;
+    _changeType = _ref3.changeType,
+    createdAt = _ref3.createdAt;
   var key = _ref4.key,
     context = _ref4.context;
   var user = null;
@@ -169,7 +170,8 @@ var Todo = function Todo(_ref3, _ref4) {
     changeType: function changeType(type) {
       return _changeType(id, type);
     },
-    type: "Todo"
+    type: "Todo",
+    createdAt: createdAt
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
@@ -275,7 +277,8 @@ var List = function List(_ref7, _ref8) {
     initialColor = _ref7$color === void 0 ? 'white' : _ref7$color,
     _ref7$points = _ref7.points,
     initialPoints = _ref7$points === void 0 ? 0 : _ref7$points,
-    initialSettings = _ref7.settings;
+    initialSettings = _ref7.settings,
+    createdAt = _ref7.createdAt;
   var key = _ref8.key,
     context = _ref8.context;
   var user = null;
@@ -310,7 +313,8 @@ var List = function List(_ref7, _ref8) {
     archived = _useState10[0],
     setArchived = _useState10[1];
   var _useState11 = (0, _reactServer.useState)({
-      defaultValuePoints: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultValuePoints) || 0
+      defaultValuePoints: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultValuePoints) || 0,
+      pinned: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.pinned) || false
     }, {
       key: 'settings',
       scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
@@ -318,6 +322,11 @@ var List = function List(_ref7, _ref8) {
     _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
     settings = _useState12[0],
     setSettings = _useState12[1];
+  var togglePinned = function togglePinned() {
+    setSettings(_objectSpread(_objectSpread({}, settings), {}, {
+      pinned: !settings.pinned
+    }));
+  };
   var setColor = function setColor(color) {
     var colors = ['white', 'darkred', 'blue', 'green', 'yellow', 'orange', 'purple'];
     if (typeof color !== 'string') {
@@ -469,6 +478,8 @@ var List = function List(_ref7, _ref8) {
     archive: archive,
     settings: settings,
     updateSettings: updateSettings,
+    togglePinned: togglePinned,
+    createdAt: createdAt,
     children: filtered.map(function (item) {
       return item.type !== 'Counter' ? (0, _jsxRuntime.jsx)(Todo, _objectSpread(_objectSpread({}, item), {}, {
         defaultValuePoints: settings === null || settings === void 0 ? void 0 : settings.defaultValuePoints,
@@ -571,7 +582,8 @@ var MyLists = function MyLists(_, _ref10) {
       order: [],
       id: id,
       settings: {
-        defaultValuePoints: DEFAULT_VALUE_POINTS
+        defaultValuePoints: DEFAULT_VALUE_POINTS,
+        pinned: false
       },
       createdAt: Date.now()
     });
