@@ -10,6 +10,13 @@ import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
 import jwt, { decode } from 'jsonwebtoken';
+
+const itemTypeStateKeyMap = {
+    Todo: 'todo',
+    Counter: 'counter',
+    Expense: 'expense',
+};
+
 type TodoObject = {
     key?: string;
     id: string | null;
@@ -385,7 +392,7 @@ export const Expense = (
             type: 'Expense',
         },
         {
-            key: `value`,
+            key: `expense`,
             scope: `${key}.${user?.id || Scopes.Client}`,
         }
     );
@@ -741,7 +748,6 @@ const exportData = ({ key, user }) => {
         scope: `${key}.${user?.id || clientId}`,
     });
     const { lists, order } = state.value;
-    console.log('Lists', lists);
     lists.forEach((list) => {
         const todos = store.getState(null, {
             key: 'todos',
@@ -765,7 +771,7 @@ const exportData = ({ key, user }) => {
         });
         todos.value.forEach((todo) => {
             const stored = store.getState(null, {
-                key: todo.type !== 'Counter' ? `todo` : 'counter',
+                key: itemTypeStateKeyMap[todo.type] || 'todo',
                 scope: `${todo.id}.${user?.id || clientId}`,
             });
             Object.assign(todo, stored.value);

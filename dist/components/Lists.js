@@ -18,6 +18,11 @@ var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime
 var _excluded = ["order", "points", "iat"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+var itemTypeStateKeyMap = {
+  Todo: 'todo',
+  Counter: 'counter',
+  Expense: 'expense'
+};
 var DAY = 1000 * 60 * 60 * 24;
 var DEFAULT_VALUE_POINTS = 0;
 
@@ -302,7 +307,7 @@ var Expense = function Expense(_ref7, _ref8) {
       dueDate: dueDate,
       type: 'Expense'
     }, {
-      key: "value",
+      key: "expense",
       scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
@@ -609,7 +614,6 @@ var exportData = function exportData(_ref11) {
   var _state$value = state.value,
     lists = _state$value.lists,
     order = _state$value.order;
-  console.log('Lists', lists);
   lists.forEach(function (list) {
     var todos = store.getState(null, {
       key: 'todos',
@@ -633,7 +637,7 @@ var exportData = function exportData(_ref11) {
     });
     todos.value.forEach(function (todo) {
       var stored = store.getState(null, {
-        key: todo.type !== 'Counter' ? "todo" : 'counter',
+        key: itemTypeStateKeyMap[todo.type] || 'todo',
         scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
       });
       Object.assign(todo, stored.value);
