@@ -115,6 +115,7 @@ export const Todo = (
         valuePoints = defaultValuePoints,
         creditedValuePoints = 0,
         negativePoints = 0,
+        lastModified,
         dueDate = null,
         changeType,
         createdAt,
@@ -149,6 +150,7 @@ export const Todo = (
             negativePoints,
             dueDate,
             type: 'Todo',
+            lastModified,
         },
         {
             key: `todo`,
@@ -257,6 +259,7 @@ export const Todo = (
             changeType={(type) => changeType(id, type)}
             type="Todo"
             createdAt={createdAt}
+            lastModified={todo.lastModified}
         />
     );
 };
@@ -890,6 +893,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
                 const oldId = todo.id;
                 const newId = v4();
                 todo.id = newId;
+                todo.createdAt = todo.createdAt || Date.now();
                 list.order[list.order.indexOf(oldId)] = newId;
             });
         });

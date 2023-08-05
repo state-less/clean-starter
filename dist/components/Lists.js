@@ -73,6 +73,7 @@ var Todo = function Todo(_ref3, _ref4) {
     creditedValuePoints = _ref3$creditedValuePo === void 0 ? 0 : _ref3$creditedValuePo,
     _ref3$negativePoints = _ref3.negativePoints,
     negativePoints = _ref3$negativePoints === void 0 ? 0 : _ref3$negativePoints,
+    lastModified = _ref3.lastModified,
     _ref3$dueDate = _ref3.dueDate,
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
     _changeType = _ref3.changeType,
@@ -102,7 +103,8 @@ var Todo = function Todo(_ref3, _ref4) {
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
       dueDate: dueDate,
-      type: 'Todo'
+      type: 'Todo',
+      lastModified: lastModified
     }, {
       key: "todo",
       scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
@@ -176,7 +178,8 @@ var Todo = function Todo(_ref3, _ref4) {
       return _changeType(id, type);
     },
     type: "Todo",
-    createdAt: createdAt
+    createdAt: createdAt,
+    lastModified: todo.lastModified
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
@@ -752,6 +755,7 @@ var MyLists = function MyLists(_, _ref12) {
         var oldId = todo.id;
         var newId = (0, _uuid.v4)();
         todo.id = newId;
+        todo.createdAt = todo.createdAt || Date.now();
         list.order[list.order.indexOf(oldId)] = newId;
       });
     });

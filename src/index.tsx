@@ -52,7 +52,6 @@ const apolloServer = new ApolloServer({
         return { headers };
     },
 });
-
 // Create a HTTP server
 const httpServer = createServer(app);
 
@@ -114,7 +113,7 @@ export const reactServer = (
         <Pages key="pages" />
         <DynamicPage key="page" />
         <MyLists key="my-lists" />
-        <MyListsMeta key="my-lists-points"  />
+        <MyListsMeta key="my-lists-points" />
         <Todos key="todos" />
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
         <Votings key="votings-multiple" policies={[]} />
@@ -149,7 +148,12 @@ const node = render(reactServer, null, null);
 
 (async () => {
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({
+        app,
+        bodyParserConfig: {
+            limit: '10mb',
+        },
+    });
     httpServer.listen(PORT, () => {
         logger.log`Server listening on port ${PORT}.`;
     });

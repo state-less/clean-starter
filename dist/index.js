@@ -52,7 +52,6 @@ var apolloServer = new _apolloServerExpress.ApolloServer({
     };
   }
 });
-
 // Create a HTTP server
 var httpServer = (0, _http.createServer)(app);
 var connections = _instances.store.createState(0, {
@@ -114,7 +113,10 @@ var node = (0, _reactServer.render)(reactServer, null, null);
         return apolloServer.start();
       case 2:
         apolloServer.applyMiddleware({
-          app: app
+          app: app,
+          bodyParserConfig: {
+            limit: '10mb'
+          }
         });
         httpServer.listen(PORT, function () {
           _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Server listening on port ", "."])), PORT);
