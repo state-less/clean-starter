@@ -1702,8 +1702,8 @@
     "@sinonjs/commons" "^2.0.0"
 
 "@state-less/react-server@state-less/react-server#master":
-  version "2.0.18"
-  resolved "https://codeload.github.com/state-less/react-server/tar.gz/2e86f15a24189330855a080843676dc00a8f4b31"
+  version "2.0.21"
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/666a67a6bd7bf9e291480e58586bbaf1bc5c6872"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"
