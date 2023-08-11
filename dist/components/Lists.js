@@ -77,7 +77,8 @@ var Todo = function Todo(_ref3, _ref4) {
     _ref3$dueDate = _ref3.dueDate,
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
     _changeType = _ref3.changeType,
-    createdAt = _ref3.createdAt;
+    createdAt = _ref3.createdAt,
+    color = _ref3.color;
   var key = _ref4.key,
     context = _ref4.context;
   var user = null;
@@ -104,7 +105,8 @@ var Todo = function Todo(_ref3, _ref4) {
       negativePoints: negativePoints,
       dueDate: dueDate,
       type: 'Todo',
-      lastModified: lastModified
+      lastModified: lastModified,
+      color: color
     }, {
       key: "todo",
       scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
@@ -113,6 +115,18 @@ var Todo = function Todo(_ref3, _ref4) {
     todo = _useState2[0],
     setTodo = _useState2[1];
   var comp = todo.completed && (todo.reset === null || todo.lastModified + todo.reset > Date.now());
+  var setColor = function setColor(color) {
+    if (typeof color !== 'string') {
+      throw new Error('Invalid color');
+    }
+    // if (!colors.includes(color)) {
+    //     throw new Error('Invalid color');
+    // }
+
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      color: color
+    }));
+  };
   var toggle = function toggle() {
     var _user3;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
@@ -177,6 +191,7 @@ var Todo = function Todo(_ref3, _ref4) {
     changeType: function changeType(type) {
       return _changeType(id, type);
     },
+    setColor: setColor,
     type: "Todo",
     createdAt: createdAt,
     lastModified: todo.lastModified

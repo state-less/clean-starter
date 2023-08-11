@@ -18,6 +18,7 @@ const itemTypeStateKeyMap = {
 };
 
 type TodoObject = {
+    color?: string;
     key?: string;
     id: string | null;
     title: string;
@@ -119,6 +120,7 @@ export const Todo = (
         dueDate = null,
         changeType,
         createdAt,
+        color,
     }: TodoObject,
     { key, context }
 ) => {
@@ -151,6 +153,7 @@ export const Todo = (
             dueDate,
             type: 'Todo',
             lastModified,
+            color,
         },
         {
             key: `todo`,
@@ -161,6 +164,19 @@ export const Todo = (
         todo.completed &&
         (todo.reset === null || todo.lastModified + todo.reset > Date.now());
 
+    const setColor = (color: string) => {
+        if (typeof color !== 'string') {
+            throw new Error('Invalid color');
+        }
+        // if (!colors.includes(color)) {
+        //     throw new Error('Invalid color');
+        // }
+
+        setTodo({
+            ...todo,
+            color,
+        });
+    };
     const toggle = () => {
         const store = Dispatcher.getCurrent().getStore();
         const lastCompleted = store.getState(
@@ -257,6 +273,7 @@ export const Todo = (
             setReset={setReset}
             setValuePoints={setValuePoints}
             changeType={(type) => changeType(id, type)}
+            setColor={setColor}
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
