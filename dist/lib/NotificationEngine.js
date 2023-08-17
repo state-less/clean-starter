@@ -40,7 +40,7 @@ var checkTodo = function checkTodo(todo, client) {
   var sameTime = diff > 0 && diff < 15;
   var lastNotifiedClient = (_todo$lastNotified = todo.lastNotified) === null || _todo$lastNotified === void 0 ? void 0 : _todo$lastNotified[client];
   var lastNotified = (0, _dateFns.differenceInMinutes)(new Date(lastNotifiedClient || 0), new Date());
-  console.log('Todo', todo.title, timeAtDueDate, lastNotified);
+  console.log('Todo', todo.title, timeAtDueDate, todo.lastNotified, client);
   if (!completed && sameDate && sameTime && lastNotified < -15) {
     return true;
   }
@@ -141,7 +141,7 @@ var NotificationEngine = /*#__PURE__*/function () {
                   title: stored.value.title,
                   body: "It's almost ".concat((0, _dateFns.format)(new Date(stored.value.dueTime), 'hh:mm'))
                 });
-                stored.value.lastNotified = _objectSpread(_objectSpread({}, stored.value.lastModified), {}, (0, _defineProperty2["default"])({}, clientId, new Date().getTime()));
+                stored.value.lastNotified = _objectSpread(_objectSpread({}, stored.value.lastNotified), {}, (0, _defineProperty2["default"])({}, clientId, new Date().getTime()));
               }
             });
           });
