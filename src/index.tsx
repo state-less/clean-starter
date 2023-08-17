@@ -32,6 +32,7 @@ import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
 import { Platform } from './components/Forum';
 import { MyLists, MyListsMeta } from './components/Lists';
+import { WebPushManager } from './components/WebPushManager';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -141,6 +142,7 @@ export const reactServer = (
         />
         <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
         <Platform key="platform" />
+        <WebPushManager key="web-push" />
     </Server>
 );
 

@@ -74,8 +74,11 @@ var Todo = function Todo(_ref3, _ref4) {
     _ref3$negativePoints = _ref3.negativePoints,
     negativePoints = _ref3$negativePoints === void 0 ? 0 : _ref3$negativePoints,
     lastModified = _ref3.lastModified,
+    lastNotified = _ref3.lastNotified,
     _ref3$dueDate = _ref3.dueDate,
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
+    _ref3$dueTime = _ref3.dueTime,
+    dueTime = _ref3$dueTime === void 0 ? null : _ref3$dueTime,
     _changeType = _ref3.changeType,
     createdAt = _ref3.createdAt,
     color = _ref3.color;
@@ -104,6 +107,7 @@ var Todo = function Todo(_ref3, _ref4) {
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
       dueDate: dueDate,
+      dueTime: dueTime,
       type: 'Todo',
       lastModified: lastModified,
       color: color
@@ -182,6 +186,30 @@ var Todo = function Todo(_ref3, _ref4) {
       negativePoints: -valuePoints
     }));
   };
+  var setTitle = function setTitle(title) {
+    if (typeof title !== 'string') {
+      throw new Error('Invalid title');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      title: title
+    }));
+  };
+  var setDueDate = function setDueDate(dueDate) {
+    if (isNaN(new Date(dueDate).getTime())) {
+      throw new Error('Invalid due date');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      dueDate: dueDate
+    }));
+  };
+  var setDueTime = function setDueTime(dueTime) {
+    if (isNaN(new Date(dueTime).getTime())) {
+      throw new Error('Invalid due date');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      dueTime: dueTime
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, todo), {}, {
     toggle: toggle,
     archive: archive,
@@ -192,6 +220,9 @@ var Todo = function Todo(_ref3, _ref4) {
       return _changeType(id, type);
     },
     setColor: setColor,
+    setTitle: setTitle,
+    setDueDate: setDueDate,
+    setDueTime: setDueTime,
     type: "Todo",
     createdAt: createdAt,
     lastModified: todo.lastModified

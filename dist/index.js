@@ -32,6 +32,7 @@ var _ViewCounter = require("./components/ViewCounter");
 var _ChatRoom = require("./components/ChatRoom");
 var _Forum = require("./components/Forum");
 var _Lists = require("./components/Lists");
+var _WebPushManager = require("./components/WebPushManager");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _templateObject, _templateObject2;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
@@ -101,7 +102,7 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     policies: [_Poll.PollActions.Revert]
   }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
     policies: [_Comments.CommentPolicies.Authenticate]
-  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform")]
+  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);

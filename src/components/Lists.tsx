@@ -25,11 +25,13 @@ type TodoObject = {
     completed: boolean;
     archived: boolean;
     lastModified?: number;
+    lastNotified?: number;
     reset?: number;
     valuePoints?: number;
     negativePoints?: number;
     creditedValuePoints?: number;
     dueDate?: number | null;
+    dueTime?: number | null;
     defaultValuePoints?: number;
     createdAt?: number;
     type: string;
@@ -117,7 +119,9 @@ export const Todo = (
         creditedValuePoints = 0,
         negativePoints = 0,
         lastModified,
+        lastNotified,
         dueDate = null,
+        dueTime = null,
         changeType,
         createdAt,
         color,
@@ -151,6 +155,7 @@ export const Todo = (
             creditedValuePoints,
             negativePoints,
             dueDate,
+            dueTime,
             type: 'Todo',
             lastModified,
             color,
@@ -263,6 +268,37 @@ export const Todo = (
             negativePoints: -valuePoints,
         });
     };
+
+    const setTitle = (title) => {
+        if (typeof title !== 'string') {
+            throw new Error('Invalid title');
+        }
+        setTodo({
+            ...todo,
+            title,
+        });
+    };
+
+    const setDueDate = (dueDate) => {
+        if (isNaN(new Date(dueDate).getTime())) {
+            throw new Error('Invalid due date');
+        }
+        setTodo({
+            ...todo,
+            dueDate,
+        });
+    };
+
+    const setDueTime = (dueTime) => {
+        if (isNaN(new Date(dueTime).getTime())) {
+            throw new Error('Invalid due date');
+        }
+        setTodo({
+            ...todo,
+            dueTime,
+        });
+    };
+
     return (
         <ServerSideProps
             key={clientKey(`${id}-todo`, context)}
@@ -274,6 +310,9 @@ export const Todo = (
             setValuePoints={setValuePoints}
             changeType={(type) => changeType(id, type)}
             setColor={setColor}
+            setTitle={setTitle}
+            setDueDate={setDueDate}
+            setDueTime={setDueTime}
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
