@@ -50,7 +50,7 @@ const checkTodo = (todo, client) => {
         new Date(lastNotifiedClient || 0),
         new Date()
     );
-    console.log('Todo', todo.title, timeAtDueDate, lastNotifiedClient);
+    console.log('Todo', todo.title, timeAtDueDate, todo.lastNotified, client);
     if (!completed && sameDate && sameTime && lastNotified < -15) {
         return true;
     }
