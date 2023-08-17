@@ -144,7 +144,7 @@ export class NotificationEngine {
                             )}`,
                         });
                         stored.value.lastNotified = {
-                            ...stored.value.lastModified,
+                            ...stored.value.lastNotified,
                             [clientId]: new Date().getTime(),
                         };
                     }
