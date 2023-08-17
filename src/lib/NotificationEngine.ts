@@ -24,7 +24,7 @@ export const isTodoCompleted = (todo) => {
     return comp;
 };
 
-const checkTodo = (todo) => {
+const checkTodo = (todo, client) => {
     const completed = isTodoCompleted(todo);
     const dueDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
     const dueTime = todo.dueTime ? new Date(todo.dueTime) : null;
@@ -44,8 +44,10 @@ const checkTodo = (todo) => {
     );
     const diff = differenceInMinutes(timeAtDueDate, new Date());
     const sameTime = diff > 0 && diff < 15;
+
+    const lastNotifiedClient = todo.lastNotified?.[client];
     const lastNotified = differenceInMinutes(
-        new Date(todo.lastNotified || 0),
+        new Date(lastNotifiedClient || 0),
         new Date()
     );
     console.log('Todo', todo.title, timeAtDueDate, lastNotified);
@@ -133,7 +135,7 @@ export class NotificationEngine {
                     });
                     Object.assign(todo, stored.value);
                     console.log('Checking Todo', stored.value.title);
-                    if (checkTodo(stored.value)) {
+                    if (checkTodo(stored.value, clientId)) {
                         this.sendNotification(sub, {
                             title: stored.value.title,
                             body: `It's almost ${format(
@@ -141,7 +143,10 @@ export class NotificationEngine {
                                 'hh:mm'
                             )}`,
                         });
-                        stored.value.lastNotified = new Date().getTime();
+                        stored.value.lastNotified = {
+                            ...stored.value.lastModified,
+                            [clientId]: new Date().getTime(),
+                        };
                     }
                 });
             });

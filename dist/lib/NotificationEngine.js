@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.isTodoCompleted = exports.NotificationEngine = void 0;
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
@@ -12,6 +13,8 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 var _webPush = _interopRequireDefault(require("web-push"));
 var _dateFns = require("date-fns");
 var _templateObject, _templateObject2, _templateObject3, _templateObject4;
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
@@ -25,7 +28,8 @@ var isTodoCompleted = function isTodoCompleted(todo) {
   return comp;
 };
 exports.isTodoCompleted = isTodoCompleted;
-var checkTodo = function checkTodo(todo) {
+var checkTodo = function checkTodo(todo, client) {
+  var _todo$lastNotified;
   var completed = isTodoCompleted(todo);
   var dueDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
   var dueTime = todo.dueTime ? new Date(todo.dueTime) : null;
@@ -34,7 +38,8 @@ var checkTodo = function checkTodo(todo) {
   var timeAtDueDate = new Date((0, _dateFns.getYear)(dueDate), (0, _dateFns.getMonth)(dueDate), (0, _dateFns.getDate)(dueDate), (0, _dateFns.getHours)(dueTime), (0, _dateFns.getMinutes)(dueTime), (0, _dateFns.getSeconds)(dueTime));
   var diff = (0, _dateFns.differenceInMinutes)(timeAtDueDate, new Date());
   var sameTime = diff > 0 && diff < 15;
-  var lastNotified = (0, _dateFns.differenceInMinutes)(new Date(todo.lastNotified || 0), new Date());
+  var lastNotifiedClient = (_todo$lastNotified = todo.lastNotified) === null || _todo$lastNotified === void 0 ? void 0 : _todo$lastNotified[client];
+  var lastNotified = (0, _dateFns.differenceInMinutes)(new Date(lastNotifiedClient || 0), new Date());
   console.log('Todo', todo.title, timeAtDueDate, lastNotified);
   if (!completed && sameDate && sameTime && lastNotified < -15) {
     return true;
@@ -131,12 +136,12 @@ var NotificationEngine = /*#__PURE__*/function () {
               });
               Object.assign(todo, stored.value);
               console.log('Checking Todo', stored.value.title);
-              if (checkTodo(stored.value)) {
+              if (checkTodo(stored.value, clientId)) {
                 _this2.sendNotification(sub, {
                   title: stored.value.title,
                   body: "It's almost ".concat((0, _dateFns.format)(new Date(stored.value.dueTime), 'hh:mm'))
                 });
-                stored.value.lastNotified = new Date().getTime();
+                stored.value.lastNotified = _objectSpread(_objectSpread({}, stored.value.lastModified), {}, (0, _defineProperty2["default"])({}, clientId, new Date().getTime()));
               }
             });
           });
