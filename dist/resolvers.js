@@ -87,7 +87,6 @@ var renderedComponents = {};
 var unmountComponent = function unmountComponent(parent, args, context) {
   var key = args.key;
   var cleanup = _reactServer.Dispatcher.getCurrent().getCleanupFns((0, _reactServer.clientKey)(key, context));
-  console.log('Unmounting', key, cleanup === null || cleanup === void 0 ? void 0 : cleanup.length);
   var len = (cleanup === null || cleanup === void 0 ? void 0 : cleanup.length) || 0;
   cleanup.forEach(function (fn) {
     return fn();
@@ -97,7 +96,6 @@ var unmountComponent = function unmountComponent(parent, args, context) {
 var mountComponent = function mountComponent(parent, args, context) {
   var key = args.key,
     props = args.props;
-  console.log('Mountint', key);
   var component = _reactServer2.globalInstance.components.get(key);
   try {
     _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", " ."])), key);

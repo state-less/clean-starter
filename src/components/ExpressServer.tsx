@@ -1,5 +1,6 @@
 import { useClientEffect } from '@state-less/react-server';
 import express from 'express';
+import cors from 'cors';
 
 const latestHandlers = new Map();
 const latestMiddleware = new Map();
@@ -36,7 +37,7 @@ export const Route = (props, { key, context }) => {
         if ('get' in props) {
             deleteRoute(app._router, path);
             app.get(path, middlewareProxy, handlerProxy);
-
+            app.options(path, cors({ origin: true }));
             // Update the handler in our store
             if (authenticate) {
                 latestMiddleware.set(path, authenticate);

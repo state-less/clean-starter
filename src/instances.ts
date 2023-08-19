@@ -15,6 +15,11 @@ export const notificationEngine = new NotificationEngine({
     logger,
 });
 export const app = express();
-app.use(cors());
+app.options('/*', cors({ origin: true }));
+app.use(
+    cors({
+        origin: true,
+    })
+);
 store.sync(20 * 1000);
 notificationEngine.start();

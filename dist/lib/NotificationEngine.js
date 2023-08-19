@@ -42,7 +42,6 @@ var checkTodo = function checkTodo(todo, client) {
   var sameTime = diff > 0 && diff < 15;
   var lastNotifiedClient = (_todo$lastNotified = todo.lastNotified) === null || _todo$lastNotified === void 0 ? void 0 : _todo$lastNotified[client];
   var lastNotified = (0, _dateFns.differenceInMinutes)(new Date(lastNotifiedClient || 0), new Date());
-  console.log('Todo', todo.title, timeAtDueDate, todo.lastNotified, client);
   if (!completed && sameDate && sameTime && lastNotified < -15) {
     return true;
   }
@@ -91,7 +90,6 @@ var NotificationEngine = /*#__PURE__*/function () {
   }, {
     key: "subscribe",
     value: function subscribe(clientId, user, subscription) {
-      console.log('Subscribe', user);
       this._clients.push({
         id: clientId,
         sub: subscription,
@@ -138,7 +136,6 @@ var NotificationEngine = /*#__PURE__*/function () {
                 scope: "".concat(todo.id, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
               });
               Object.assign(todo, stored.value);
-              console.log('Checking Todo', stored.value.title);
               var token = _jwtSimple["default"].encode(user, _config.JWT_SECRET);
               if (checkTodo(stored.value, clientId)) {
                 _this2.sendNotification(sub, {

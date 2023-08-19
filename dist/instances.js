@@ -28,6 +28,11 @@ var notificationEngine = new _NotificationEngine.NotificationEngine({
 exports.notificationEngine = notificationEngine;
 var app = (0, _express["default"])();
 exports.app = app;
-app.use((0, _cors["default"])());
+app.options('/*', (0, _cors["default"])({
+  origin: true
+}));
+app.use((0, _cors["default"])({
+  origin: true
+}));
 store.sync(20 * 1000);
 notificationEngine.start();

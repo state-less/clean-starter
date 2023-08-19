@@ -133,7 +133,6 @@ var Todo = function Todo(_ref3, _ref4) {
       color: color
     }));
   };
-  console.log('Render todo', todo);
   var toggle = function toggle() {
     var _user3;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
@@ -150,7 +149,6 @@ var Todo = function Todo(_ref3, _ref4) {
       lastModified: Date.now(),
       creditedValuePoints: comp ? 0 : valuePoints
     });
-    console.log('toggling', todo, newTodo);
     setTodo(newTodo);
     var newItems = !comp ? [].concat((0, _toConsumableArray2["default"])(lastCompleted.value[valuePoints] || []), [newTodo]) : (lastCompleted.value[valuePoints] || []).filter(function (i) {
       return i.id !== todo.id;
@@ -236,12 +234,10 @@ var Todo = function Todo(_ref3, _ref4) {
       app: _instances.app,
       path: "/todos/".concat(id, "/toggle"),
       get: function get(req, res) {
-        console.log('Hello from HTTP');
         var todo = toggle();
         res.send(todo);
       },
       authenticate: function authenticate(req, res, next) {
-        console.log('Hello from HTTP');
         // Authenticate the http request
         (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
         // Make sure the client is the same
