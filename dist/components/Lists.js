@@ -14,6 +14,8 @@ var _uuid = require("uuid");
 var _ServerSideProps = require("./ServerSideProps");
 var _config = require("../config");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
+var _ExpressServer = require("./ExpressServer");
+var _instances = require("../instances");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _excluded = ["order", "points", "iat"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -131,6 +133,7 @@ var Todo = function Todo(_ref3, _ref4) {
       color: color
     }));
   };
+  console.log('Render todo', todo);
   var toggle = function toggle() {
     var _user3;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
@@ -147,6 +150,7 @@ var Todo = function Todo(_ref3, _ref4) {
       lastModified: Date.now(),
       creditedValuePoints: comp ? 0 : valuePoints
     });
+    console.log('toggling', todo, newTodo);
     setTodo(newTodo);
     var newItems = !comp ? [].concat((0, _toConsumableArray2["default"])(lastCompleted.value[valuePoints] || []), [newTodo]) : (lastCompleted.value[valuePoints] || []).filter(function (i) {
       return i.id !== todo.id;
@@ -157,6 +161,7 @@ var Todo = function Todo(_ref3, _ref4) {
     });
     lastCompleted.value = _objectSpread(_objectSpread({}, lastCompleted.value || {}), {}, (0, _defineProperty2["default"])({}, valuePoints, filtered));
     points.value += comp ? -todo.creditedValuePoints : valuePoints;
+    return newTodo;
   };
   var archive = function archive() {
     if (todo.archived) return;
@@ -225,7 +230,27 @@ var Todo = function Todo(_ref3, _ref4) {
     setDueTime: setDueTime,
     type: "Todo",
     createdAt: createdAt,
-    lastModified: todo.lastModified
+    lastModified: todo.lastModified,
+    children: (0, _jsxRuntime.jsx)(_ExpressServer.Route, {
+      todo: todo,
+      app: _instances.app,
+      path: "/todos/".concat(id, "/toggle"),
+      get: function get(req, res) {
+        console.log('Hello from HTTP');
+        var todo = toggle();
+        res.send(todo);
+      },
+      authenticate: function authenticate(req, res, next) {
+        console.log('Hello from HTTP');
+        // Authenticate the http request
+        (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
+        // Make sure the client is the same
+        if (req.headers['x-unique-id'] !== clientId) {
+          throw new Error('Unauthorized');
+        }
+        next();
+      }
+    }, "test")
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;

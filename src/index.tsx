@@ -14,7 +14,7 @@ import {
     createContext,
 } from '@state-less/react-server';
 
-import { pubsub, store } from './instances';
+import { app, pubsub, store } from './instances';
 
 import { generatePubSubKey, resolvers } from './resolvers';
 import { typeDefs } from './schema';
@@ -37,7 +37,6 @@ import { WebPushManager } from './components/WebPushManager';
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
 
-const app = express();
 const PORT = 4000;
 
 const schema = makeExecutableSchema({

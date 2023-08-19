@@ -1,5 +1,7 @@
 import { PubSub } from 'graphql-subscriptions';
 import { Store } from '@state-less/react-server';
+import express from 'express';
+import cors from 'cors';
 import logger from './lib/logger';
 import { NotificationEngine } from './lib/NotificationEngine';
 
@@ -12,6 +14,7 @@ export const notificationEngine = new NotificationEngine({
     interval: 1 * 60 * 1000,
     logger,
 });
-
+export const app = express();
+app.use(cors());
 store.sync(20 * 1000);
 notificationEngine.start();

@@ -12,6 +12,8 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 var _webPush = _interopRequireDefault(require("web-push"));
 var _dateFns = require("date-fns");
+var _jwtSimple = _interopRequireDefault(require("jwt-simple"));
+var _config = require("../config");
 var _templateObject, _templateObject2, _templateObject3, _templateObject4;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -89,6 +91,7 @@ var NotificationEngine = /*#__PURE__*/function () {
   }, {
     key: "subscribe",
     value: function subscribe(clientId, user, subscription) {
+      console.log('Subscribe', user);
       this._clients.push({
         id: clientId,
         sub: subscription,
@@ -136,8 +139,13 @@ var NotificationEngine = /*#__PURE__*/function () {
               });
               Object.assign(todo, stored.value);
               console.log('Checking Todo', stored.value.title);
+              var token = _jwtSimple["default"].encode(user, _config.JWT_SECRET);
               if (checkTodo(stored.value, clientId)) {
                 _this2.sendNotification(sub, {
+                  token: token,
+                  clientId: clientId,
+                  id: stored.value.id,
+                  actions: ['complete'],
                   title: stored.value.title,
                   body: "It's almost ".concat((0, _dateFns.format)(new Date(stored.value.dueTime), 'hh:mm'))
                 });

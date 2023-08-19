@@ -11,6 +11,8 @@ import {
     getSeconds,
     getYear,
 } from 'date-fns';
+import jwt from 'jwt-simple';
+import { JWT_SECRET } from '../config';
 const itemTypeStateKeyMap = {
     Todo: 'todo',
     Counter: 'counter',
@@ -50,7 +52,6 @@ const checkTodo = (todo, client) => {
         new Date(lastNotifiedClient || 0),
         new Date()
     );
-    console.log('Todo', todo.title, timeAtDueDate, todo.lastNotified, client);
     if (!completed && sameDate && sameTime && lastNotified < -15) {
         return true;
     }
@@ -58,11 +59,17 @@ const checkTodo = (todo, client) => {
 
 export class NotificationEngine {
     _store: Store;
+
     _interval: number;
+
     _timeout: any;
+
     _listsKey: string;
+
     _webpushKey: string;
+
     _clients: Array<{ id: string; sub: any; user: any }>;
+
     _logger: any;
 
     constructor({ store, interval, listsKey, webpushKey, logger }) {
@@ -134,9 +141,13 @@ export class NotificationEngine {
                         scope: `${todo.id}.${user?.id || clientId}`,
                     });
                     Object.assign(todo, stored.value);
-                    console.log('Checking Todo', stored.value.title);
+                    const token = jwt.encode(user, JWT_SECRET);
                     if (checkTodo(stored.value, clientId)) {
                         this.sendNotification(sub, {
+                            token,
+                            clientId,
+                            id: stored.value.id,
+                            actions: ['complete'],
                             title: stored.value.title,
                             body: `It's almost ${format(
                                 new Date(stored.value.dueTime),
@@ -152,6 +163,7 @@ export class NotificationEngine {
             });
         }
     }
+
     sendNotification(sub, body) {
         if (typeof body !== 'string') {
             body = JSON.stringify(body);
@@ -166,6 +178,7 @@ export class NotificationEngine {
             this._logger.error`Error sending notification: ${e}`;
         }
     }
+
     start() {
         this._timeout = setInterval(() => this.run(), this._interval);
         this._logger.info`Started Interval`;

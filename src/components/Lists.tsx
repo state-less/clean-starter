@@ -10,6 +10,8 @@ import { v4 } from 'uuid';
 import { ServerSideProps } from './ServerSideProps';
 import { JWT_SECRET } from '../config';
 import jwt, { decode } from 'jsonwebtoken';
+import { Route } from './ExpressServer';
+import { app } from '../instances';
 
 const itemTypeStateKeyMap = {
     Todo: 'todo',
@@ -220,6 +222,8 @@ export const Todo = (
         };
 
         points.value += comp ? -todo.creditedValuePoints : valuePoints;
+
+        return newTodo;
     };
 
     const archive = () => {
@@ -316,7 +320,27 @@ export const Todo = (
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
-        />
+        >
+            <Route
+                todo={todo}
+                key="test"
+                app={app}
+                path={`/todos/${id}/toggle`}
+                get={(req, res) => {
+                    const todo = toggle();
+                    res.send(todo);
+                }}
+                authenticate={(req, res, next) => {
+                    // Authenticate the http request
+                    authenticate(req.headers, JWT_SECRET);
+                    // Make sure the client is the same
+                    if (req.headers['x-unique-id'] !== clientId) {
+                        throw new Error('Unauthorized');
+                    }
+                    next();
+                }}
+            />
+        </ServerSideProps>
     );
 };
 

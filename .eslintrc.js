@@ -18,6 +18,8 @@ module.exports = {
     },
     plugins: ['@typescript-eslint', 'prettier'],
     rules: {
+        'no-underscore-dangle': 'off',
+        'no-restricted-syntax': 'off',
         'no-unused-expressions': 'off',
         'linebreak-style': 'off',
         'import/extensions': [

@@ -12,7 +12,6 @@ var _apolloServerExpress = require("apollo-server-express");
 var _graphqlTools = require("graphql-tools");
 var _graphql = require("graphql");
 var _http = require("http");
-var _express = _interopRequireDefault(require("express"));
 var _subscriptionsTransportWs = require("subscriptions-transport-ws");
 var _reactServer = require("@state-less/react-server");
 var _instances = require("./instances");
@@ -37,7 +36,6 @@ var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime
 var _templateObject, _templateObject2;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
-var app = (0, _express["default"])();
 var PORT = 4000;
 var schema = (0, _graphqlTools.makeExecutableSchema)({
   typeDefs: _schema.typeDefs,
@@ -54,7 +52,7 @@ var apolloServer = new _apolloServerExpress.ApolloServer({
   }
 });
 // Create a HTTP server
-var httpServer = (0, _http.createServer)(app);
+var httpServer = (0, _http.createServer)(_instances.app);
 var connections = _instances.store.createState(0, {
   key: 'connections',
   scope: 'global'
@@ -114,7 +112,7 @@ var node = (0, _reactServer.render)(reactServer, null, null);
         return apolloServer.start();
       case 2:
         apolloServer.applyMiddleware({
-          app: app,
+          app: _instances.app,
           bodyParserConfig: {
             limit: '10mb'
           }

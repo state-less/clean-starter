@@ -90,7 +90,6 @@ const unmountComponent = (parent, args, context) => {
     const cleanup = Dispatcher.getCurrent().getCleanupFns(
         clientKey(key, context)
     );
-    console.log('Unmounting', key, cleanup?.length);
     const len = cleanup?.length || 0;
     cleanup.forEach((fn) => fn());
     return len;
@@ -99,7 +98,6 @@ const unmountComponent = (parent, args, context) => {
 const mountComponent = (parent, args, context) => {
     const { key, props } = args;
 
-    console.log('Mountint', key);
     const component = globalInstance.components.get(key);
 
     try {

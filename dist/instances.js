@@ -4,9 +4,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.store = exports.pubsub = exports.notificationEngine = void 0;
+exports.store = exports.pubsub = exports.notificationEngine = exports.app = void 0;
 var _graphqlSubscriptions = require("graphql-subscriptions");
 var _reactServer = require("@state-less/react-server");
+var _express = _interopRequireDefault(require("express"));
+var _cors = _interopRequireDefault(require("cors"));
 var _logger = _interopRequireDefault(require("./lib/logger"));
 var _NotificationEngine = require("./lib/NotificationEngine");
 var pubsub = new _graphqlSubscriptions.PubSub();
@@ -24,5 +26,8 @@ var notificationEngine = new _NotificationEngine.NotificationEngine({
   logger: _logger["default"]
 });
 exports.notificationEngine = notificationEngine;
+var app = (0, _express["default"])();
+exports.app = app;
+app.use((0, _cors["default"])());
 store.sync(20 * 1000);
 notificationEngine.start();
