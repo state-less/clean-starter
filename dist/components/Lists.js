@@ -238,10 +238,14 @@ var Todo = function Todo(_ref3, _ref4) {
         res.send(todo);
       },
       authenticate: function authenticate(req, res, next) {
-        // Authenticate the http request
-        (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
-        // Make sure the client is the same
-        if (req.headers['x-unique-id'] !== clientId) {
+        var _user4, _httpUser;
+        var httpUser = null;
+        try {
+          // Authenticate the http request
+          httpUser = (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
+        } catch (e) {}
+        // Make sure the client and user is the same as the one who rendered the component
+        if (req.headers['x-unique-id'] !== clientId || ((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) !== ((_httpUser = httpUser) === null || _httpUser === void 0 ? void 0 : _httpUser.id)) {
           throw new Error('Unauthorized');
         }
         next();
@@ -251,7 +255,7 @@ var Todo = function Todo(_ref3, _ref4) {
 };
 exports.Todo = Todo;
 var Counter = function Counter(_ref5, _ref6) {
-  var _user4, _user5;
+  var _user5, _user6;
   var id = _ref5.id,
     _ref5$count = _ref5.count,
     count = _ref5$count === void 0 ? 0 : _ref5$count,
@@ -283,7 +287,7 @@ var Counter = function Counter(_ref5, _ref6) {
   // We are not using use state because of a bug that prevents multiple state updates in the same function
   var points = store.getState(null, {
     key: "points",
-    scope: "".concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || clientId)
+    scope: "".concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || clientId)
   });
   var _useState3 = (0, _reactServer.useState)({
       id: id,
@@ -298,7 +302,7 @@ var Counter = function Counter(_ref5, _ref6) {
       type: 'Counter'
     }, {
       key: "counter",
-      scope: "".concat(key, ".").concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     counter = _useState4[0],
@@ -340,7 +344,7 @@ var Counter = function Counter(_ref5, _ref6) {
 };
 exports.Counter = Counter;
 var Expense = function Expense(_ref7, _ref8) {
-  var _user6;
+  var _user7;
   var id = _ref7.id,
     _ref7$value = _ref7.value,
     value = _ref7$value === void 0 ? 0 : _ref7$value,
@@ -378,7 +382,7 @@ var Expense = function Expense(_ref7, _ref8) {
       type: 'Expense'
     }, {
       key: "expense",
-      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
     expense = _useState6[0],
@@ -408,7 +412,7 @@ var Expense = function Expense(_ref7, _ref8) {
 };
 exports.Expense = Expense;
 var List = function List(_ref9, _ref10) {
-  var _user7, _user8, _user9, _user10, _user11, _user12, _user13, _user14;
+  var _user8, _user9, _user10, _user11, _user12, _user13, _user14, _user15;
   var id = _ref9.id,
     initialTitle = _ref9.title,
     _ref9$todos = _ref9.todos,
@@ -434,25 +438,25 @@ var List = function List(_ref9, _ref10) {
   var clientId = context.headers['x-unique-id'];
   var points = store.getState(initialPoints, {
     key: "points",
-    scope: "".concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || clientId)
+    scope: "".concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || clientId)
   });
   var _useState7 = (0, _reactServer.useState)(initialTodos, {
       key: 'todos',
-      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
     }),
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
     todos = _useState8[0],
     setTodos = _useState8[1];
   var _useState9 = (0, _reactServer.useState)(initialColor, {
       key: 'color',
-      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
     }),
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     color = _useState10[0],
     _setColor = _useState10[1];
   var _useState11 = (0, _reactServer.useState)(initialArchived, {
       key: 'archived',
-      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
     }),
     _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
     archived = _useState12[0],
@@ -463,7 +467,7 @@ var List = function List(_ref9, _ref10) {
       defaultType: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultType) || 'Todo'
     }, {
       key: 'settings',
-      scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
     }),
     _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
     settings = _useState14[0],
@@ -486,21 +490,21 @@ var List = function List(_ref9, _ref10) {
   };
   var _useState15 = (0, _reactServer.useState)(initialLabels, {
       key: 'labels',
-      scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
     }),
     _useState16 = (0, _slicedToArray2["default"])(_useState15, 2),
     labels = _useState16[0],
     setLabels = _useState16[1];
   var _useState17 = (0, _reactServer.useState)(initialTitle, {
       key: 'title',
-      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
     }),
     _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
     title = _useState18[0],
     setTitle = _useState18[1];
   var _useState19 = (0, _reactServer.useState)(initialOrder, {
       key: 'order',
-      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
     }),
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
     order = _useState20[0],
@@ -522,11 +526,11 @@ var List = function List(_ref9, _ref10) {
     return newItem;
   };
   var removeEntry = function removeEntry(todoId) {
-    var _user15, _todo$value, _todo$value2;
+    var _user16, _todo$value, _todo$value2;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
     var todo = store.getState(null, {
       key: "todo-".concat(todoId),
-      scope: "".concat(todoId, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
+      scope: "".concat(todoId, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     });
     setOrder(order.filter(function (id) {
       return id !== todoId;
@@ -735,7 +739,7 @@ var exportData = function exportData(_ref11) {
   });
 };
 var MyLists = function MyLists(_, _ref12) {
-  var _context$headers, _user16, _user17;
+  var _context$headers, _user17, _user18;
   var context = _ref12.context,
     key = _ref12.key;
   var user = null;
@@ -746,14 +750,14 @@ var MyLists = function MyLists(_, _ref12) {
   var clientId = ((_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
   var points = store.getState(null, {
     key: 'points',
-    scope: "".concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || clientId)
+    scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)
   });
   var _useState21 = (0, _reactServer.useState)({
       lists: [],
       order: []
     }, {
       key: 'state',
-      scope: "".concat(key, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || _reactServer.Scopes.Client)
     }),
     _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
     state = _useState22[0],
@@ -879,7 +883,7 @@ var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
 var MyListsMeta = function MyListsMeta(props, _ref14) {
-  var _user18, _user19;
+  var _user19, _user20;
   var key = _ref14.key,
     context = _ref14.context;
   var user = null;
@@ -888,14 +892,14 @@ var MyListsMeta = function MyListsMeta(props, _ref14) {
   } catch (e) {}
   var _useState23 = (0, _reactServer.useState)(0, {
       key: "points",
-      scope: "".concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || _reactServer.Scopes.Client)
     }),
     _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
     points = _useState24[0],
     setPoints = _useState24[1];
   var _useState25 = (0, _reactServer.useState)({}, {
       key: "lastCompleted",
-      scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.id) || _reactServer.Scopes.Client)
     }),
     _useState26 = (0, _slicedToArray2["default"])(_useState25, 1),
     lastCompleted = _useState26[0];
