@@ -332,9 +332,15 @@ export const Todo = (
                 }}
                 authenticate={(req, res, next) => {
                     // Authenticate the http request
-                    authenticate(req.headers, JWT_SECRET);
+                    let httpUser = null;
+                    try {
+                        user = authenticate(req.headers, JWT_SECRET);
+                    } catch (e) {}
                     // Make sure the client is the same
-                    if (req.headers['x-unique-id'] !== clientId) {
+                    if (
+                        req.headers['x-unique-id'] !== clientId ||
+                        user?.id !== httpUser?.id
+                    ) {
                         throw new Error('Unauthorized');
                     }
                     next();
