@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.reactServer = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _apolloServerExpress = require("apollo-server-express");
 var _graphqlTools = require("graphql-tools");
@@ -33,6 +34,8 @@ var _Lists = require("./components/Lists");
 var _WebPushManager = require("./components/WebPushManager");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _templateObject, _templateObject2;
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
 var PORT = 4000;
@@ -86,10 +89,40 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   server: httpServer,
   path: apolloServer.graphqlPath
 });
+var landingList1 = {
+  id: 'landing-list-1',
+  title: 'Hello World',
+  todos: [{
+    id: 'todo-0',
+    title: 'Hello World',
+    completed: true
+  }, {
+    id: 'todo-1',
+    title: 'Add your first Todo Item',
+    completed: false
+  }, {
+    id: 'todo-2',
+    title: 'Add a counter item by clicking +',
+    completed: false
+  }],
+  order: ['todo-0', 'todo-1', 'todo-2']
+};
+var landingList2 = {
+  id: 'landing-list-2',
+  title: 'Colors',
+  color: '#ABDDA477',
+  todos: [{
+    id: 'counter-0',
+    type: 'Counter',
+    count: 3,
+    title: 'Glasses of water'
+  }],
+  order: ['counter-0']
+};
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
-  }, "votings"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
   }, "votings-multiple"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],

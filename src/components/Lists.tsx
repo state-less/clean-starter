@@ -137,7 +137,7 @@ export const Todo = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
-    const clientId = context.headers['x-unique-id'];
+    const clientId = context?.headers?.['x-unique-id'] || 'server';
 
     // We need to obtain the client id manually since we are not using useState
     // We are not using use state because of a bug that prevents multiple state updates in the same function
@@ -373,7 +373,7 @@ export const Counter = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
-    const clientId = context.headers['x-unique-id'];
+    const clientId = context.headers?.['x-unique-id'] || 'server';
 
     // We need to obtain the client id manually since we are not using useState
     // We are not using use state because of a bug that prevents multiple state updates in the same function
@@ -525,7 +525,7 @@ export const List = (
         todos: initialTodos = [],
         order: initialOrder, // = initialTodos.map((_, i) => i),
         archived: initialArchived = false,
-        color: initialColor = 'white',
+        color: initialColor = '',
         points: initialPoints = 0,
         labels: initialLabels = [],
         settings: initialSettings,
@@ -553,7 +553,7 @@ export const List = (
         } catch (e) {}
 
     const store = Dispatcher.getCurrent().getStore();
-    const clientId = context.headers['x-unique-id'];
+    const clientId = context?.headers?.['x-unique-id'] || 'server';
 
     const points = store.getState<number>(initialPoints, {
         key: `points`,

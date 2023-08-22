@@ -60,7 +60,7 @@ var checkLimits = function checkLimits(items, todo) {
   return !reachedLimit;
 };
 var Todo = function Todo(_ref3, _ref4) {
-  var _user, _user2;
+  var _context$headers, _user, _user2;
   var id = _ref3.id,
     completed = _ref3.completed,
     title = _ref3.title,
@@ -91,7 +91,7 @@ var Todo = function Todo(_ref3, _ref4) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
-  var clientId = context.headers['x-unique-id'];
+  var clientId = (context === null || context === void 0 ? void 0 : (_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
 
   // We need to obtain the client id manually since we are not using useState
   // We are not using use state because of a bug that prevents multiple state updates in the same function
@@ -255,7 +255,7 @@ var Todo = function Todo(_ref3, _ref4) {
 };
 exports.Todo = Todo;
 var Counter = function Counter(_ref5, _ref6) {
-  var _user5, _user6;
+  var _context$headers2, _user5, _user6;
   var id = _ref5.id,
     _ref5$count = _ref5.count,
     count = _ref5$count === void 0 ? 0 : _ref5$count,
@@ -281,7 +281,7 @@ var Counter = function Counter(_ref5, _ref6) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
-  var clientId = context.headers['x-unique-id'];
+  var clientId = ((_context$headers2 = context.headers) === null || _context$headers2 === void 0 ? void 0 : _context$headers2['x-unique-id']) || 'server';
 
   // We need to obtain the client id manually since we are not using useState
   // We are not using use state because of a bug that prevents multiple state updates in the same function
@@ -412,7 +412,7 @@ var Expense = function Expense(_ref7, _ref8) {
 };
 exports.Expense = Expense;
 var List = function List(_ref9, _ref10) {
-  var _user8, _user9, _user10, _user11, _user12, _user13, _user14, _user15;
+  var _context$headers3, _user8, _user9, _user10, _user11, _user12, _user13, _user14, _user15;
   var id = _ref9.id,
     initialTitle = _ref9.title,
     _ref9$todos = _ref9.todos,
@@ -421,7 +421,7 @@ var List = function List(_ref9, _ref10) {
     _ref9$archived = _ref9.archived,
     initialArchived = _ref9$archived === void 0 ? false : _ref9$archived,
     _ref9$color = _ref9.color,
-    initialColor = _ref9$color === void 0 ? 'white' : _ref9$color,
+    initialColor = _ref9$color === void 0 ? '' : _ref9$color,
     _ref9$points = _ref9.points,
     initialPoints = _ref9$points === void 0 ? 0 : _ref9$points,
     _ref9$labels = _ref9.labels,
@@ -435,7 +435,7 @@ var List = function List(_ref9, _ref10) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
-  var clientId = context.headers['x-unique-id'];
+  var clientId = (context === null || context === void 0 ? void 0 : (_context$headers3 = context.headers) === null || _context$headers3 === void 0 ? void 0 : _context$headers3['x-unique-id']) || 'server';
   var points = store.getState(initialPoints, {
     key: "points",
     scope: "".concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || clientId)
@@ -739,7 +739,7 @@ var exportData = function exportData(_ref11) {
   });
 };
 var MyLists = function MyLists(_, _ref12) {
-  var _context$headers, _user17, _user18;
+  var _context$headers4, _user17, _user18;
   var context = _ref12.context,
     key = _ref12.key;
   var user = null;
@@ -747,7 +747,7 @@ var MyLists = function MyLists(_, _ref12) {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var store = _reactServer.Dispatcher.getCurrent().getStore();
-  var clientId = ((_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
+  var clientId = ((_context$headers4 = context.headers) === null || _context$headers4 === void 0 ? void 0 : _context$headers4['x-unique-id']) || 'server';
   var points = store.getState(null, {
     key: 'points',
     scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)

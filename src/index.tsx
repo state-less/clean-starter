@@ -30,7 +30,7 @@ import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
 import { Platform } from './components/Forum';
-import { MyLists, MyListsMeta } from './components/Lists';
+import { List, MyLists, MyListsMeta } from './components/Lists';
 import { WebPushManager } from './components/WebPushManager';
 
 Dispatcher.getCurrent().setStore(store);
@@ -100,6 +100,44 @@ SubscriptionServer.create(
     }
 );
 
+const landingList1 = {
+    id: 'landing-list-1',
+    title: 'Hello World',
+    todos: [
+        {
+            id: 'todo-0',
+            title: 'Hello World',
+            completed: true,
+        },
+        {
+            id: 'todo-1',
+            title: 'Add your first Todo Item',
+            completed: false,
+        },
+        {
+            id: 'todo-2',
+            title: 'Add a counter item by clicking +',
+            completed: false,
+        },
+    ],
+    order: ['todo-0', 'todo-1', 'todo-2'],
+};
+
+const landingList2 = {
+    id: 'landing-list-2',
+    title: 'Colors',
+    color: '#ABDDA477',
+    todos: [
+        {
+            id: 'counter-0',
+            type: 'Counter',
+            count: 3,
+            title: 'Glasses of water',
+        },
+    ],
+    order: ['counter-0'],
+};
+
 export const reactServer = (
     <Server key="server">
         <ChatApp key="chat" />
@@ -114,6 +152,8 @@ export const reactServer = (
         <MyLists key="my-lists" />
         <MyListsMeta key="my-lists-points" />
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
+        <List key="landing-list-1" {...landingList1} />
+        <List key="landing-list-2" {...landingList2} />
         <Votings key="votings-multiple" policies={[]} />
         <Session key="session" />
         <Poll
