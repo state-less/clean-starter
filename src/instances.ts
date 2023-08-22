@@ -21,5 +21,5 @@ app.use(
         origin: true,
     })
 );
-store.sync(20 * 1000);
+store.sync(1 * 60 * 1000);
 notificationEngine.start();

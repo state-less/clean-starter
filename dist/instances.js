@@ -34,5 +34,5 @@ app.options('/*', (0, _cors["default"])({
 app.use((0, _cors["default"])({
   origin: true
 }));
-store.sync(20 * 1000);
+store.sync(1 * 60 * 1000);
 notificationEngine.start();
