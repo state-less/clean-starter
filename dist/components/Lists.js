@@ -238,14 +238,14 @@ var Todo = function Todo(_ref3, _ref4) {
         res.send(todo);
       },
       authenticate: function authenticate(req, res, next) {
-        var _user4;
-        // Authenticate the http request
+        var _user4, _httpUser;
         var httpUser = null;
         try {
-          user = (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
+          // Authenticate the http request
+          httpUser = (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
         } catch (e) {}
-        // Make sure the client is the same
-        if (req.headers['x-unique-id'] !== clientId || ((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) !== (httpUser === null || httpUser === void 0 ? void 0 : httpUser.id)) {
+        // Make sure the client and user is the same as the one who rendered the component
+        if (req.headers['x-unique-id'] !== clientId || ((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) !== ((_httpUser = httpUser) === null || _httpUser === void 0 ? void 0 : _httpUser.id)) {
           throw new Error('Unauthorized');
         }
         next();

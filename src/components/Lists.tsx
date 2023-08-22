@@ -331,12 +331,12 @@ export const Todo = (
                     res.send(todo);
                 }}
                 authenticate={(req, res, next) => {
-                    // Authenticate the http request
                     let httpUser = null;
                     try {
-                        user = authenticate(req.headers, JWT_SECRET);
+                        // Authenticate the http request
+                        httpUser = authenticate(req.headers, JWT_SECRET);
                     } catch (e) {}
-                    // Make sure the client is the same
+                    // Make sure the client and user is the same as the one who rendered the component
                     if (
                         req.headers['x-unique-id'] !== clientId ||
                         user?.id !== httpUser?.id
