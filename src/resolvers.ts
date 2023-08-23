@@ -170,6 +170,11 @@ const callFunction = async (parent, args, context) => {
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
         Dispatcher.getCurrent().addCurrentComponent(component);
+        Dispatcher.getCurrent().setClientContext({
+            context,
+            initiator: Initiator.FunctionCall,
+            clientProps: {},
+        });
         const start = Date.now();
         const result = fn(...fnArgs);
         const end = Date.now();
