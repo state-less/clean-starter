@@ -645,7 +645,7 @@ export const List = (
             throw new Error('Invalid item');
         }
         setTodos([...todos, newItem]);
-        setOrder([todoId, ...order]);
+        setOrder([...order, todoId]);
         points.value += 1;
         return newItem;
     };
