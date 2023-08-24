@@ -119,10 +119,21 @@ var landingList2 = {
   }],
   order: ['counter-0']
 };
+var demoList1 = {
+  id: 'demo-list-1',
+  title: 'Todos',
+  order: ['todo-0'],
+  todos: [{
+    id: 'todo-0',
+    title: 'Todo',
+    type: 'Todo',
+    completed: false
+  }]
+};
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
-  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, demoList1), "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
   }, "votings-multiple"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],

@@ -137,7 +137,19 @@ const landingList2 = {
     ],
     order: ['counter-0'],
 };
-
+const demoList1 = {
+    id: 'demo-list-1',
+    title: 'Todos',
+    order: ['todo-0'],
+    todos: [
+        {
+            id: 'todo-0',
+            title: 'Todo',
+            type: 'Todo',
+            completed: false,
+        },
+    ],
+};
 export const reactServer = (
     <Server key="server">
         <ChatApp key="chat" />
@@ -154,6 +166,7 @@ export const reactServer = (
         <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
         <List key="landing-list-1" {...landingList1} />
         <List key="landing-list-2" {...landingList2} />
+        <List key="todos" {...demoList1} />
         <Votings key="votings-multiple" policies={[]} />
         <Session key="session" />
         <Poll
