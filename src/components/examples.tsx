@@ -1,4 +1,4 @@
-import { Scopes, useState } from '@state-less/react-server';
+import { Scopes, useState, clientKey } from '@state-less/react-server';
 import { ServerSideProps } from './ServerSideProps';
 
 export const HelloWorldExample1 = () => {
@@ -18,7 +18,7 @@ export const HelloWorldExample1 = () => {
     );
 };
 
-export const HelloWorldExample2 = () => {
+export const HelloWorldExample2 = (props, { key, context }) => {
     const [count, setState] = useState(0, {
         key: 'count',
         scope: Scopes.Global,
@@ -30,7 +30,7 @@ export const HelloWorldExample2 = () => {
 
     return (
         <ServerSideProps
-            key="hello-world-2-props"
+            key={clientKey(`${key}-props`, context)}
             count={count}
             increase={increase}
         />
