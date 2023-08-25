@@ -521,7 +521,7 @@ var List = function List(_ref9, _ref10) {
       throw new Error('Invalid item');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
-    setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
+    setOrder([].concat((0, _toConsumableArray2["default"])(order), [todoId]));
     points.value += 1;
     return newItem;
   };
@@ -766,6 +766,7 @@ var MyLists = function MyLists(_, _ref12) {
     order = state.order;
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
+    console.log('New List', list);
     var newList = _objectSpread(_objectSpread({}, list), {}, {
       order: [],
       id: id,
@@ -873,7 +874,7 @@ var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
 };
 var isValidList = function isValidList(list) {
-  return list.id && list.title && list.todos && list.order && list.order.every(function (id) {
+  return list.id && list.todos && list.order && list.order.every(function (id) {
     return typeof id === 'string';
   }) && list.todos.every(function (todo) {
     return isValidItem(todo);

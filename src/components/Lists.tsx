@@ -1040,7 +1040,6 @@ type ListObject = {
 const isValidList = (list: ListObject) => {
     return (
         list.id &&
-        list.title &&
         list.todos &&
         list.order &&
         list.order.every((id) => typeof id === 'string') &&
