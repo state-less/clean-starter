@@ -24,6 +24,7 @@ type TodoObject = {
     key?: string;
     id: string | null;
     title: string;
+    note?: string;
     completed: boolean;
     archived: boolean;
     lastModified?: number;
@@ -124,6 +125,7 @@ export const Todo = (
         lastNotified,
         dueDate = null,
         dueTime = null,
+        note,
         changeType,
         createdAt,
         color,
@@ -156,6 +158,7 @@ export const Todo = (
             valuePoints,
             creditedValuePoints,
             negativePoints,
+            note,
             dueDate,
             dueTime,
             type: 'Todo',
@@ -258,7 +261,15 @@ export const Todo = (
             reset: 1000 * 60 * 60 * reset,
         });
     };
-
+    const setNote = (note) => {
+        if (typeof note !== 'string' || note.length > 32000) {
+            throw new Error('Invalid note');
+        }
+        setTodo({
+            ...todo,
+            note,
+        });
+    };
     const setValuePoints = (valuePoints) => {
         if (
             (typeof valuePoints !== 'number' && valuePoints < 0) ||
@@ -317,6 +328,7 @@ export const Todo = (
             setTitle={setTitle}
             setDueDate={setDueDate}
             setDueTime={setDueTime}
+            setNote={setNote}
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
@@ -916,6 +928,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     const { lists, order } = state;
     const addEntry = (list: ListObject) => {
         const id = v4();
+        console.log('New List', list);
         const newList = {
             ...list,
             order: [],

@@ -81,6 +81,7 @@ var Todo = function Todo(_ref3, _ref4) {
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
     _ref3$dueTime = _ref3.dueTime,
     dueTime = _ref3$dueTime === void 0 ? null : _ref3$dueTime,
+    note = _ref3.note,
     _changeType = _ref3.changeType,
     createdAt = _ref3.createdAt,
     color = _ref3.color;
@@ -108,6 +109,7 @@ var Todo = function Todo(_ref3, _ref4) {
       valuePoints: valuePoints,
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
+      note: note,
       dueDate: dueDate,
       dueTime: dueTime,
       type: 'Todo',
@@ -180,6 +182,14 @@ var Todo = function Todo(_ref3, _ref4) {
       reset: 1000 * 60 * 60 * reset
     }));
   };
+  var setNote = function setNote(note) {
+    if (typeof note !== 'string' || note.length > 32000) {
+      throw new Error('Invalid note');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      note: note
+    }));
+  };
   var setValuePoints = function setValuePoints(valuePoints) {
     if (typeof valuePoints !== 'number' && valuePoints < 0 || valuePoints > 100) {
       throw new Error('Invalid value points');
@@ -226,6 +236,7 @@ var Todo = function Todo(_ref3, _ref4) {
     setTitle: setTitle,
     setDueDate: setDueDate,
     setDueTime: setDueTime,
+    setNote: setNote,
     type: "Todo",
     createdAt: createdAt,
     lastModified: todo.lastModified,
