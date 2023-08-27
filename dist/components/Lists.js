@@ -716,6 +716,10 @@ var exportData = function exportData(_ref11) {
       key: 'color',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
+    var title = store.getState(null, {
+      key: 'title',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
+    });
     var settings = store.getState(null, {
       key: 'settings',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
@@ -728,6 +732,7 @@ var exportData = function exportData(_ref11) {
       Object.assign(todo, stored.value);
     });
     data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
+      title: title.value,
       color: color.value,
       order: order.value,
       todos: todos.value,

@@ -866,6 +866,10 @@ const exportData = ({ key, user }) => {
             key: 'color',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
+        const title = store.getState(null, {
+            key: 'title',
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
+        });
         const settings = store.getState(null, {
             key: 'settings',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
@@ -880,6 +884,7 @@ const exportData = ({ key, user }) => {
 
         data[list.id] = {
             ...list,
+            title: title.value,
             color: color.value,
             order: order.value,
             todos: todos.value,
