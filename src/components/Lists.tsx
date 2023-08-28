@@ -665,7 +665,7 @@ export const List = (
     const removeEntry = (todoId: string) => {
         const store = Dispatcher.getCurrent().getStore();
         const todo = store.getState<TodoObject>(null, {
-            key: `todo-${todoId}`,
+            key: `todo`,
             scope: `${todoId}.${user?.id || Scopes.Client}`,
         });
         setOrder(order.filter((id) => id !== todoId));
@@ -675,6 +675,7 @@ export const List = (
             1 -
             (todo?.value?.archived ? 1 : 0) -
             (todo?.value?.valuePoints || 0);
+        return todo.value;
     };
 
     const addLabel = (label: TodoObject) => {
@@ -933,11 +934,10 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     const { lists, order } = state;
     const addEntry = (list: ListObject) => {
         const id = v4();
-        console.log('New List', list);
         const newList = {
+            id,
             ...list,
             order: [],
-            id,
             settings: {
                 defaultValuePoints: DEFAULT_VALUE_POINTS,
                 defaultType: 'Todo',
@@ -946,14 +946,16 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             createdAt: Date.now(),
         };
         const newLists = [newList, ...state.lists];
-        setState({ order: [id, ...state.order], lists: newLists });
+        setState({ order: [newList.id, ...state.order], lists: newLists });
     };
 
     const removeEntry = (id: string) => {
+        const removed = state.lists.find((list) => list.id === id);
         setState({
             lists: state.lists.filter((list) => list.id !== id),
             order: state.order.filter((listId) => listId !== id),
         });
+        return removed;
     };
 
     const exportUserData = () => {

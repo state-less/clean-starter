@@ -540,7 +540,7 @@ var List = function List(_ref9, _ref10) {
     var _user16, _todo$value, _todo$value2;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
     var todo = store.getState(null, {
-      key: "todo-".concat(todoId),
+      key: "todo",
       scope: "".concat(todoId, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     });
     setOrder(order.filter(function (id) {
@@ -550,6 +550,7 @@ var List = function List(_ref9, _ref10) {
       return todo.id !== todoId;
     }));
     points.value = points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0);
+    return todo.value;
   };
   var addLabel = function addLabel(label) {
     var labelId = (0, _uuid.v4)();
@@ -782,10 +783,10 @@ var MyLists = function MyLists(_, _ref12) {
     order = state.order;
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
-    console.log('New List', list);
-    var newList = _objectSpread(_objectSpread({}, list), {}, {
+    var newList = _objectSpread(_objectSpread({
+      id: id
+    }, list), {}, {
       order: [],
-      id: id,
       settings: {
         defaultValuePoints: DEFAULT_VALUE_POINTS,
         defaultType: 'Todo',
@@ -795,11 +796,14 @@ var MyLists = function MyLists(_, _ref12) {
     });
     var newLists = [newList].concat((0, _toConsumableArray2["default"])(state.lists));
     setState({
-      order: [id].concat((0, _toConsumableArray2["default"])(state.order)),
+      order: [newList.id].concat((0, _toConsumableArray2["default"])(state.order)),
       lists: newLists
     });
   };
   var removeEntry = function removeEntry(id) {
+    var removed = state.lists.find(function (list) {
+      return list.id === id;
+    });
     setState({
       lists: state.lists.filter(function (list) {
         return list.id !== id;
@@ -808,6 +812,7 @@ var MyLists = function MyLists(_, _ref12) {
         return listId !== id;
       })
     });
+    return removed;
   };
   var exportUserData = function exportUserData() {
     return exportData({
