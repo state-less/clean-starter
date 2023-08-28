@@ -6,6 +6,33 @@ The @state-less/clean-starter repository is designed to provide a starting point
 
 React Server allows the creation of server-side React components using TSX, promoting a component-driven architecture for building robust and maintainable backend solutions. By using @state-less/clean-starter, developers can quickly get started with this innovative approach to full-stack development.
 
+```tsx
+import { Scopes, useState, clientKey } from '@state-less/react-server';
+import { ServerSideProps } from './ServerSideProps';
+
+export const HelloWorldExample2 = (props, { key, context })  => {
+  // The useState hook looks familiar?
+  const [count, setState] = useState(0, {
+    key: "count",
+    scope: Scopes.Global,
+  });
+
+  // A simple function that can be executed from the client side.
+  const increase = () => {
+    setState(count + 1);
+  };
+
+  return (
+    // Simply pass down props to the client side.
+    <ServerSideProps
+      key={clientKey(`${key}-props`, context)}
+      count={count}
+      increase={increase}
+    />
+  );
+};
+```
+
 Use the familiar approach of React to build serverside applications in a declarative way. React has proven to be a successful framework for building large scale applications while keeping a clean state-management solution to provide reactive realtime enabled modern UIs. React favors a clean codebase due to its inherently modular structure and component driven approach. React allows you to cleanly abstract the complexity of modern applications using *states*, *hooks* and *components*. 
 
 React Server brings the same flexibility to the server side by giving you a Framework that handles TSX compilation, a small React engine that powers *hooks*, *states* and the lifecycle of *components*. It also abstracts data storage and data transportation into a common concept of *states*. Data is stored in *Stores* which can be accessed by components using *hooks* (`useState`). The `useState` hook provides reactivity and automatically re-renders the component when its value is updated using the setter. Data is transported by consuming server-side states / components on the clientside using the `useComponent` hook. We are using *GraphQL* as transportation layer to provide a robust foundation. 
