@@ -332,10 +332,20 @@ var Counter = function Counter(_ref5, _ref6) {
       archived: Date.now()
     }));
   };
+  var setTitle = function setTitle(title) {
+    if (typeof title !== 'string') {
+      throw new Error('Invalid title');
+    }
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      title: title,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, counter), {}, {
     archive: archive,
     increase: increase,
     decrease: decrease,
+    setTitle: setTitle,
     changeType: function changeType(type) {
       return _changeType2(id, type);
     },
@@ -401,12 +411,22 @@ var Expense = function Expense(_ref7, _ref8) {
       lastModified: Date.now()
     }));
   };
+  var setTitle = function setTitle(title) {
+    if (typeof title !== 'string') {
+      throw new Error('Invalid title');
+    }
+    setExpense(_objectSpread(_objectSpread({}, expense), {}, {
+      title: title,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, expense), {}, {
     archive: archive,
     changeType: function changeType(type) {
       return _changeType3(id, type);
     },
     setValue: setValue,
+    setTitle: setTitle,
     type: "Expense"
   }), (0, _reactServer.clientKey)("".concat(id, "-expense"), context));
 };
@@ -766,7 +786,6 @@ var MyLists = function MyLists(_, _ref12) {
     order = state.order;
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
-    console.log('New List', list);
     var newList = _objectSpread(_objectSpread({}, list), {}, {
       order: [],
       id: id,
@@ -862,7 +881,7 @@ var MyLists = function MyLists(_, _ref12) {
 };
 exports.MyLists = MyLists;
 var isValidTodo = function isValidTodo(todo) {
-  return todo.id && todo.title && 'completed' in todo;
+  return todo.id && 'completed' in todo;
 };
 var isValidCounter = function isValidCounter(counter) {
   return counter.id && 'count' in counter && counter.type === 'Counter';

@@ -432,6 +432,16 @@ export const Counter = (
         });
     };
 
+    const setTitle = (title) => {
+        if (typeof title !== 'string') {
+            throw new Error('Invalid title');
+        }
+        setCounter({
+            ...counter,
+            title,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-counter`, context)}
@@ -439,6 +449,7 @@ export const Counter = (
             archive={archive}
             increase={increase}
             decrease={decrease}
+            setTitle={setTitle}
             changeType={(type) => changeType(id, type)}
             type="Counter"
         />
@@ -502,6 +513,16 @@ export const Expense = (
             lastModified: Date.now(),
         });
     };
+    const setTitle = (title) => {
+        if (typeof title !== 'string') {
+            throw new Error('Invalid title');
+        }
+        setExpense({
+            ...expense,
+            title,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-expense`, context)}
@@ -509,6 +530,7 @@ export const Expense = (
             archive={archive}
             changeType={(type) => changeType(id, type)}
             setValue={setValue}
+            setTitle={setTitle}
             type="Expense"
         />
     );
@@ -1010,7 +1032,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     );
 };
 const isValidTodo = (todo): todo is TodoObject => {
-    return todo.id && todo.title && 'completed' in todo;
+    return todo.id && 'completed' in todo;
 };
 
 const isValidCounter = (counter): counter is CounterObject => {
