@@ -1076,7 +1076,7 @@ export const MyListsMeta = (props, { key, context }) => {
 
     return (
         <ServerSideProps
-            key="meta"
+            key={clientKey('my-lists-meta-props', context)}
             points={points}
             lastCompleted={lastCompleted}
         />

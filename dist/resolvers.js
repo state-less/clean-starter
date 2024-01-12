@@ -180,22 +180,21 @@ var callFunction = /*#__PURE__*/function () {
             initiator: _reactServer.Initiator.FunctionCall
           });
           if (!rendered.props[prop]) {
-            _context3.next = 13;
+            _context3.next = 12;
             break;
           }
           fn = rendered.props[prop].fn;
           _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
           start = Date.now();
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
-          end = Date.now();
-          console.log('Function call took', end - start, 'ms');
+          end = Date.now(); // console.log('Function call took', end - start, 'ms');
           _reactServer.Dispatcher.getCurrent().popCurrentComponent();
           return _context3.abrupt("return", result);
-        case 13:
+        case 12:
           return _context3.abrupt("return", {
             rendered: rendered
           });
-        case 14:
+        case 13:
         case "end":
           return _context3.stop();
       }
@@ -340,7 +339,6 @@ var resolvers = {
         setTimeout(function () {
           var key = args.key;
           var rendered = _internals.renderCache[key];
-          console.log('PUBLISH AFTER SUBSCRIBE', rendered);
           _instances.pubsub.publish(generateComponentPubSubKey(args), {
             updateComponent: {
               rendered: rendered

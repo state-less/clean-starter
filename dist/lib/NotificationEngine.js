@@ -129,7 +129,6 @@ var NotificationEngine = /*#__PURE__*/function () {
               key: 'todos',
               scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
             });
-            console.log(clientId, 'User has ', todos.value.length, ' lists');
             todos.value.forEach(function (todo) {
               var stored = _this2._store.getState(null, {
                 key: itemTypeStateKeyMap[todo.type] || 'todo',

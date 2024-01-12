@@ -906,7 +906,7 @@ var MyListsMeta = function MyListsMeta(props, _ref14) {
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     points: points,
     lastCompleted: lastCompleted
-  }, "meta");
+  }, (0, _reactServer.clientKey)('my-lists-meta-props', context));
 };
 exports.MyListsMeta = MyListsMeta;
 var validationFunctions = {
