@@ -221,7 +221,9 @@ export const Todo = (
             [valuePoints]: filtered,
         };
 
-        points.value += comp ? -todo.creditedValuePoints : valuePoints;
+        points.setValue(
+            points.value + (comp ? -todo.creditedValuePoints : valuePoints)
+        );
 
         return newTodo;
     };
@@ -232,7 +234,7 @@ export const Todo = (
             ...todo,
             archived: true,
         });
-        points.value += 1;
+        points.setValue(points.value + 1);
     };
 
     const setReset = (reset) => {
@@ -646,7 +648,7 @@ export const List = (
         }
         setTodos([...todos, newItem]);
         setOrder([todoId, ...order]);
-        points.value += 1;
+        points.setValue(points.value + 1);
         return newItem;
     };
 
@@ -658,11 +660,12 @@ export const List = (
         });
         setOrder(order.filter((id) => id !== todoId));
         setTodos(todos.filter((todo) => todo.id !== todoId));
-        points.value =
+        points.setValue(
             points.value -
-            1 -
-            (todo?.value?.archived ? 1 : 0) -
-            (todo?.value?.valuePoints || 0);
+                1 -
+                (todo?.value?.archived ? 1 : 0) -
+                (todo?.value?.valuePoints || 0)
+        );
     };
 
     const addLabel = (label: TodoObject) => {
@@ -674,13 +677,13 @@ export const List = (
         }
 
         setLabels([...labels, newLabel]);
-        points.value += 1;
+        points.setValue(points.value + 1);
         return newLabel;
     };
 
     const removeLabel = (labelId: string) => {
         setLabels(labels.filter((label) => label.id !== labelId));
-        points.value = points.value - 1;
+        points.setValue(points.value - 1);
     };
 
     const archive = () => {
@@ -985,7 +988,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
         });
 
         setState({ lists, order });
-        points.value = storedPoints;
+        points.setValue(storedPoints);
     };
     const setOrder = (order) => {
         if (!order.every((id) => typeof id === 'string')) {

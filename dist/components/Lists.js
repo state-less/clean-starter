@@ -158,7 +158,7 @@ var Todo = function Todo(_ref3, _ref4) {
       return item.lastModified + (((_limits$valuePoints = limits[valuePoints]) === null || _limits$valuePoints === void 0 ? void 0 : _limits$valuePoints[0]) || 0) > Date.now();
     });
     lastCompleted.value = _objectSpread(_objectSpread({}, lastCompleted.value || {}), {}, (0, _defineProperty2["default"])({}, valuePoints, filtered));
-    points.value += comp ? -todo.creditedValuePoints : valuePoints;
+    points.setValue(points.value + (comp ? -todo.creditedValuePoints : valuePoints));
     return newTodo;
   };
   var archive = function archive() {
@@ -166,7 +166,7 @@ var Todo = function Todo(_ref3, _ref4) {
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       archived: true
     }));
-    points.value += 1;
+    points.setValue(points.value + 1);
   };
   var setReset = function setReset(reset) {
     if (reset === 0 || reset === null || reset === undefined || reset === '' || reset === '-') {
@@ -522,7 +522,7 @@ var List = function List(_ref9, _ref10) {
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
     setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
-    points.value += 1;
+    points.setValue(points.value + 1);
     return newItem;
   };
   var removeEntry = function removeEntry(todoId) {
@@ -538,7 +538,7 @@ var List = function List(_ref9, _ref10) {
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
     }));
-    points.value = points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0);
+    points.setValue(points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0));
   };
   var addLabel = function addLabel(label) {
     var labelId = (0, _uuid.v4)();
@@ -549,14 +549,14 @@ var List = function List(_ref9, _ref10) {
       throw new Error('Invalid todo');
     }
     setLabels([].concat((0, _toConsumableArray2["default"])(labels), [newLabel]));
-    points.value += 1;
+    points.setValue(points.value + 1);
     return newLabel;
   };
   var removeLabel = function removeLabel(labelId) {
     setLabels(labels.filter(function (label) {
       return label.id !== labelId;
     }));
-    points.value = points.value - 1;
+    points.setValue(points.value - 1);
   };
   var archive = function archive() {
     setArchived(true);
@@ -834,7 +834,7 @@ var MyLists = function MyLists(_, _ref12) {
       lists: lists,
       order: order
     });
-    points.value = storedPoints;
+    points.setValue(storedPoints);
   };
   var setOrder = function setOrder(order) {
     if (!order.every(function (id) {

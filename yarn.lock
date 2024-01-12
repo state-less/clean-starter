@@ -1710,7 +1710,7 @@
 
 "@state-less/react-server@state-less/react-server#feat/transport":
   version "2.0.28"
-  resolved "https://codeload.github.com/state-less/react-server/tar.gz/6313ba47b1ca75aeeca5baf7529a83c26babe0a4"
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/6df5d8a4199ed42178f621221ea46cf078e057b9"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"
