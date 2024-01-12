@@ -9,7 +9,6 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 var _l0g = require("l0g");
 var _Color = require("l0g/formatters/Color");
 var _ConsoleTransport = require("l0g/transports/ConsoleTransport");
-var _FileTransport = require("l0g/transports/FileTransport");
 var _ReloadConfigFeature = require("l0g/features/ReloadConfigFeature");
 var _format = require("./format");
 var _require = require('../../package.json'),
@@ -48,10 +47,10 @@ _Color.Color.colors.key.level.notice = 'yellow';
 /** Define the used transports */
 var transports = [new _ConsoleTransport.ConsoleTransport({
   formatter: formatter
-}), /** Uncomment the line to output a log file */
-new _FileTransport.FileTransport("".concat(packageName, ".log"), {
-  formatter: _Color.Formatter
-})];
+})
+/** Uncomment the line to output a log file */
+// new FileTransport(`${packageName}.log`, { formatter: Formatter }),
+];
 
 /** Create the base logger instance. With a default LOG_LEVEL of 'debug' if no environment variable is present */
 var logger = new _l0g.Logger('debug', {

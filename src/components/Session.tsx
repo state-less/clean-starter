@@ -9,6 +9,12 @@ export const Session = (props, { context = { headers: {} } }) => {
         return <ServerSideProps session={null} />;
     }
 
-    const session = authenticate(headers, JWT_SECRET);
+    let session = null;
+    try {
+        session = authenticate(headers, JWT_SECRET);
+    } catch (e) {
+        // ignore
+    }
+
     return <ServerSideProps session={session} />;
 };

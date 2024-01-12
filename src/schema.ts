@@ -10,6 +10,8 @@ export const typeDefs = gql`
         hello: String
         getState(key: ID!, scope: String!): State
         renderComponent(key: ID!, props: JSON): Component
+        unmountComponent(key: ID!): Int
+        mountComponent(key: ID!, props: JSON): Boolean
     }
 
     type Component {
@@ -34,7 +36,12 @@ export const typeDefs = gql`
 
     type Subscription {
         updateState(key: ID!, scope: String!): State!
-        updateComponent(key: ID!, scope: String!): Component!
+        updateComponent(
+            key: ID!
+            scope: String!
+            id: String!
+            bearer: String
+        ): Component!
     }
 
     type TestComponent {

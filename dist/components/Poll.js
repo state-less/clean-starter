@@ -34,7 +34,7 @@ var Poll = function Poll(_ref, _ref2) {
     votes = _useState2[0],
     setVotes = _useState2[1];
   var _useState3 = (0, _reactServer.useState)(-1, {
-      key: 'voted',
+      key: "voted-".concat(key),
       scope: _reactServer.Scopes.Client
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
@@ -67,6 +67,6 @@ var Poll = function Poll(_ref, _ref2) {
     values: values,
     voted: voted,
     vote: vote
-  }, "poll-props");
+  }, (0, _reactServer.clientKey)("poll-props-".concat(key), context));
 };
 exports.Poll = Poll;

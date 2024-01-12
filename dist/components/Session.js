@@ -19,7 +19,12 @@ var Session = function Session(props, _ref) {
       session: null
     });
   }
-  var session = (0, _reactServer.authenticate)(headers, _config.JWT_SECRET);
+  var session = null;
+  try {
+    session = (0, _reactServer.authenticate)(headers, _config.JWT_SECRET);
+  } catch (e) {
+    // ignore
+  }
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     session: session
   });

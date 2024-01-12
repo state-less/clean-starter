@@ -1,6 +1,13 @@
-import { render, StateValue } from '@state-less/react-server';
+import {
+    clientKey,
+    Dispatcher,
+    Initiator,
+    render,
+    StateValue,
+} from '@state-less/react-server';
 
 import { globalInstance } from '@state-less/react-server/dist/lib/reactServer';
+import { renderCache } from '@state-less/react-server/dist/lib/internals';
 
 import { Resolver, State } from '@state-less/react-server/dist/types/graphql';
 import jwt from 'jsonwebtoken';
@@ -9,7 +16,8 @@ import jwksClient from 'jwks-rsa';
 import { pubsub, store } from './instances';
 import TimestampType from './lib/TimestampType';
 import { JWT_SECRET } from './config';
-import { GoogleOAuthToken } from './lib/types';
+import { GoogleToken } from './lib/types';
+import logger from './lib/logger';
 
 enum AuthStrategy {
     Google = 'google',
@@ -39,7 +47,7 @@ type AuthStrategyData = {
 const authenticateGoogle = async ({
     accessToken,
     idToken,
-}: GoogleAuthData): Promise<PartialAuth<GoogleOAuthToken>> => {
+}: GoogleAuthData): Promise<PartialAuth<GoogleToken>> => {
     try {
         await verifyGoogleSignature(accessToken);
     } catch (e) {
@@ -56,12 +64,14 @@ const authenticateGoogle = async ({
     };
 };
 
-const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
+export const generatePubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
     return `${state.key}:${state.scope}`;
 };
 
-const generateComponentPubSubKey = (state: Pick<State, 'key' | 'scope'>) => {
-    return `component::${state.key}`;
+const generateComponentPubSubKey = (
+    state: Pick<State, 'key' | 'scope'> & { id: string }
+) => {
+    return `component::${state.id}::${state.key}`;
 };
 
 const useState = async (parent, args) => {
@@ -75,15 +85,61 @@ const useState = async (parent, args) => {
     };
 };
 
+const lastClientProps: Record<string, Record<string, any>> = {};
+const renderedComponents: Record<string, string[]> = {};
+
+const unmountComponent = (parent, args, context) => {
+    const { key } = args;
+    const cleanup = Dispatcher.getCurrent().getCleanupFns(
+        clientKey(key, context)
+    );
+    const len = cleanup?.length || 0;
+    cleanup.forEach((fn) => fn());
+    return len;
+};
+
+const mountComponent = (parent, args, context) => {
+    const { key, props } = args;
+
+    const component = globalInstance.components.get(key);
+
+    try {
+        logger.log`Rendering compoenent ${key} .`;
+
+        const rendered = render(component, {
+            clientProps: props,
+            context,
+            initiator: Initiator.Mount,
+        });
+
+        return true;
+    } catch (e) {
+        console.log('Error mounting component', e);
+        throw e;
+    }
+};
+
 const renderComponent = (parent, args, context) => {
     const { key, props } = args;
+    lastClientProps[clientKey(key, context)] = props;
     const component = globalInstance.components.get(key);
+
+    renderedComponents[clientKey('components-', context)] =
+        renderedComponents[clientKey('components-', context)] || [];
+    renderedComponents[clientKey('components-', context)].push(key);
+
     if (!component) {
         throw new Error('Component not found');
     }
 
     try {
-        const rendered = render(component, { clientProps: props, context });
+        logger.log`Rendering compoenent ${key} .`;
+
+        const rendered = render(component, {
+            clientProps: props,
+            context,
+            initiator: Initiator.RenderClient,
+        });
         return {
             rendered,
         };
@@ -108,10 +164,20 @@ const setState: Resolver<unknown, State> = (parent, args) => {
 const callFunction = async (parent, args, context) => {
     const { key, prop, args: fnArgs } = args;
     const component = globalInstance.components.get(key);
-    const rendered = render(component, context);
+    const clientProps = lastClientProps[clientKey(key, context)];
+    const rendered = render(component, {
+        context,
+        clientProps,
+        initiator: Initiator.FunctionCall,
+    });
     if (rendered.props[prop]) {
         const { fn } = rendered.props[prop];
+        Dispatcher.getCurrent().addCurrentComponent(component);
+        const start = Date.now();
         const result = fn(...fnArgs);
+        const end = Date.now();
+        console.log('Function call took', end - start, 'ms');
+        Dispatcher.getCurrent().popCurrentComponent();
         return result;
     }
 
@@ -165,7 +231,7 @@ const decodeGoogleToken = async (token): Promise<GoogleOAuthToken> => {
                 if (err) {
                     reject(err);
                 }
-                resolve(decoded as GoogleOAuthToken);
+                resolve(decoded as GoogleToken);
             }
         );
     });
@@ -210,6 +276,8 @@ export const resolvers = {
     Query: {
         getState: useState,
         renderComponent,
+        unmountComponent,
+        mountComponent,
     },
     Mutation: {
         setState,
@@ -223,11 +291,26 @@ export const resolvers = {
             },
         },
         updateComponent: {
-            subscribe: (parent, args: Pick<State, 'key' | 'scope'>) => {
-                console.log(
-                    'Subscribing to component',
-                    generateComponentPubSubKey(args)
-                );
+            subscribe: (
+                parent,
+                args: Pick<State, 'key' | 'scope'> & {
+                    id: string;
+                    bearer?: string;
+                }
+            ) => {
+                logger.log`Subscribing to component ${generateComponentPubSubKey(
+                    args
+                )}`;
+
+                setTimeout(() => {
+                    const key = args.key;
+                    const rendered = renderCache[key];
+                    console.log('PUBLISH AFTER SUBSCRIBE', rendered);
+                    pubsub.publish(generateComponentPubSubKey(args), {
+                        updateComponent: { rendered },
+                    });
+                }, 0);
+
                 return pubsub.asyncIterator(generateComponentPubSubKey(args));
             },
         },

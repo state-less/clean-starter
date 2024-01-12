@@ -14,21 +14,28 @@ import {
     createContext,
 } from '@state-less/react-server';
 
-import { pubsub, store } from './instances';
+import { app, pubsub, store } from './instances';
 
-import { resolvers } from './resolvers';
+import { generatePubSubKey, resolvers } from './resolvers';
 import { typeDefs } from './schema';
 import { Navigation } from './components/Navigation';
 import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
 import { DynamicPage, Pages } from './components/Pages';
-import { Todos } from './components/Todos';
+import { VotingPolicies, Votings } from './components/Votings';
 import { Session } from './components/Session';
 import { Poll, PollActions } from './components/Poll';
+import { CommentPolicies, Comments } from './components/Comments';
+import logger from './lib/logger';
+import { Features } from './components/Features';
+import { ViewCounter } from './components/ViewCounter';
+import { ChatApp } from './components/ChatRoom';
+import { Platform } from './components/Forum';
+import { List, MyLists, MyListsMeta } from './components/Lists';
+import { WebPushManager } from './components/WebPushManager';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
 
-const app = express();
 const PORT = 4000;
 
 const schema = makeExecutableSchema({
@@ -40,24 +47,51 @@ const apolloServer = new ApolloServer({
     schema,
     context: ({ req }) => {
         const { headers } = req;
+
         return { headers };
     },
 });
-
 // Create a HTTP server
 const httpServer = createServer(app);
 
+const connections = store.createState(0, {
+    key: 'connections',
+    scope: 'global',
+});
 // Create a WebSocket server for subscriptions
+const clients = new WeakMap();
 SubscriptionServer.create(
     {
         schema,
         execute,
         subscribe,
-        onConnect: () => {
-            console.log('Client connected');
+        onConnect: (params, socket) => {
+            logger.log`Client connected`;
+            connections.value += 1;
+            pubsub.publish(generatePubSubKey(connections), {
+                updateState: connections,
+            });
+
+            console.log(
+                'Connnect',
+                socket.upgradeReq.headers.cookie?.match(
+                    /x-react-server-id=(.+?);/
+                )?.[1]
+            );
+            return { headers: params.headers };
         },
-        onDisconnect: () => {
-            console.log('Client disconnected');
+        onDisconnect: (params, socket) => {
+            connections.value = Math.max(0, connections.value - 1);
+            pubsub.publish(generatePubSubKey(connections), {
+                updateState: connections,
+            });
+
+            console.log(
+                'Disconnect',
+                socket.request.headers.cookie?.match(
+                    /x-react-server-id=(.+?);/
+                )?.[1]
+            );
         },
     },
     {
@@ -66,15 +100,61 @@ SubscriptionServer.create(
     }
 );
 
+const landingList1 = {
+    id: 'landing-list-1',
+    title: 'Hello World',
+    todos: [
+        {
+            id: 'todo-0',
+            title: 'Hello World',
+            completed: true,
+        },
+        {
+            id: 'todo-1',
+            title: 'Add your first Todo Item',
+            completed: false,
+        },
+        {
+            id: 'todo-2',
+            title: 'Add a counter item by clicking +',
+            completed: false,
+        },
+    ],
+    order: ['todo-0', 'todo-1', 'todo-2'],
+};
+
+const landingList2 = {
+    id: 'landing-list-2',
+    title: 'Colors',
+    color: '#ABDDA477',
+    todos: [
+        {
+            id: 'counter-0',
+            type: 'Counter',
+            count: 3,
+            title: 'Glasses of water',
+        },
+    ],
+    order: ['counter-0'],
+};
+
 export const reactServer = (
     <Server key="server">
+        <ChatApp key="chat" />
+        <ViewCounter key="view-counter" />
+        <Features key="features" />
         <TestComponent key="test" />
         <Navigation key="navigation" />
         <HelloWorldExample1 key="hello-world-1" />
         <HelloWorldExample2 key="hello-world-2" />
         <Pages key="pages" />
         <DynamicPage key="page" />
-        <Todos key="todos" />
+        <MyLists key="my-lists" />
+        <MyListsMeta key="my-lists-points" />
+        <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
+        <List key="landing-list-1" {...landingList1} />
+        <List key="landing-list-2" {...landingList2} />
+        <Votings key="votings-multiple" policies={[]} />
         <Session key="session" />
         <Poll
             key="poll"
@@ -97,6 +177,9 @@ export const reactServer = (
             ]}
             policies={[PollActions.Revert]}
         />
+        <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
+        <Platform key="platform" />
+        <WebPushManager key="web-push" />
     </Server>
 );
 
@@ -104,8 +187,13 @@ const node = render(reactServer, null, null);
 
 (async () => {
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({
+        app,
+        bodyParserConfig: {
+            limit: '10mb',
+        },
+    });
     httpServer.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}.`);
+        logger.log`Server listening on port ${PORT}.`;
     });
 })();

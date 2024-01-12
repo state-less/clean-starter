@@ -4,19 +4,23 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.resolvers = void 0;
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+exports.resolvers = exports.generatePubSubKey = void 0;
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _reactServer = require("@state-less/react-server");
 var _reactServer2 = require("@state-less/react-server/dist/lib/reactServer");
+var _internals = require("@state-less/react-server/dist/lib/internals");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 var _axios = _interopRequireDefault(require("axios"));
 var _jwksRsa = _interopRequireDefault(require("jwks-rsa"));
 var _instances = require("./instances");
 var _TimestampType = _interopRequireDefault(require("./lib/TimestampType"));
 var _config = require("./config");
+var _logger = _interopRequireDefault(require("./lib/logger"));
+var _templateObject, _templateObject2, _templateObject3;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var AuthStrategy = /*#__PURE__*/function (AuthStrategy) {
@@ -65,8 +69,9 @@ var authenticateGoogle = /*#__PURE__*/function () {
 var generatePubSubKey = function generatePubSubKey(state) {
   return "".concat(state.key, ":").concat(state.scope);
 };
+exports.generatePubSubKey = generatePubSubKey;
 var generateComponentPubSubKey = function generateComponentPubSubKey(state) {
-  return "component::".concat(state.key);
+  return "component::".concat(state.id, "::").concat(state.key);
 };
 var useState = /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(parent, args) {
@@ -93,17 +98,50 @@ var useState = /*#__PURE__*/function () {
     return _ref3.apply(this, arguments);
   };
 }();
-var renderComponent = function renderComponent(parent, args, context) {
+var lastClientProps = {};
+var renderedComponents = {};
+var unmountComponent = function unmountComponent(parent, args, context) {
+  var key = args.key;
+  var cleanup = _reactServer.Dispatcher.getCurrent().getCleanupFns((0, _reactServer.clientKey)(key, context));
+  var len = (cleanup === null || cleanup === void 0 ? void 0 : cleanup.length) || 0;
+  cleanup.forEach(function (fn) {
+    return fn();
+  });
+  return len;
+};
+var mountComponent = function mountComponent(parent, args, context) {
   var key = args.key,
     props = args.props;
   var component = _reactServer2.globalInstance.components.get(key);
+  try {
+    _logger["default"].log(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", " ."])), key);
+    var rendered = (0, _reactServer.render)(component, {
+      clientProps: props,
+      context: context,
+      initiator: _reactServer.Initiator.Mount
+    });
+    return true;
+  } catch (e) {
+    console.log('Error mounting component', e);
+    throw e;
+  }
+};
+var renderComponent = function renderComponent(parent, args, context) {
+  var key = args.key,
+    props = args.props;
+  lastClientProps[(0, _reactServer.clientKey)(key, context)] = props;
+  var component = _reactServer2.globalInstance.components.get(key);
+  renderedComponents[(0, _reactServer.clientKey)('components-', context)] = renderedComponents[(0, _reactServer.clientKey)('components-', context)] || [];
+  renderedComponents[(0, _reactServer.clientKey)('components-', context)].push(key);
   if (!component) {
     throw new Error('Component not found');
   }
   try {
+    _logger["default"].log(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Rendering compoenent ", " ."])), key);
     var rendered = (0, _reactServer.render)(component, {
       clientProps: props,
-      context: context
+      context: context,
+      initiator: _reactServer.Initiator.RenderClient
     });
     return {
       rendered: rendered
@@ -129,25 +167,35 @@ var setState = function setState(parent, args) {
 };
 var callFunction = /*#__PURE__*/function () {
   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(parent, args, context) {
-    var key, prop, fnArgs, component, rendered, fn, result;
+    var key, prop, fnArgs, component, clientProps, rendered, fn, start, result, end;
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           key = args.key, prop = args.prop, fnArgs = args.args;
           component = _reactServer2.globalInstance.components.get(key);
-          rendered = (0, _reactServer.render)(component, context);
+          clientProps = lastClientProps[(0, _reactServer.clientKey)(key, context)];
+          rendered = (0, _reactServer.render)(component, {
+            context: context,
+            clientProps: clientProps,
+            initiator: _reactServer.Initiator.FunctionCall
+          });
           if (!rendered.props[prop]) {
-            _context3.next = 7;
+            _context3.next = 13;
             break;
           }
           fn = rendered.props[prop].fn;
+          _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
+          start = Date.now();
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
+          end = Date.now();
+          console.log('Function call took', end - start, 'ms');
+          _reactServer.Dispatcher.getCurrent().popCurrentComponent();
           return _context3.abrupt("return", result);
-        case 7:
+        case 13:
           return _context3.abrupt("return", {
             rendered: rendered
           });
-        case 8:
+        case 14:
         case "end":
           return _context3.stop();
       }
@@ -271,7 +319,9 @@ var isValidAuthResponse = function isValidAuthResponse(auth) {
 var resolvers = {
   Query: {
     getState: useState,
-    renderComponent: renderComponent
+    renderComponent: renderComponent,
+    unmountComponent: unmountComponent,
+    mountComponent: mountComponent
   },
   Mutation: {
     setState: setState,
@@ -286,7 +336,17 @@ var resolvers = {
     },
     updateComponent: {
       subscribe: function subscribe(parent, args) {
-        console.log('Subscribing to component', generateComponentPubSubKey(args));
+        _logger["default"].log(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Subscribing to component ", ""])), generateComponentPubSubKey(args));
+        setTimeout(function () {
+          var key = args.key;
+          var rendered = _internals.renderCache[key];
+          console.log('PUBLISH AFTER SUBSCRIBE', rendered);
+          _instances.pubsub.publish(generateComponentPubSubKey(args), {
+            updateComponent: {
+              rendered: rendered
+            }
+          });
+        }, 0);
         return _instances.pubsub.asyncIterator(generateComponentPubSubKey(args));
       }
     }

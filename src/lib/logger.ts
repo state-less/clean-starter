@@ -6,6 +6,7 @@ import { ConsoleTransport } from 'l0g/transports/ConsoleTransport';
 import { FileTransport } from 'l0g/transports/FileTransport';
 import { ReloadConfigFeature } from 'l0g/features/ReloadConfigFeature';
 import { hasLogCfg, formatLogCfg } from './format';
+
 const { name: packageName } = require('../../package.json');
 
 const features = [];
@@ -46,7 +47,7 @@ const transports = [
         formatter,
     }),
     /** Uncomment the line to output a log file */
-    new FileTransport(`${packageName}.log`, { formatter: Formatter }),
+    // new FileTransport(`${packageName}.log`, { formatter: Formatter }),
 ];
 
 /** Create the base logger instance. With a default LOG_LEVEL of 'debug' if no environment variable is present */
