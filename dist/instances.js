@@ -12,13 +12,14 @@ var _express = _interopRequireDefault(require("express"));
 var _cors = _interopRequireDefault(require("cors"));
 var _logger = _interopRequireDefault(require("./lib/logger"));
 var _NotificationEngine = require("./lib/NotificationEngine");
+var _config = require("./config");
 var pubsub = new _graphqlSubscriptions.PubSub();
 exports.pubsub = pubsub;
 var store = new _reactServer.Store({
   // file: './store.json',
   // logger,
   transport: new _transport.PostgresTransport({
-    connectionString: 'postgres://postgres:mysecretpassword@localhost:5433/postgres'
+    connectionString: "postgres://postgres:".concat(_config.PG_PASSWORD, "@localhost:5433/postgres")
   })
 });
 exports.store = store;

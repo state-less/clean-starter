@@ -5,14 +5,14 @@ import express from 'express';
 import cors from 'cors';
 import logger from './lib/logger';
 import { NotificationEngine } from './lib/NotificationEngine';
+import { PG_PASSWORD } from './config';
 
 export const pubsub = new PubSub();
 export const store = new Store({
     // file: './store.json',
     // logger,
     transport: new PostgresTransport({
-        connectionString:
-            'postgres://postgres:mysecretpassword@localhost:5433/postgres',
+        connectionString: `postgres://postgres:${PG_PASSWORD}@localhost:5433/postgres`,
     }),
 });
 
