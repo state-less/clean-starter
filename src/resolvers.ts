@@ -176,7 +176,7 @@ const callFunction = async (parent, args, context) => {
         const start = Date.now();
         const result = fn(...fnArgs);
         const end = Date.now();
-        console.log('Function call took', end - start, 'ms');
+        // console.log('Function call took', end - start, 'ms');
         Dispatcher.getCurrent().popCurrentComponent();
         return result;
     }
@@ -305,7 +305,6 @@ export const resolvers = {
                 setTimeout(() => {
                     const key = args.key;
                     const rendered = renderCache[key];
-                    console.log('PUBLISH AFTER SUBSCRIBE', rendered);
                     pubsub.publish(generateComponentPubSubKey(args), {
                         updateComponent: { rendered },
                     });

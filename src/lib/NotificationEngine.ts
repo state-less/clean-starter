@@ -129,12 +129,6 @@ export class NotificationEngine {
                     key: 'todos',
                     scope: `${`list-${list.id}`}.${user?.id || clientId}`,
                 });
-                console.log(
-                    clientId,
-                    'User has ',
-                    todos.value.length,
-                    ' lists'
-                );
 
                 todos.value.forEach((todo) => {
                     const stored = this._store.getState(null, {
