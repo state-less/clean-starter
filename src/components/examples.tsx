@@ -1,7 +1,7 @@
-import { Scopes, useState } from '@state-less/react-server';
+import { Scopes, clientKey, useState } from '@state-less/react-server';
 import { ServerSideProps } from './ServerSideProps';
 
-export const HelloWorldExample1 = () => {
+export const HelloWorldExample1 = (props, { key, context }) => {
     const [count] = useState(0, { key: 'count', scope: 'global' });
 
     const increase = () => {
@@ -11,14 +11,14 @@ export const HelloWorldExample1 = () => {
     return (
         <ServerSideProps
             // Needed for reactivity
-            key="hello-world-1-props"
+            key={clientKey('hello-world-1-props', context)}
             count={count}
             increase={increase}
         />
     );
 };
 
-export const HelloWorldExample2 = () => {
+export const HelloWorldExample2 = (_props, { key, context }) => {
     const [count, setState] = useState(0, {
         key: 'count',
         scope: Scopes.Global,
@@ -30,7 +30,7 @@ export const HelloWorldExample2 = () => {
 
     return (
         <ServerSideProps
-            key="hello-world-2-props"
+            key={clientKey('hello-world-2-props', context)}
             count={count}
             increase={increase}
         />

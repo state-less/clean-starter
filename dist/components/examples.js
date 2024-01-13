@@ -9,7 +9,9 @@ var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/sli
 var _reactServer = require("@state-less/react-server");
 var _ServerSideProps = require("./ServerSideProps");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var HelloWorldExample1 = function HelloWorldExample1() {
+var HelloWorldExample1 = function HelloWorldExample1(props, _ref) {
+  var key = _ref.key,
+    context = _ref.context;
   var _useState = (0, _reactServer.useState)(0, {
       key: 'count',
       scope: 'global'
@@ -24,10 +26,12 @@ var HelloWorldExample1 = function HelloWorldExample1() {
   , {
     count: count,
     increase: increase
-  }, "hello-world-1-props");
+  }, (0, _reactServer.clientKey)('hello-world-1-props', context));
 };
 exports.HelloWorldExample1 = HelloWorldExample1;
-var HelloWorldExample2 = function HelloWorldExample2() {
+var HelloWorldExample2 = function HelloWorldExample2(_props, _ref2) {
+  var key = _ref2.key,
+    context = _ref2.context;
   var _useState3 = (0, _reactServer.useState)(0, {
       key: 'count',
       scope: _reactServer.Scopes.Global
@@ -41,6 +45,6 @@ var HelloWorldExample2 = function HelloWorldExample2() {
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     count: count,
     increase: increase
-  }, "hello-world-2-props");
+  }, (0, _reactServer.clientKey)('hello-world-2-props', context));
 };
 exports.HelloWorldExample2 = HelloWorldExample2;
