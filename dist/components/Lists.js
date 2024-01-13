@@ -282,6 +282,8 @@ var Counter = function Counter(_ref5, _ref6) {
     creditedValuePoints = _ref5$creditedValuePo === void 0 ? 0 : _ref5$creditedValuePo,
     _ref5$negativePoints = _ref5.negativePoints,
     negativePoints = _ref5$negativePoints === void 0 ? 0 : _ref5$negativePoints,
+    _ref5$cost = _ref5.cost,
+    cost = _ref5$cost === void 0 ? 0 : _ref5$cost,
     _ref5$dueDate = _ref5.dueDate,
     dueDate = _ref5$dueDate === void 0 ? null : _ref5$dueDate,
     _changeType2 = _ref5.changeType;
@@ -309,6 +311,7 @@ var Counter = function Counter(_ref5, _ref6) {
       valuePoints: valuePoints,
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
+      cost: cost,
       dueDate: dueDate,
       type: 'Counter'
     }, {
@@ -352,11 +355,21 @@ var Counter = function Counter(_ref5, _ref6) {
       lastModified: Date.now()
     }));
   };
+  var setCost = function setCost(cost) {
+    if (typeof cost !== 'number') {
+      throw new Error('Expected a number.');
+    }
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      cost: cost,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, counter), {}, {
     archive: archive,
     increase: increase,
     decrease: decrease,
     setTitle: setTitle,
+    setCost: setCost,
     changeType: function changeType(type) {
       return _changeType2(id, type);
     },
@@ -552,13 +565,8 @@ var List = function List(_ref9, _ref10) {
       throw new Error('Invalid item');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
-<<<<<<< HEAD
-    setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
-    points.setValue(points.value + 1);
-=======
     setOrder([].concat((0, _toConsumableArray2["default"])(order), [todoId]));
-    points.value += 1;
->>>>>>> 03c407037195270bc170ca100fdfb6f491246104
+    points.setValue(points.value + 1);
     return newItem;
   };
   var removeEntry = function removeEntry(todoId) {
@@ -574,12 +582,8 @@ var List = function List(_ref9, _ref10) {
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
     }));
-<<<<<<< HEAD
     points.setValue(points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0));
-=======
-    points.value = points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0);
     return todo.value;
->>>>>>> 03c407037195270bc170ca100fdfb6f491246104
   };
   var addLabel = function addLabel(label) {
     var labelId = (0, _uuid.v4)();

@@ -54,6 +54,7 @@ type CounterObject = {
     creditedValuePoints?: number;
     dueDate?: number | null;
     defaultValuePoints?: number;
+    cost?: number;
     createdAt?: number;
     type: string;
     changeType?: (id: string, type: string) => void;
@@ -375,6 +376,7 @@ export const Counter = (
         valuePoints = defaultValuePoints,
         creditedValuePoints = 0,
         negativePoints = 0,
+        cost = 0,
         dueDate = null,
         changeType,
     }: CounterObject,
@@ -406,6 +408,7 @@ export const Counter = (
             valuePoints,
             creditedValuePoints,
             negativePoints,
+            cost,
             dueDate,
             type: 'Counter',
         },
@@ -456,6 +459,17 @@ export const Counter = (
             lastModified: Date.now(),
         });
     };
+
+    const setCost = (cost) => {
+        if (typeof cost !== 'number') {
+            throw new Error('Expected a number.');
+        }
+        setCounter({
+            ...counter,
+            cost,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-counter`, context)}
@@ -464,6 +478,7 @@ export const Counter = (
             increase={increase}
             decrease={decrease}
             setTitle={setTitle}
+            setCost={setCost}
             changeType={(type) => changeType(id, type)}
             type="Counter"
         />
