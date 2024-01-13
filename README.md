@@ -1,12 +1,110 @@
+# Lists App Backend 📡
+
+Welcome to the backend repository of the Lists app, powered by [React Server](https://state-less.cloud)!
+
+![Lists App Frontend](https://github.com/C5H8NNaO4/lists-app-frontend/raw/master/public/screenshot.png)
+
+## Overview
+
+The Lists app backend provides the robust server-side functionality needed to support the [Lists app](https://lists.state-less.cloud)'s seamless user experience. Built on the React Server framework, this backend code enables real-time synchronization, data storage, and interaction with the frontend.
+
+## Key Features
+
+- **Real-Time Sync**: Achieve real-time updates and synchronization across clients.
+- **Data Storage**: Efficiently store task lists, reminders, and user data.
+- **Server-Rendered**: Utilize server-rendering capabilities for enhanced performance.
+- **Scalable Architecture**: Build a scalable backend for handling multiple users.
+- **Clean Codebase**: Based on the clean-starter repo for a structured foundation.
+
+## Getting Started
+### Installation
+#### Install the backend
+```
+git clone https://github.com/C5H8NNaO4/lists-app-backend.git
+cd lists-app-backend
+yarn install
+yarn start
+```
+#### Install the frontend
+```
+git clone https://github.com/C5H8NNaO4/lists-app-frontend.git
+cd lists-app-frontend
+yarn install
+yarn dev
+```
+
+## Contribute
+* Fork the repository
+* Create a branch
+* Commit your changes
+* Push to the branch
+* Open a pull request
+
+We welcome contributions from the community! Feel free to submit bug reports, feature requests, or pull requests to help make Lists even better.
+## Learn More About React Server
+
+Explore the power of [React Server](https://state-less.cloud), the framework used to develop this backend. With React Server, you can build reactive, server-rendered applications with ease.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+Empower Your Lists App with a Robust Backend 🚀
+
 # React Server
 
 ![npm (scoped)](https://img.shields.io/npm/v/@state-less/react-server)
 
 The @state-less/clean-starter repository is designed to provide a starting point for developers exploring React Server. It includes essential backend components, utilities, and examples that illustrate the fundamental concepts and capabilities of React Server.
 
+# React Server
 React Server allows the creation of server-side React components using TSX, promoting a component-driven architecture for building robust and maintainable backend solutions. By using @state-less/clean-starter, developers can quickly get started with this innovative approach to full-stack development.
 
+```tsx
+import { Scopes, useState, clientKey } from '@state-less/react-server';
+import { ServerSideProps } from './ServerSideProps';
+
+export const HelloWorldExample2 = (props, { key, context })  => {
+  // The useState hook looks familiar?
+  const [count, setState] = useState(0, {
+    key: "count",
+    scope: Scopes.Global,
+  });
+
+  // A simple function that can be executed from the client side.
+  const increase = () => {
+    setState(count + 1);
+  };
+
+  return (
+    // Simply pass down props to the client side.
+    <ServerSideProps
+      key={clientKey(`${key}-props`, context)}
+      count={count}
+      increase={increase}
+    />
+  );
+};
+```
+
+Use the familiar approach of React to build serverside applications in a declarative way. React has proven to be a successful framework for building large scale applications while keeping a clean state-management solution to provide reactive realtime enabled modern UIs. React favors a clean codebase due to its inherently modular structure and component driven approach. React allows you to cleanly abstract the complexity of modern applications using *states*, *hooks* and *components*. 
+
+React Server brings the same flexibility to the server side by giving you a Framework that handles TSX compilation, a small React engine that powers *hooks*, *states* and the lifecycle of *components*. It also abstracts data storage and data transportation into a common concept of *states*. Data is stored in *Stores* which can be accessed by components using *hooks* (`useState`). The `useState` hook provides reactivity and automatically re-renders the component when its value is updated using the setter. Data is transported by consuming server-side states / components on the clientside using the `useComponent` hook. We are using *GraphQL* as transportation layer to provide a robust foundation. 
+
+Developers familiar with **React** and JSX components `<Component hello="world" />` are able to jump right into developing full-stack applications. It really works well and provides a seamless reactive experience on both the backend and the frontend. States are synchronized to all connected clients using PUB / SUB. 
+
 For detailed documentation and in-depth guides, please visit the official website at [state-less.cloud](https://state-less.cloud).
+
+## Explore Examples
+Dive into real-world examples, like the [Lists App](https://lists.state-less.cloud), showcasing the potential of React Server.
+
+## Key Features
+
+- **Server-Side React**: Create server-side React components using TSX for efficient, component-driven backend development.
+- **@state-less/clean-starter**: Jumpstart your project with essential backend components, utilities, and examples.
+- **Explore the Future**: Harness the power of server-side real-time TSX components.
+
+For comprehensive documentation and detailed guides, visit the official [state-less.cloud](https://state-less.cloud) website.
 
 ## Getting Started
 
@@ -122,4 +220,6 @@ _Note: You can still override the provided client if you pass one in the options
 
 That's it, your App is now powered by the same backend as the documentation under [state-less.cloud](https://state-less.cloud).
 
-Happy Hacking!
+---------
+
+**License**: This project is under the **MIT License** - see the [LICENSE.md](/LICENSE.txt) file for details.

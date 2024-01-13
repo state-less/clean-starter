@@ -24,6 +24,7 @@ type TodoObject = {
     key?: string;
     id: string | null;
     title: string;
+    note?: string;
     completed: boolean;
     archived: boolean;
     lastModified?: number;
@@ -124,6 +125,7 @@ export const Todo = (
         lastNotified,
         dueDate = null,
         dueTime = null,
+        note,
         changeType,
         createdAt,
         color,
@@ -156,6 +158,7 @@ export const Todo = (
             valuePoints,
             creditedValuePoints,
             negativePoints,
+            note,
             dueDate,
             dueTime,
             type: 'Todo',
@@ -260,7 +263,15 @@ export const Todo = (
             reset: 1000 * 60 * 60 * reset,
         });
     };
-
+    const setNote = (note) => {
+        if (typeof note !== 'string' || note.length > 32000) {
+            throw new Error('Invalid note');
+        }
+        setTodo({
+            ...todo,
+            note,
+        });
+    };
     const setValuePoints = (valuePoints) => {
         if (
             (typeof valuePoints !== 'number' && valuePoints < 0) ||
@@ -319,6 +330,7 @@ export const Todo = (
             setTitle={setTitle}
             setDueDate={setDueDate}
             setDueTime={setDueTime}
+            setNote={setNote}
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
@@ -434,6 +446,16 @@ export const Counter = (
         });
     };
 
+    const setTitle = (title) => {
+        if (typeof title !== 'string') {
+            throw new Error('Invalid title');
+        }
+        setCounter({
+            ...counter,
+            title,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-counter`, context)}
@@ -441,6 +463,7 @@ export const Counter = (
             archive={archive}
             increase={increase}
             decrease={decrease}
+            setTitle={setTitle}
             changeType={(type) => changeType(id, type)}
             type="Counter"
         />
@@ -504,6 +527,16 @@ export const Expense = (
             lastModified: Date.now(),
         });
     };
+    const setTitle = (title) => {
+        if (typeof title !== 'string') {
+            throw new Error('Invalid title');
+        }
+        setExpense({
+            ...expense,
+            title,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-expense`, context)}
@@ -511,6 +544,7 @@ export const Expense = (
             archive={archive}
             changeType={(type) => changeType(id, type)}
             setValue={setValue}
+            setTitle={setTitle}
             type="Expense"
         />
     );
@@ -647,7 +681,7 @@ export const List = (
             throw new Error('Invalid item');
         }
         setTodos([...todos, newItem]);
-        setOrder([todoId, ...order]);
+        setOrder([...order, todoId]);
         points.setValue(points.value + 1);
         return newItem;
     };
@@ -655,7 +689,7 @@ export const List = (
     const removeEntry = (todoId: string) => {
         const store = Dispatcher.getCurrent().getStore();
         const todo = store.getState<TodoObject>(null, {
-            key: `todo-${todoId}`,
+            key: `todo`,
             scope: `${todoId}.${user?.id || Scopes.Client}`,
         });
         setOrder(order.filter((id) => id !== todoId));
@@ -666,6 +700,7 @@ export const List = (
                 (todo?.value?.archived ? 1 : 0) -
                 (todo?.value?.valuePoints || 0)
         );
+        return todo.value;
     };
 
     const addLabel = (label: TodoObject) => {
@@ -857,6 +892,10 @@ const exportData = ({ key, user }) => {
             key: 'color',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
         });
+        const title = store.getState(null, {
+            key: 'title',
+            scope: `${`list-${list.id}`}.${user?.id || clientId}`,
+        });
         const settings = store.getState(null, {
             key: 'settings',
             scope: `${`list-${list.id}`}.${user?.id || clientId}`,
@@ -871,6 +910,7 @@ const exportData = ({ key, user }) => {
 
         data[list.id] = {
             ...list,
+            title: title.value,
             color: color.value,
             order: order.value,
             todos: todos.value,
@@ -920,9 +960,9 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     const addEntry = (list: ListObject) => {
         const id = v4();
         const newList = {
+            id,
             ...list,
             order: [],
-            id,
             settings: {
                 defaultValuePoints: DEFAULT_VALUE_POINTS,
                 defaultType: 'Todo',
@@ -931,14 +971,16 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
             createdAt: Date.now(),
         };
         const newLists = [newList, ...state.lists];
-        setState({ order: [id, ...state.order], lists: newLists });
+        setState({ order: [newList.id, ...state.order], lists: newLists });
     };
 
     const removeEntry = (id: string) => {
+        const removed = state.lists.find((list) => list.id === id);
         setState({
             lists: state.lists.filter((list) => list.id !== id),
             order: state.order.filter((listId) => listId !== id),
         });
+        return removed;
     };
 
     const exportUserData = () => {
@@ -1013,7 +1055,7 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     );
 };
 const isValidTodo = (todo): todo is TodoObject => {
-    return todo.id && todo.title && 'completed' in todo;
+    return todo.id && 'completed' in todo;
 };
 
 const isValidCounter = (counter): counter is CounterObject => {
@@ -1043,7 +1085,6 @@ type ListObject = {
 const isValidList = (list: ListObject) => {
     return (
         list.id &&
-        list.title &&
         list.todos &&
         list.order &&
         list.order.every((id) => typeof id === 'string') &&

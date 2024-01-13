@@ -180,21 +180,39 @@ var callFunction = /*#__PURE__*/function () {
             initiator: _reactServer.Initiator.FunctionCall
           });
           if (!rendered.props[prop]) {
+<<<<<<< HEAD
             _context3.next = 12;
+=======
+            _context2.next = 14;
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
             break;
           }
           fn = rendered.props[prop].fn;
           _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
+          _reactServer.Dispatcher.getCurrent().setClientContext({
+            context: context,
+            initiator: _reactServer.Initiator.FunctionCall,
+            clientProps: {}
+          });
           start = Date.now();
           result = fn.apply(void 0, (0, _toConsumableArray2["default"])(fnArgs));
           end = Date.now(); // console.log('Function call took', end - start, 'ms');
           _reactServer.Dispatcher.getCurrent().popCurrentComponent();
+<<<<<<< HEAD
           return _context3.abrupt("return", result);
         case 12:
           return _context3.abrupt("return", {
             rendered: rendered
           });
         case 13:
+=======
+          return _context2.abrupt("return", result);
+        case 14:
+          return _context2.abrupt("return", {
+            rendered: rendered
+          });
+        case 15:
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
         case "end":
           return _context3.stop();
       }

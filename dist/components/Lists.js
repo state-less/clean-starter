@@ -81,6 +81,7 @@ var Todo = function Todo(_ref3, _ref4) {
     dueDate = _ref3$dueDate === void 0 ? null : _ref3$dueDate,
     _ref3$dueTime = _ref3.dueTime,
     dueTime = _ref3$dueTime === void 0 ? null : _ref3$dueTime,
+    note = _ref3.note,
     _changeType = _ref3.changeType,
     createdAt = _ref3.createdAt,
     color = _ref3.color;
@@ -108,6 +109,7 @@ var Todo = function Todo(_ref3, _ref4) {
       valuePoints: valuePoints,
       creditedValuePoints: creditedValuePoints,
       negativePoints: negativePoints,
+      note: note,
       dueDate: dueDate,
       dueTime: dueTime,
       type: 'Todo',
@@ -180,6 +182,14 @@ var Todo = function Todo(_ref3, _ref4) {
       reset: 1000 * 60 * 60 * reset
     }));
   };
+  var setNote = function setNote(note) {
+    if (typeof note !== 'string' || note.length > 32000) {
+      throw new Error('Invalid note');
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      note: note
+    }));
+  };
   var setValuePoints = function setValuePoints(valuePoints) {
     if (typeof valuePoints !== 'number' && valuePoints < 0 || valuePoints > 100) {
       throw new Error('Invalid value points');
@@ -226,6 +236,7 @@ var Todo = function Todo(_ref3, _ref4) {
     setTitle: setTitle,
     setDueDate: setDueDate,
     setDueTime: setDueTime,
+    setNote: setNote,
     type: "Todo",
     createdAt: createdAt,
     lastModified: todo.lastModified,
@@ -332,10 +343,20 @@ var Counter = function Counter(_ref5, _ref6) {
       archived: Date.now()
     }));
   };
+  var setTitle = function setTitle(title) {
+    if (typeof title !== 'string') {
+      throw new Error('Invalid title');
+    }
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      title: title,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, counter), {}, {
     archive: archive,
     increase: increase,
     decrease: decrease,
+    setTitle: setTitle,
     changeType: function changeType(type) {
       return _changeType2(id, type);
     },
@@ -401,12 +422,22 @@ var Expense = function Expense(_ref7, _ref8) {
       lastModified: Date.now()
     }));
   };
+  var setTitle = function setTitle(title) {
+    if (typeof title !== 'string') {
+      throw new Error('Invalid title');
+    }
+    setExpense(_objectSpread(_objectSpread({}, expense), {}, {
+      title: title,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, expense), {}, {
     archive: archive,
     changeType: function changeType(type) {
       return _changeType3(id, type);
     },
     setValue: setValue,
+    setTitle: setTitle,
     type: "Expense"
   }), (0, _reactServer.clientKey)("".concat(id, "-expense"), context));
 };
@@ -521,15 +552,20 @@ var List = function List(_ref9, _ref10) {
       throw new Error('Invalid item');
     }
     setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
+<<<<<<< HEAD
     setOrder([todoId].concat((0, _toConsumableArray2["default"])(order)));
     points.setValue(points.value + 1);
+=======
+    setOrder([].concat((0, _toConsumableArray2["default"])(order), [todoId]));
+    points.value += 1;
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
     return newItem;
   };
   var removeEntry = function removeEntry(todoId) {
     var _user16, _todo$value, _todo$value2;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
     var todo = store.getState(null, {
-      key: "todo-".concat(todoId),
+      key: "todo",
       scope: "".concat(todoId, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     });
     setOrder(order.filter(function (id) {
@@ -538,7 +574,12 @@ var List = function List(_ref9, _ref10) {
     setTodos(todos.filter(function (todo) {
       return todo.id !== todoId;
     }));
+<<<<<<< HEAD
     points.setValue(points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0));
+=======
+    points.value = points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0);
+    return todo.value;
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
   };
   var addLabel = function addLabel(label) {
     var labelId = (0, _uuid.v4)();
@@ -705,6 +746,10 @@ var exportData = function exportData(_ref11) {
       key: 'color',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
     });
+    var title = store.getState(null, {
+      key: 'title',
+      scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
+    });
     var settings = store.getState(null, {
       key: 'settings',
       scope: "".concat("list-".concat(list.id), ".", (user === null || user === void 0 ? void 0 : user.id) || clientId)
@@ -717,6 +762,7 @@ var exportData = function exportData(_ref11) {
       Object.assign(todo, stored.value);
     });
     data[list.id] = _objectSpread(_objectSpread({}, list), {}, {
+      title: title.value,
       color: color.value,
       order: order.value,
       todos: todos.value,
@@ -766,9 +812,10 @@ var MyLists = function MyLists(_, _ref12) {
     order = state.order;
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
-    var newList = _objectSpread(_objectSpread({}, list), {}, {
+    var newList = _objectSpread(_objectSpread({
+      id: id
+    }, list), {}, {
       order: [],
-      id: id,
       settings: {
         defaultValuePoints: DEFAULT_VALUE_POINTS,
         defaultType: 'Todo',
@@ -778,11 +825,14 @@ var MyLists = function MyLists(_, _ref12) {
     });
     var newLists = [newList].concat((0, _toConsumableArray2["default"])(state.lists));
     setState({
-      order: [id].concat((0, _toConsumableArray2["default"])(state.order)),
+      order: [newList.id].concat((0, _toConsumableArray2["default"])(state.order)),
       lists: newLists
     });
   };
   var removeEntry = function removeEntry(id) {
+    var removed = state.lists.find(function (list) {
+      return list.id === id;
+    });
     setState({
       lists: state.lists.filter(function (list) {
         return list.id !== id;
@@ -791,6 +841,7 @@ var MyLists = function MyLists(_, _ref12) {
         return listId !== id;
       })
     });
+    return removed;
   };
   var exportUserData = function exportUserData() {
     return exportData({
@@ -861,7 +912,7 @@ var MyLists = function MyLists(_, _ref12) {
 };
 exports.MyLists = MyLists;
 var isValidTodo = function isValidTodo(todo) {
-  return todo.id && todo.title && 'completed' in todo;
+  return todo.id && 'completed' in todo;
 };
 var isValidCounter = function isValidCounter(counter) {
   return counter.id && 'count' in counter && counter.type === 'Counter';
@@ -873,7 +924,7 @@ var isValidLabel = function isValidLabel(label) {
   return label.id && label.title && Object.keys(label).length === 2;
 };
 var isValidList = function isValidList(list) {
-  return list.id && list.title && list.todos && list.order && list.order.every(function (id) {
+  return list.id && list.todos && list.order && list.order.every(function (id) {
     return typeof id === 'string';
   }) && list.todos.every(function (todo) {
     return isValidItem(todo);

@@ -29,9 +29,15 @@ var HelloWorldExample1 = function HelloWorldExample1(props, _ref) {
   }, (0, _reactServer.clientKey)('hello-world-1-props', context));
 };
 exports.HelloWorldExample1 = HelloWorldExample1;
+<<<<<<< HEAD
 var HelloWorldExample2 = function HelloWorldExample2(_props, _ref2) {
   var key = _ref2.key,
     context = _ref2.context;
+=======
+var HelloWorldExample2 = function HelloWorldExample2(props, _ref) {
+  var key = _ref.key,
+    context = _ref.context;
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
   var _useState3 = (0, _reactServer.useState)(0, {
       key: 'count',
       scope: _reactServer.Scopes.Global
@@ -45,6 +51,10 @@ var HelloWorldExample2 = function HelloWorldExample2(_props, _ref2) {
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     count: count,
     increase: increase
+<<<<<<< HEAD
   }, (0, _reactServer.clientKey)('hello-world-2-props', context));
+=======
+  }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
+>>>>>>> 03c407037195270bc170ca100fdfb6f491246104
 };
 exports.HelloWorldExample2 = HelloWorldExample2;
