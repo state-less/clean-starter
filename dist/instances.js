@@ -16,8 +16,6 @@ var _config = require("./config");
 var pubsub = new _graphqlSubscriptions.PubSub();
 exports.pubsub = pubsub;
 var store = new _reactServer.Store({
-  // file: './store.json',
-  // logger,
   transport: new _transport.PostgresTransport({
     connectionString: "postgres://postgres:".concat(_config.PG_PASSWORD, "@localhost:5433/postgres")
   })

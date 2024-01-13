@@ -2,16 +2,12 @@ import { ApolloServer } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import { execute, subscribe } from 'graphql';
 import { createServer } from 'http';
-import fs from 'fs';
-import path from 'path';
-import express from 'express';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import {
     Server,
     TestComponent,
     render,
     Dispatcher,
-    createContext,
 } from '@state-less/react-server';
 
 import { app, pubsub, store } from './instances';
