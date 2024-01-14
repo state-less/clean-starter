@@ -25,7 +25,7 @@ var notificationEngine = new _NotificationEngine.NotificationEngine({
   store: store,
   listsKey: 'my-lists',
   webpushKey: 'web-push',
-  interval: 1 * 10 * 1000,
+  interval: 1 * 60 * 1000,
   logger: _logger["default"]
 });
 exports.notificationEngine = notificationEngine;

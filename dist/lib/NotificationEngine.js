@@ -35,7 +35,6 @@ var checkTodo = function checkTodo(todo, client) {
   var completed = isTodoCompleted(todo);
   var dueDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
   var dueTime = todo.dueTime ? new Date(todo.dueTime) : null;
-  console.log('checkTodo');
   if (!dueTime) return false;
   var sameDate = (0, _dateFns.format)(dueDate, 'dd.MM.yyyy') === (0, _dateFns.format)(new Date(), 'dd.MM.yyyy');
   var timeAtDueDate = new Date((0, _dateFns.getYear)(dueDate), (0, _dateFns.getMonth)(dueDate), (0, _dateFns.getDate)(dueDate), (0, _dateFns.getHours)(dueTime), (0, _dateFns.getMinutes)(dueTime), (0, _dateFns.getSeconds)(dueTime));
@@ -110,7 +109,6 @@ var NotificationEngine = /*#__PURE__*/function () {
     value: function run() {
       var _this2 = this;
       this._logger.info(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Running Notification Engine"])));
-      console.log('clients', this._clients);
       var _iterator = _createForOfIteratorHelper(this._clients),
         _step;
       try {
