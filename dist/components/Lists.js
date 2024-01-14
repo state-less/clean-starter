@@ -219,6 +219,7 @@ var Todo = function Todo(_ref3, _ref4) {
     if (isNaN(new Date(dueTime).getTime())) {
       throw new Error('Invalid due date');
     }
+    console.log('Setting Due Time', dueTime, new Date());
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       dueTime: dueTime
     }));

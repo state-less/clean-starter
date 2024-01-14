@@ -106,6 +106,7 @@ export class NotificationEngine {
     }
 
     subscribe(clientId, user, subscription) {
+        this._logger.info`Subscribing ${clientId} to notifications`;
         this._clients.push({ id: clientId, sub: subscription, user });
     }
 
@@ -115,6 +116,7 @@ export class NotificationEngine {
 
     run() {
         this._logger.info`Running Notification Engine`;
+
         for (const entry of this._clients) {
             const { sub, id: clientId, user } = entry;
             const state = this._store.getState(null, {
@@ -144,10 +146,8 @@ export class NotificationEngine {
                             id: stored.value.id,
                             actions: ['complete'],
                             title: stored.value.title,
-                            body: `It's almost ${format(
-                                new Date(stored.value.dueTime),
-                                'hh:mm'
-                            )}`,
+                            body: `It's almost %s o'clock!`,
+                            time: stored.value.dueTime,
                         });
                         stored.value.lastNotified = {
                             ...stored.value.lastNotified,

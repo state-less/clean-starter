@@ -14,7 +14,7 @@ var _webPush = _interopRequireDefault(require("web-push"));
 var _dateFns = require("date-fns");
 var _jwtSimple = _interopRequireDefault(require("jwt-simple"));
 var _config = require("../config");
-var _templateObject, _templateObject2, _templateObject3, _templateObject4;
+var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -35,6 +35,7 @@ var checkTodo = function checkTodo(todo, client) {
   var completed = isTodoCompleted(todo);
   var dueDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
   var dueTime = todo.dueTime ? new Date(todo.dueTime) : null;
+  console.log('checkTodo');
   if (!dueTime) return false;
   var sameDate = (0, _dateFns.format)(dueDate, 'dd.MM.yyyy') === (0, _dateFns.format)(new Date(), 'dd.MM.yyyy');
   var timeAtDueDate = new Date((0, _dateFns.getYear)(dueDate), (0, _dateFns.getMonth)(dueDate), (0, _dateFns.getDate)(dueDate), (0, _dateFns.getHours)(dueTime), (0, _dateFns.getMinutes)(dueTime), (0, _dateFns.getSeconds)(dueTime));
@@ -90,6 +91,7 @@ var NotificationEngine = /*#__PURE__*/function () {
   }, {
     key: "subscribe",
     value: function subscribe(clientId, user, subscription) {
+      this._logger.info(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Subscribing ", " to notifications"])), clientId);
       this._clients.push({
         id: clientId,
         sub: subscription,
@@ -107,7 +109,8 @@ var NotificationEngine = /*#__PURE__*/function () {
     key: "run",
     value: function run() {
       var _this2 = this;
-      this._logger.info(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2["default"])(["Running Notification Engine"])));
+      this._logger.info(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["Running Notification Engine"])));
+      console.log('clients', this._clients);
       var _iterator = _createForOfIteratorHelper(this._clients),
         _step;
       try {
@@ -123,7 +126,7 @@ var NotificationEngine = /*#__PURE__*/function () {
           var _state$value = state.value,
             lists = _state$value.lists,
             order = _state$value.order;
-          _this2._logger.info(_templateObject2 || (_templateObject2 = (0, _taggedTemplateLiteral2["default"])(["User has ", " lists."])), lists.length);
+          _this2._logger.info(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["User has ", " lists."])), lists.length);
           lists.forEach(function (list) {
             var todos = _this2._store.getState(null, {
               key: 'todos',
@@ -143,7 +146,8 @@ var NotificationEngine = /*#__PURE__*/function () {
                   id: stored.value.id,
                   actions: ['complete'],
                   title: stored.value.title,
-                  body: "It's almost ".concat((0, _dateFns.format)(new Date(stored.value.dueTime), 'hh:mm'))
+                  body: "It's almost %s o'clock!",
+                  time: stored.value.dueTime
                 });
                 stored.value.lastNotified = _objectSpread(_objectSpread({}, stored.value.lastNotified), {}, (0, _defineProperty2["default"])({}, clientId, new Date().getTime()));
               }
@@ -172,7 +176,7 @@ var NotificationEngine = /*#__PURE__*/function () {
           return e.sub.endpoint === sub.endpoint;
         });
         this.unsubscribe(client.id, client.user);
-        this._logger.error(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Error sending notification: ", ""])), e);
+        this._logger.error(_templateObject4 || (_templateObject4 = (0, _taggedTemplateLiteral2["default"])(["Error sending notification: ", ""])), e);
       }
     }
   }, {
@@ -182,7 +186,7 @@ var NotificationEngine = /*#__PURE__*/function () {
       this._timeout = setInterval(function () {
         return _this3.run();
       }, this._interval);
-      this._logger.info(_templateObject4 || (_templateObject4 = (0, _taggedTemplateLiteral2["default"])(["Started Interval"])));
+      this._logger.info(_templateObject5 || (_templateObject5 = (0, _taggedTemplateLiteral2["default"])(["Started Interval"])));
     }
   }]);
   return NotificationEngine;

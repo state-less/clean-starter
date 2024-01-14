@@ -311,6 +311,7 @@ export const Todo = (
         if (isNaN(new Date(dueTime).getTime())) {
             throw new Error('Invalid due date');
         }
+        console.log('Setting Due Time', dueTime, new Date());
         setTodo({
             ...todo,
             dueTime,
