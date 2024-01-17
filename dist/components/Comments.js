@@ -28,7 +28,8 @@ var Comments = function Comments(_ref, _ref2) {
   var _user5, _user6, _user6$strategies, _user6$strategies$use, _user7;
   var _ref$policies = _ref.policies,
     policies = _ref$policies === void 0 ? [] : _ref$policies;
-  var context = _ref2.context;
+  var key = _ref2.key,
+    context = _ref2.context;
   if ((0, _reactServer.isClientContext)(context) && policies.includes(CommentPolicies.AuthenticateRead)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   var user;
   try {
@@ -38,7 +39,7 @@ var Comments = function Comments(_ref, _ref2) {
   }
   var _useState = (0, _reactServer.useState)([], {
       key: "comments",
-      scope: _reactServer.Scopes.Component
+      scope: key
     }),
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     comments = _useState2[0],
@@ -113,7 +114,7 @@ var Comments = function Comments(_ref, _ref2) {
         }
       }), "comment-".concat(cmt.id));
     })
-  }, "comments-props");
+  }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.Comments = Comments;
 var Comment = function Comment(props, _ref5) {

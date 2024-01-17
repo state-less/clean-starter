@@ -18,6 +18,9 @@ var _ExpressServer = require("./ExpressServer");
 var _instances = require("../instances");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _excluded = ["order", "points", "iat"];
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var itemTypeStateKeyMap = {
@@ -565,10 +568,15 @@ var List = function List(_ref9, _ref10) {
     });
     var isValid = validationFunctions[newItem.type];
     if (!isValid(newItem)) {
+      console.log('ERROR: Invalid item', newItem);
       throw new Error('Invalid item');
     }
-    setTodos([].concat((0, _toConsumableArray2["default"])(todos), [newItem]));
-    setOrder([].concat((0, _toConsumableArray2["default"])(order), [todoId]));
+    setTodos(function (todos) {
+      return [].concat((0, _toConsumableArray2["default"])(todos), [newItem]);
+    });
+    setOrder(function (order) {
+      return [].concat((0, _toConsumableArray2["default"])(order), [todoId]);
+    });
     points.setValue(points.value + 1);
     return newItem;
   };
@@ -579,12 +587,16 @@ var List = function List(_ref9, _ref10) {
       key: "todo",
       scope: "".concat(todoId, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     });
-    setOrder(order.filter(function (id) {
-      return id !== todoId;
-    }));
-    setTodos(todos.filter(function (todo) {
-      return todo.id !== todoId;
-    }));
+    setOrder(function (order) {
+      return order.filter(function (id) {
+        return id !== todoId;
+      });
+    });
+    setTodos(function (todos) {
+      return todos.filter(function (todo) {
+        return todo.id !== todoId;
+      });
+    });
     points.setValue(points.value - 1 - (todo !== null && todo !== void 0 && (_todo$value = todo.value) !== null && _todo$value !== void 0 && _todo$value.archived ? 1 : 0) - ((todo === null || todo === void 0 ? void 0 : (_todo$value2 = todo.value) === null || _todo$value2 === void 0 ? void 0 : _todo$value2.valuePoints) || 0));
     return todo.value;
   };
@@ -614,6 +626,37 @@ var List = function List(_ref9, _ref10) {
       throw new Error('Invalid settings');
     }
     setSettings(settings);
+  };
+  var recreate = function recreate() {
+    var _iterator = _createForOfIteratorHelper(todos.filter(function (todo) {
+        var _user17;
+        var state = store.getState(null, {
+          key: 'counter',
+          scope: "".concat(todo.id, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)
+        });
+        return state.value.count > 0 && !state.value.archived && state.value.type === 'Counter';
+      })),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var _user18;
+        var todo = _step.value;
+        var state = store.getState(null, {
+          key: 'counter',
+          scope: "".concat(todo.id, ".").concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || clientId)
+        });
+        state.setValue(_objectSpread(_objectSpread({}, state.value), {}, {
+          archived: +new Date()
+        }));
+        addEntry(_objectSpread(_objectSpread({}, todo), {}, {
+          count: 0
+        }));
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
   };
   var changeType = function changeType(id, type) {
     if (!['Todo', 'Counter', 'Expense'].includes(type)) {
@@ -689,6 +732,7 @@ var List = function List(_ref9, _ref10) {
     settings: settings,
     updateSettings: updateSettings,
     togglePinned: togglePinned,
+    recreate: recreate,
     createdAt: createdAt,
     children: filtered.map(function (item) {
       switch (item.type) {
@@ -792,7 +836,7 @@ var exportData = function exportData(_ref11) {
   });
 };
 var MyLists = function MyLists(_, _ref12) {
-  var _context$headers4, _user17, _user18;
+  var _context$headers4, _user19, _user20;
   var context = _ref12.context,
     key = _ref12.key;
   var user = null;
@@ -803,14 +847,14 @@ var MyLists = function MyLists(_, _ref12) {
   var clientId = ((_context$headers4 = context.headers) === null || _context$headers4 === void 0 ? void 0 : _context$headers4['x-unique-id']) || 'server';
   var points = store.getState(null, {
     key: 'points',
-    scope: "".concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)
+    scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || clientId)
   });
   var _useState21 = (0, _reactServer.useState)({
       lists: [],
       order: []
     }, {
       key: 'state',
-      scope: "".concat(key, ".").concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.id) || _reactServer.Scopes.Client)
     }),
     _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
     state = _useState22[0],
@@ -941,7 +985,7 @@ var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
 var MyListsMeta = function MyListsMeta(props, _ref14) {
-  var _user19, _user20;
+  var _user21, _user22;
   var key = _ref14.key,
     context = _ref14.context;
   var user = null;
@@ -950,14 +994,14 @@ var MyListsMeta = function MyListsMeta(props, _ref14) {
   } catch (e) {}
   var _useState23 = (0, _reactServer.useState)(0, {
       key: "points",
-      scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user21 = user) === null || _user21 === void 0 ? void 0 : _user21.id) || _reactServer.Scopes.Client)
     }),
     _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
     points = _useState24[0],
     setPoints = _useState24[1];
   var _useState25 = (0, _reactServer.useState)({}, {
       key: "lastCompleted",
-      scope: "".concat(((_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user22 = user) === null || _user22 === void 0 ? void 0 : _user22.id) || _reactServer.Scopes.Client)
     }),
     _useState26 = (0, _slicedToArray2["default"])(_useState25, 1),
     lastCompleted = _useState26[0];

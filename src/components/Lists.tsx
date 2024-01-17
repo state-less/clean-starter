@@ -685,7 +685,7 @@ export const List = (
         scope: `${key}.${user?.id || Scopes.Client}`,
     });
 
-    const addEntry = (todo: TodoObject) => {
+    const addEntry = (todo: TodoObject | CounterObject) => {
         const todoId = v4();
         const newItem = {
             ...todo,
@@ -696,10 +696,11 @@ export const List = (
 
         const isValid = validationFunctions[newItem.type];
         if (!isValid(newItem)) {
+            console.log('ERROR: Invalid item', newItem);
             throw new Error('Invalid item');
         }
-        setTodos([...todos, newItem]);
-        setOrder([...order, todoId]);
+        setTodos((todos) => [...todos, newItem]);
+        setOrder((order) => [...order, todoId]);
         points.setValue(points.value + 1);
         return newItem;
     };
@@ -710,8 +711,8 @@ export const List = (
             key: `todo`,
             scope: `${todoId}.${user?.id || Scopes.Client}`,
         });
-        setOrder(order.filter((id) => id !== todoId));
-        setTodos(todos.filter((todo) => todo.id !== todoId));
+        setOrder((order) => order.filter((id) => id !== todoId));
+        setTodos((todos) => todos.filter((todo) => todo.id !== todoId));
         points.setValue(
             points.value -
                 1 -
@@ -748,6 +749,34 @@ export const List = (
             throw new Error('Invalid settings');
         }
         setSettings(settings);
+    };
+
+    const recreate = () => {
+        for (const todo of todos.filter((todo) => {
+            const state = store.getState(null, {
+                key: 'counter',
+                scope: `${todo.id}.${user?.id || clientId}`,
+            });
+
+            return (
+                state.value.count > 0 &&
+                !state.value.archived &&
+                state.value.type === 'Counter'
+            );
+        })) {
+            const state = store.getState(null, {
+                key: 'counter',
+                scope: `${todo.id}.${user?.id || clientId}`,
+            });
+            state.setValue({
+                ...state.value,
+                archived: +new Date(),
+            });
+            addEntry({
+                ...todo,
+                count: 0,
+            } as CounterObject);
+        }
     };
 
     const changeType = (id: string, type: string) => {
@@ -830,6 +859,7 @@ export const List = (
             settings={settings}
             updateSettings={updateSettings}
             togglePinned={togglePinned}
+            recreate={recreate}
             createdAt={createdAt}
         >
             {filtered.map((item) => {

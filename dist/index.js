@@ -143,7 +143,10 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     policies: [_Poll.PollActions.Revert]
   }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
     policies: [_Comments.CommentPolicies.Authenticate]
-  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
+  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+    id: "community-forum",
+    name: "Community"
+  }, "community-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, null, null);

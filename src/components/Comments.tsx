@@ -1,6 +1,7 @@
 import {
     authenticate,
     ClientContext,
+    clientKey,
     Dispatcher,
     IComponent,
     isClientContext,
@@ -22,8 +23,8 @@ export enum CommentPolicies {
 }
 
 export const Comments: IComponent<any> = (
-    { policies = [] }: { policies: CommentPolicies[] },
-    { context }
+    { policies = [] }: { policies: CommentPolicies[]; id: string },
+    { key, context }
 ) => {
     if (
         isClientContext(context) &&
@@ -40,7 +41,7 @@ export const Comments: IComponent<any> = (
 
     const [comments, setComments] = useState([], {
         key: `comments`,
-        scope: Scopes.Component,
+        scope: key,
     });
 
     const comment = (message) => {
@@ -118,7 +119,7 @@ export const Comments: IComponent<any> = (
                     user?.strategies?.[user?.strategy]?.email
                 ),
             }}
-            key="comments-props"
+            key={clientKey(`${key}-props`, context)}
             comments={comments}
             comment={comment}
             del={del}

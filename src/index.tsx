@@ -25,7 +25,7 @@ import logger from './lib/logger';
 import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
-import { Platform } from './components/Forum';
+import { Forum, Platform } from './components/Forum';
 import { List, MyLists, MyListsMeta } from './components/Lists';
 import { WebPushManager } from './components/WebPushManager';
 
@@ -188,6 +188,7 @@ export const reactServer = (
         />
         <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
         <Platform key="platform" />
+        <Forum key="community-forum" id="community-forum" name="Community" />
         <WebPushManager key="web-push" />
     </Server>
 );
