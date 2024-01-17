@@ -837,7 +837,7 @@ export const List = (
             setTodos(newTodos);
         }
     };
-    const filtered = todos;
+    const filtered = todos || [];
     return (
         <ServerSideProps
             key={clientKey(`${key}-props`, context)}

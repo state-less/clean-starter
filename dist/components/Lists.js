@@ -712,7 +712,7 @@ var List = function List(_ref9, _ref10) {
       setTodos(_newTodos2);
     }
   };
-  var filtered = todos;
+  var filtered = todos || [];
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     add: addEntry,
     remove: removeEntry,
