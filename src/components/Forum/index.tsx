@@ -35,7 +35,6 @@ export const Post = ({ id, ...post }: PostProps) => {
 
         setAnswers([...answers, answer]);
 
-        console.log('answers', answer);
         return answer;
     };
     return (

@@ -46,7 +46,6 @@ var Post = function Post(_ref2) {
       body: body
     };
     setAnswers([].concat((0, _toConsumableArray2["default"])(answers), [answer]));
-    console.log('answers', answer);
     return answer;
   };
   return (0, _jsxRuntime.jsxs)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, post), {}, {

@@ -212,6 +212,7 @@ export const Todo = (
             lastModified: Date.now(),
             creditedValuePoints: comp ? 0 : valuePoints,
         };
+
         setTodo(newTodo);
 
         const newItems = !comp
@@ -315,7 +316,7 @@ export const Todo = (
         if (isNaN(new Date(dueTime).getTime())) {
             throw new Error('Invalid due date');
         }
-        console.log('Setting Due Time', dueTime, new Date());
+
         setTodo({
             ...todo,
             dueTime,
@@ -741,7 +742,6 @@ export const List = (
 
         const isValid = validationFunctions[newItem.type];
         if (!isValid(newItem)) {
-            console.log('ERROR: Invalid item', newItem);
             throw new Error('Invalid item');
         }
         setTodos((todos) => [...todos, newItem]);

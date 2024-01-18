@@ -225,7 +225,6 @@ var Todo = function Todo(_ref3, _ref4) {
     if (isNaN(new Date(dueTime).getTime())) {
       throw new Error('Invalid due date');
     }
-    console.log('Setting Due Time', dueTime, new Date());
     setTodo(_objectSpread(_objectSpread({}, todo), {}, {
       dueTime: dueTime
     }));
@@ -607,7 +606,6 @@ var List = function List(_ref10, _ref11) {
     });
     var isValid = validationFunctions[newItem.type];
     if (!isValid(newItem)) {
-      console.log('ERROR: Invalid item', newItem);
       throw new Error('Invalid item');
     }
     setTodos(function (todos) {
