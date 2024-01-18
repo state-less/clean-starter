@@ -63,7 +63,7 @@ var checkLimits = function checkLimits(items, todo) {
   return !reachedLimit;
 };
 var Todo = function Todo(_ref3, _ref4) {
-  var _context$headers, _user, _user2;
+  var _context$headers, _user, _user2, _ref5;
   var id = _ref3.id,
     completed = _ref3.completed,
     title = _ref3.title,
@@ -87,7 +87,9 @@ var Todo = function Todo(_ref3, _ref4) {
     note = _ref3.note,
     _changeType = _ref3.changeType,
     createdAt = _ref3.createdAt,
-    color = _ref3.color;
+    color = _ref3.color,
+    _ref3$dependencies = _ref3.dependencies,
+    initialDependencies = _ref3$dependencies === void 0 ? [] : _ref3$dependencies;
   var key = _ref4.key,
     context = _ref4.context;
   var user = null;
@@ -117,7 +119,8 @@ var Todo = function Todo(_ref3, _ref4) {
       dueTime: dueTime,
       type: 'Todo',
       lastModified: lastModified,
-      color: color
+      color: color,
+      dependencies: initialDependencies
     }, {
       key: "todo",
       scope: "".concat(key, ".").concat(((_user2 = user) === null || _user2 === void 0 ? void 0 : _user2.id) || _reactServer.Scopes.Client)
@@ -227,6 +230,19 @@ var Todo = function Todo(_ref3, _ref4) {
       dueTime: dueTime
     }));
   };
+  var addDependency = function addDependency(dep) {
+    if (!(dep !== null && dep !== void 0 && dep.id) || !(dep !== null && dep !== void 0 && dep.title)) {
+      throw new Error('Invalid id');
+    }
+    if (todo.dependencies.some(function (a) {
+      return a.id === dep.id;
+    })) {
+      return;
+    }
+    setTodo(_objectSpread(_objectSpread({}, todo), {}, {
+      dependencies: [].concat((0, _toConsumableArray2["default"])(todo.dependencies || []), [dep])
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, todo), {}, {
     toggle: toggle,
     archive: archive,
@@ -244,6 +260,15 @@ var Todo = function Todo(_ref3, _ref4) {
     type: "Todo",
     createdAt: createdAt,
     lastModified: todo.lastModified,
+    dependencies: (_ref5 = todo.dependencies || []) === null || _ref5 === void 0 ? void 0 : _ref5.map(function (dep) {
+      var _user4;
+      var state = store.getState(null, {
+        key: 'todo',
+        scope: "".concat(dep.id, ".").concat(((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || clientId)
+      });
+      return state.value;
+    }),
+    addDependency: addDependency,
     children: (0, _jsxRuntime.jsx)(_ExpressServer.Route, {
       todo: todo,
       app: _instances.app,
@@ -253,14 +278,14 @@ var Todo = function Todo(_ref3, _ref4) {
         res.send(todo);
       },
       authenticate: function authenticate(req, res, next) {
-        var _user4, _httpUser;
+        var _user5, _httpUser;
         var httpUser = null;
         try {
           // Authenticate the http request
           httpUser = (0, _reactServer.authenticate)(req.headers, _config.JWT_SECRET);
         } catch (e) {}
         // Make sure the client and user is the same as the one who rendered the component
-        if (req.headers['x-unique-id'] !== clientId || ((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) !== ((_httpUser = httpUser) === null || _httpUser === void 0 ? void 0 : _httpUser.id)) {
+        if (req.headers['x-unique-id'] !== clientId || ((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) !== ((_httpUser = httpUser) === null || _httpUser === void 0 ? void 0 : _httpUser.id)) {
           throw new Error('Unauthorized');
         }
         next();
@@ -269,32 +294,32 @@ var Todo = function Todo(_ref3, _ref4) {
   }), (0, _reactServer.clientKey)("".concat(id, "-todo"), context));
 };
 exports.Todo = Todo;
-var Counter = function Counter(_ref5, _ref6) {
-  var _context$headers2, _user5, _user6;
-  var id = _ref5.id,
-    _ref5$count = _ref5.count,
-    count = _ref5$count === void 0 ? 0 : _ref5$count,
-    title = _ref5.title,
-    createdAt = _ref5.createdAt,
-    archived = _ref5.archived,
-    _ref5$reset = _ref5.reset,
-    reset = _ref5$reset === void 0 ? null : _ref5$reset,
-    _ref5$defaultValuePoi = _ref5.defaultValuePoints,
-    defaultValuePoints = _ref5$defaultValuePoi === void 0 ? 0 : _ref5$defaultValuePoi,
-    _ref5$valuePoints = _ref5.valuePoints,
-    valuePoints = _ref5$valuePoints === void 0 ? defaultValuePoints : _ref5$valuePoints,
-    _ref5$creditedValuePo = _ref5.creditedValuePoints,
-    creditedValuePoints = _ref5$creditedValuePo === void 0 ? 0 : _ref5$creditedValuePo,
-    _ref5$negativePoints = _ref5.negativePoints,
-    negativePoints = _ref5$negativePoints === void 0 ? 0 : _ref5$negativePoints,
-    _ref5$cost = _ref5.cost,
-    cost = _ref5$cost === void 0 ? 0 : _ref5$cost,
-    _ref5$dueDate = _ref5.dueDate,
-    dueDate = _ref5$dueDate === void 0 ? null : _ref5$dueDate,
-    color = _ref5.color,
-    _changeType2 = _ref5.changeType;
-  var key = _ref6.key,
-    context = _ref6.context;
+var Counter = function Counter(_ref6, _ref7) {
+  var _context$headers2, _user6, _user7;
+  var id = _ref6.id,
+    _ref6$count = _ref6.count,
+    count = _ref6$count === void 0 ? 0 : _ref6$count,
+    title = _ref6.title,
+    createdAt = _ref6.createdAt,
+    archived = _ref6.archived,
+    _ref6$reset = _ref6.reset,
+    reset = _ref6$reset === void 0 ? null : _ref6$reset,
+    _ref6$defaultValuePoi = _ref6.defaultValuePoints,
+    defaultValuePoints = _ref6$defaultValuePoi === void 0 ? 0 : _ref6$defaultValuePoi,
+    _ref6$valuePoints = _ref6.valuePoints,
+    valuePoints = _ref6$valuePoints === void 0 ? defaultValuePoints : _ref6$valuePoints,
+    _ref6$creditedValuePo = _ref6.creditedValuePoints,
+    creditedValuePoints = _ref6$creditedValuePo === void 0 ? 0 : _ref6$creditedValuePo,
+    _ref6$negativePoints = _ref6.negativePoints,
+    negativePoints = _ref6$negativePoints === void 0 ? 0 : _ref6$negativePoints,
+    _ref6$cost = _ref6.cost,
+    cost = _ref6$cost === void 0 ? 0 : _ref6$cost,
+    _ref6$dueDate = _ref6.dueDate,
+    dueDate = _ref6$dueDate === void 0 ? null : _ref6$dueDate,
+    color = _ref6.color,
+    _changeType2 = _ref6.changeType;
+  var key = _ref7.key,
+    context = _ref7.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -306,7 +331,7 @@ var Counter = function Counter(_ref5, _ref6) {
   // We are not using use state because of a bug that prevents multiple state updates in the same function
   var points = store.getState(null, {
     key: "points",
-    scope: "".concat(((_user5 = user) === null || _user5 === void 0 ? void 0 : _user5.id) || clientId)
+    scope: "".concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || clientId)
   });
   var _useState3 = (0, _reactServer.useState)({
       id: id,
@@ -324,7 +349,7 @@ var Counter = function Counter(_ref5, _ref6) {
       type: 'Counter'
     }, {
       key: "counter",
-      scope: "".concat(key, ".").concat(((_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     counter = _useState4[0],
@@ -395,28 +420,28 @@ var Counter = function Counter(_ref5, _ref6) {
   }), (0, _reactServer.clientKey)("".concat(id, "-counter"), context));
 };
 exports.Counter = Counter;
-var Expense = function Expense(_ref7, _ref8) {
-  var _user7;
-  var id = _ref7.id,
-    _ref7$value = _ref7.value,
-    value = _ref7$value === void 0 ? 0 : _ref7$value,
-    title = _ref7.title,
-    archived = _ref7.archived,
-    _ref7$reset = _ref7.reset,
-    reset = _ref7$reset === void 0 ? null : _ref7$reset,
-    _ref7$defaultValuePoi = _ref7.defaultValuePoints,
-    defaultValuePoints = _ref7$defaultValuePoi === void 0 ? 0 : _ref7$defaultValuePoi,
-    _ref7$valuePoints = _ref7.valuePoints,
-    valuePoints = _ref7$valuePoints === void 0 ? defaultValuePoints : _ref7$valuePoints,
-    _ref7$creditedValuePo = _ref7.creditedValuePoints,
-    creditedValuePoints = _ref7$creditedValuePo === void 0 ? 0 : _ref7$creditedValuePo,
-    _ref7$negativePoints = _ref7.negativePoints,
-    negativePoints = _ref7$negativePoints === void 0 ? 0 : _ref7$negativePoints,
-    _ref7$dueDate = _ref7.dueDate,
-    dueDate = _ref7$dueDate === void 0 ? null : _ref7$dueDate,
-    _changeType3 = _ref7.changeType;
-  var key = _ref8.key,
-    context = _ref8.context;
+var Expense = function Expense(_ref8, _ref9) {
+  var _user8;
+  var id = _ref8.id,
+    _ref8$value = _ref8.value,
+    value = _ref8$value === void 0 ? 0 : _ref8$value,
+    title = _ref8.title,
+    archived = _ref8.archived,
+    _ref8$reset = _ref8.reset,
+    reset = _ref8$reset === void 0 ? null : _ref8$reset,
+    _ref8$defaultValuePoi = _ref8.defaultValuePoints,
+    defaultValuePoints = _ref8$defaultValuePoi === void 0 ? 0 : _ref8$defaultValuePoi,
+    _ref8$valuePoints = _ref8.valuePoints,
+    valuePoints = _ref8$valuePoints === void 0 ? defaultValuePoints : _ref8$valuePoints,
+    _ref8$creditedValuePo = _ref8.creditedValuePoints,
+    creditedValuePoints = _ref8$creditedValuePo === void 0 ? 0 : _ref8$creditedValuePo,
+    _ref8$negativePoints = _ref8.negativePoints,
+    negativePoints = _ref8$negativePoints === void 0 ? 0 : _ref8$negativePoints,
+    _ref8$dueDate = _ref8.dueDate,
+    dueDate = _ref8$dueDate === void 0 ? null : _ref8$dueDate,
+    _changeType3 = _ref8.changeType;
+  var key = _ref9.key,
+    context = _ref9.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -434,7 +459,7 @@ var Expense = function Expense(_ref7, _ref8) {
       type: 'Expense'
     }, {
       key: "expense",
-      scope: "".concat(key, ".").concat(((_user7 = user) === null || _user7 === void 0 ? void 0 : _user7.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || _reactServer.Scopes.Client)
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
     expense = _useState6[0],
@@ -473,25 +498,25 @@ var Expense = function Expense(_ref7, _ref8) {
   }), (0, _reactServer.clientKey)("".concat(id, "-expense"), context));
 };
 exports.Expense = Expense;
-var List = function List(_ref9, _ref10) {
-  var _context$headers3, _user8, _user9, _user10, _user11, _user12, _user13, _user14, _user15;
-  var id = _ref9.id,
-    initialTitle = _ref9.title,
-    _ref9$todos = _ref9.todos,
-    initialTodos = _ref9$todos === void 0 ? [] : _ref9$todos,
-    initialOrder = _ref9.order,
-    _ref9$archived = _ref9.archived,
-    initialArchived = _ref9$archived === void 0 ? false : _ref9$archived,
-    _ref9$color = _ref9.color,
-    initialColor = _ref9$color === void 0 ? '' : _ref9$color,
-    _ref9$points = _ref9.points,
-    initialPoints = _ref9$points === void 0 ? 0 : _ref9$points,
-    _ref9$labels = _ref9.labels,
-    initialLabels = _ref9$labels === void 0 ? [] : _ref9$labels,
-    initialSettings = _ref9.settings,
-    createdAt = _ref9.createdAt;
-  var key = _ref10.key,
-    context = _ref10.context;
+var List = function List(_ref10, _ref11) {
+  var _context$headers3, _user9, _user10, _user11, _user12, _user13, _user14, _user15, _user16;
+  var id = _ref10.id,
+    initialTitle = _ref10.title,
+    _ref10$todos = _ref10.todos,
+    initialTodos = _ref10$todos === void 0 ? [] : _ref10$todos,
+    initialOrder = _ref10.order,
+    _ref10$archived = _ref10.archived,
+    initialArchived = _ref10$archived === void 0 ? false : _ref10$archived,
+    _ref10$color = _ref10.color,
+    initialColor = _ref10$color === void 0 ? '' : _ref10$color,
+    _ref10$points = _ref10.points,
+    initialPoints = _ref10$points === void 0 ? 0 : _ref10$points,
+    _ref10$labels = _ref10.labels,
+    initialLabels = _ref10$labels === void 0 ? [] : _ref10$labels,
+    initialSettings = _ref10.settings,
+    createdAt = _ref10.createdAt;
+  var key = _ref11.key,
+    context = _ref11.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -500,25 +525,25 @@ var List = function List(_ref9, _ref10) {
   var clientId = (context === null || context === void 0 ? void 0 : (_context$headers3 = context.headers) === null || _context$headers3 === void 0 ? void 0 : _context$headers3['x-unique-id']) || 'server';
   var points = store.getState(initialPoints, {
     key: "points",
-    scope: "".concat(((_user8 = user) === null || _user8 === void 0 ? void 0 : _user8.id) || clientId)
+    scope: "".concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || clientId)
   });
   var _useState7 = (0, _reactServer.useState)(initialTodos, {
       key: 'todos',
-      scope: "".concat(key, ".").concat(((_user9 = user) === null || _user9 === void 0 ? void 0 : _user9.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
     }),
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
     todos = _useState8[0],
     setTodos = _useState8[1];
   var _useState9 = (0, _reactServer.useState)(initialColor, {
       key: 'color',
-      scope: "".concat(key, ".").concat(((_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
     }),
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     color = _useState10[0],
     _setColor = _useState10[1];
   var _useState11 = (0, _reactServer.useState)(initialArchived, {
       key: 'archived',
-      scope: "".concat(key, ".").concat(((_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
     }),
     _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
     archived = _useState12[0],
@@ -531,7 +556,7 @@ var List = function List(_ref9, _ref10) {
       endOfDay: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.endOfDay) || 22
     }, {
       key: 'settings',
-      scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
     }),
     _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
     settings = _useState14[0],
@@ -554,21 +579,21 @@ var List = function List(_ref9, _ref10) {
   };
   var _useState15 = (0, _reactServer.useState)(initialLabels, {
       key: 'labels',
-      scope: "".concat(key, ".").concat(((_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
     }),
     _useState16 = (0, _slicedToArray2["default"])(_useState15, 2),
     labels = _useState16[0],
     setLabels = _useState16[1];
   var _useState17 = (0, _reactServer.useState)(initialTitle, {
       key: 'title',
-      scope: "".concat(key, ".").concat(((_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
     }),
     _useState18 = (0, _slicedToArray2["default"])(_useState17, 2),
     title = _useState18[0],
     setTitle = _useState18[1];
   var _useState19 = (0, _reactServer.useState)(initialOrder, {
       key: 'order',
-      scope: "".concat(key, ".").concat(((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
     }),
     _useState20 = (0, _slicedToArray2["default"])(_useState19, 2),
     order = _useState20[0],
@@ -595,11 +620,11 @@ var List = function List(_ref9, _ref10) {
     return newItem;
   };
   var removeEntry = function removeEntry(todoId) {
-    var _user16, _todo$value, _todo$value2;
+    var _user17, _todo$value, _todo$value2;
     var store = _reactServer.Dispatcher.getCurrent().getStore();
     var todo = store.getState(null, {
       key: "todo",
-      scope: "".concat(todoId, ".").concat(((_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.id) || _reactServer.Scopes.Client)
+      scope: "".concat(todoId, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || _reactServer.Scopes.Client)
     });
     setOrder(function (order) {
       return order.filter(function (id) {
@@ -643,21 +668,21 @@ var List = function List(_ref9, _ref10) {
   };
   var recreate = function recreate() {
     var _iterator = _createForOfIteratorHelper(todos.filter(function (todo) {
-        var _user17;
+        var _user18;
         var state = store.getState(null, {
           key: 'counter',
-          scope: "".concat(todo.id, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)
+          scope: "".concat(todo.id, ".").concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || clientId)
         });
         return !state.value.archived && state.value.type === 'Counter';
       })),
       _step;
     try {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var _user18;
+        var _user19;
         var todo = _step.value;
         var state = store.getState(null, {
           key: 'counter',
-          scope: "".concat(todo.id, ".").concat(((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id) || clientId)
+          scope: "".concat(todo.id, ".").concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || clientId)
         });
         state.setValue(_objectSpread(_objectSpread({}, state.value), {}, {
           archived: +new Date()
@@ -781,9 +806,9 @@ var List = function List(_ref9, _ref10) {
   }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.List = List;
-var exportData = function exportData(_ref11) {
-  var key = _ref11.key,
-    user = _ref11.user;
+var exportData = function exportData(_ref12) {
+  var key = _ref12.key,
+    user = _ref12.user;
   var clientId = _reactServer.Dispatcher.getCurrent()._renderOptions.context.headers['x-unique-id'];
   var store = _reactServer.Dispatcher.getCurrent().getStore();
   var data = {};
@@ -849,10 +874,10 @@ var exportData = function exportData(_ref11) {
     signed: signed
   });
 };
-var MyLists = function MyLists(_, _ref12) {
-  var _context$headers4, _user19, _user20;
-  var context = _ref12.context,
-    key = _ref12.key;
+var MyLists = function MyLists(_, _ref13) {
+  var _context$headers4, _user20, _user21;
+  var context = _ref13.context,
+    key = _ref13.key;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
@@ -861,14 +886,14 @@ var MyLists = function MyLists(_, _ref12) {
   var clientId = ((_context$headers4 = context.headers) === null || _context$headers4 === void 0 ? void 0 : _context$headers4['x-unique-id']) || 'server';
   var points = store.getState(null, {
     key: 'points',
-    scope: "".concat(((_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.id) || clientId)
+    scope: "".concat(((_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.id) || clientId)
   });
   var _useState21 = (0, _reactServer.useState)({
       lists: [],
       order: []
     }, {
       key: 'state',
-      scope: "".concat(key, ".").concat(((_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.id) || _reactServer.Scopes.Client)
+      scope: "".concat(key, ".").concat(((_user21 = user) === null || _user21 === void 0 ? void 0 : _user21.id) || _reactServer.Scopes.Client)
     }),
     _useState22 = (0, _slicedToArray2["default"])(_useState21, 2),
     state = _useState22[0],
@@ -919,11 +944,11 @@ var MyLists = function MyLists(_, _ref12) {
     if (!signed) {
       throw new Error('Unsigned data');
     }
-    var _ref13 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
-      order = _ref13.order,
-      storedPoints = _ref13.points,
-      iat = _ref13.iat,
-      data = (0, _objectWithoutProperties2["default"])(_ref13, _excluded);
+    var _ref14 = _jsonwebtoken["default"].verify(signed, _config.JWT_SECRET),
+      order = _ref14.order,
+      storedPoints = _ref14.points,
+      iat = _ref14.iat,
+      data = (0, _objectWithoutProperties2["default"])(_ref14, _excluded);
     var lists = Object.values(data);
     if (!lists.length || !lists.every(isValidList)) {
       throw new Error('Invalid data');
@@ -998,24 +1023,24 @@ var isValidList = function isValidList(list) {
 var isValidSettings = function isValidSettings(settings) {
   return 'defaultValuePoints' in settings;
 };
-var MyListsMeta = function MyListsMeta(props, _ref14) {
-  var _user21, _user22;
-  var key = _ref14.key,
-    context = _ref14.context;
+var MyListsMeta = function MyListsMeta(props, _ref15) {
+  var _user22, _user23;
+  var key = _ref15.key,
+    context = _ref15.context;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
   var _useState23 = (0, _reactServer.useState)(0, {
       key: "points",
-      scope: "".concat(((_user21 = user) === null || _user21 === void 0 ? void 0 : _user21.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user22 = user) === null || _user22 === void 0 ? void 0 : _user22.id) || _reactServer.Scopes.Client)
     }),
     _useState24 = (0, _slicedToArray2["default"])(_useState23, 2),
     points = _useState24[0],
     setPoints = _useState24[1];
   var _useState25 = (0, _reactServer.useState)({}, {
       key: "lastCompleted",
-      scope: "".concat(((_user22 = user) === null || _user22 === void 0 ? void 0 : _user22.id) || _reactServer.Scopes.Client)
+      scope: "".concat(((_user23 = user) === null || _user23 === void 0 ? void 0 : _user23.id) || _reactServer.Scopes.Client)
     }),
     _useState26 = (0, _slicedToArray2["default"])(_useState25, 1),
     lastCompleted = _useState26[0];

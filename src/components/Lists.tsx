@@ -22,11 +22,11 @@ const itemTypeStateKeyMap = {
 type TodoObject = {
     color?: string;
     key?: string;
-    id: string | null;
-    title: string;
+    id?: string | null;
+    title?: string;
     note?: string;
-    completed: boolean;
-    archived: boolean;
+    completed?: boolean;
+    archived?: boolean;
     lastModified?: number;
     lastNotified?: number;
     reset?: number;
@@ -37,8 +37,9 @@ type TodoObject = {
     dueTime?: number | null;
     defaultValuePoints?: number;
     createdAt?: number;
-    type: string;
+    type?: string;
     changeType?: (id: string, type: string) => void;
+    dependencies?: Dependency[];
 };
 
 type CounterObject = {
@@ -131,6 +132,7 @@ export const Todo = (
         changeType,
         createdAt,
         color,
+        dependencies: initialDependencies = [],
     }: TodoObject,
     { key, context }
 ) => {
@@ -166,6 +168,7 @@ export const Todo = (
             type: 'Todo',
             lastModified,
             color,
+            dependencies: initialDependencies,
         },
         {
             key: `todo`,
@@ -319,6 +322,15 @@ export const Todo = (
         });
     };
 
+    const addDependency = (dep: Dependency) => {
+        if (!dep?.id || !dep?.title) {
+            throw new Error('Invalid id');
+        }
+        if (todo.dependencies.some((a) => a.id === dep.id)) {
+            return;
+        }
+        setTodo({ ...todo, dependencies: [...(todo.dependencies || []), dep] });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-todo`, context)}
@@ -337,6 +349,14 @@ export const Todo = (
             type="Todo"
             createdAt={createdAt}
             lastModified={todo.lastModified}
+            dependencies={(todo.dependencies || [])?.map((dep) => {
+                const state = store.getState(null, {
+                    key: 'todo',
+                    scope: `${dep.id}.${user?.id || clientId}`,
+                });
+                return state.value;
+            })}
+            addDependency={addDependency}
         >
             <Route
                 todo={todo}
@@ -588,6 +608,12 @@ type ListSettings = {
     defaultType: string;
     startOfDay: string;
     endOfDay: string;
+};
+
+type Dependency = {
+    id: string;
+    title: string;
+    list: string;
 };
 export const List = (
     {
@@ -852,6 +878,7 @@ export const List = (
             setTodos(newTodos);
         }
     };
+
     const filtered = todos || [];
     return (
         <ServerSideProps
