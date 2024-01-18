@@ -291,6 +291,7 @@ var Counter = function Counter(_ref5, _ref6) {
     cost = _ref5$cost === void 0 ? 0 : _ref5$cost,
     _ref5$dueDate = _ref5.dueDate,
     dueDate = _ref5$dueDate === void 0 ? null : _ref5$dueDate,
+    color = _ref5.color,
     _changeType2 = _ref5.changeType;
   var key = _ref6.key,
     context = _ref6.context;
@@ -319,6 +320,7 @@ var Counter = function Counter(_ref5, _ref6) {
       negativePoints: negativePoints,
       cost: cost,
       dueDate: dueDate,
+      color: color,
       type: 'Counter'
     }, {
       key: "counter",
@@ -370,12 +372,22 @@ var Counter = function Counter(_ref5, _ref6) {
       lastModified: Date.now()
     }));
   };
+  var setColor = function setColor(color) {
+    if (typeof color !== 'string') {
+      throw new Error('Invalid color');
+    }
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      color: color,
+      lastModified: Date.now()
+    }));
+  };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({}, counter), {}, {
     archive: archive,
     increase: increase,
     decrease: decrease,
     setTitle: setTitle,
     setCost: setCost,
+    setColor: setColor,
     changeType: function changeType(type) {
       return _changeType2(id, type);
     },
@@ -514,7 +526,9 @@ var List = function List(_ref9, _ref10) {
   var _useState13 = (0, _reactServer.useState)({
       defaultValuePoints: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultValuePoints) || 0,
       pinned: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.pinned) || false,
-      defaultType: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultType) || 'Todo'
+      defaultType: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.defaultType) || 'Todo',
+      startOfDay: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.startOfDay) || 6,
+      endOfDay: (initialSettings === null || initialSettings === void 0 ? void 0 : initialSettings.endOfDay) || 22
     }, {
       key: 'settings',
       scope: "".concat(key, ".").concat(((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || _reactServer.Scopes.Client)
@@ -634,7 +648,7 @@ var List = function List(_ref9, _ref10) {
           key: 'counter',
           scope: "".concat(todo.id, ".").concat(((_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.id) || clientId)
         });
-        return state.value.count > 0 && !state.value.archived && state.value.type === 'Counter';
+        return !state.value.archived && state.value.type === 'Counter';
       })),
       _step;
     try {

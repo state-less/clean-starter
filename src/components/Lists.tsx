@@ -46,6 +46,7 @@ type CounterObject = {
     id: string | null;
     title: string;
     count: number;
+    color?: string;
     archived: number;
     lastModified?: number;
     reset?: number;
@@ -380,6 +381,7 @@ export const Counter = (
         negativePoints = 0,
         cost = 0,
         dueDate = null,
+        color,
         changeType,
     }: CounterObject,
     { key, context }
@@ -413,6 +415,7 @@ export const Counter = (
             negativePoints,
             cost,
             dueDate,
+            color,
             type: 'Counter',
         },
         {
@@ -473,6 +476,17 @@ export const Counter = (
             lastModified: Date.now(),
         });
     };
+
+    const setColor = (color: string) => {
+        if (typeof color !== 'string') {
+            throw new Error('Invalid color');
+        }
+        setCounter({
+            ...counter,
+            color,
+            lastModified: Date.now(),
+        });
+    };
     return (
         <ServerSideProps
             key={clientKey(`${id}-counter`, context)}
@@ -482,6 +496,7 @@ export const Counter = (
             decrease={decrease}
             setTitle={setTitle}
             setCost={setCost}
+            setColor={setColor}
             changeType={(type) => changeType(id, type)}
             type="Counter"
         />
@@ -571,6 +586,8 @@ type ListSettings = {
     defaultValuePoints: number;
     pinned: boolean;
     defaultType: string;
+    startOfDay: string;
+    endOfDay: string;
 };
 export const List = (
     {
@@ -637,6 +654,8 @@ export const List = (
             defaultValuePoints: initialSettings?.defaultValuePoints || 0,
             pinned: initialSettings?.pinned || false,
             defaultType: initialSettings?.defaultType || 'Todo',
+            startOfDay: initialSettings?.startOfDay || 6,
+            endOfDay: initialSettings?.endOfDay || 22,
         },
         {
             key: 'settings',
@@ -758,11 +777,7 @@ export const List = (
                 scope: `${todo.id}.${user?.id || clientId}`,
             });
 
-            return (
-                state.value.count > 0 &&
-                !state.value.archived &&
-                state.value.type === 'Counter'
-            );
+            return !state.value.archived && state.value.type === 'Counter';
         })) {
             const state = store.getState(null, {
                 key: 'counter',
