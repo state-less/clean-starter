@@ -8,6 +8,7 @@ import {
     TestComponent,
     render,
     Dispatcher,
+    Initiator,
 } from '@state-less/react-server';
 
 import { app, pubsub, store } from './instances';
@@ -193,7 +194,19 @@ export const reactServer = (
     </Server>
 );
 
-const node = render(reactServer, null, null);
+const node = render(
+    reactServer,
+    {
+        initiator: Initiator.RenderServer,
+        context: {
+            __typename: 'ServerContext',
+            headers: undefined,
+            os: 'windows',
+        },
+        clientProps: {},
+    },
+    null
+);
 
 (async () => {
     await apolloServer.start();

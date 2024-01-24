@@ -149,7 +149,15 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   }, "community-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
-var node = (0, _reactServer.render)(reactServer, null, null);
+var node = (0, _reactServer.render)(reactServer, {
+  initiator: _reactServer.Initiator.RenderServer,
+  context: {
+    __typename: 'ServerContext',
+    headers: undefined,
+    os: 'windows'
+  },
+  clientProps: {}
+}, null);
 (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
   return _regenerator["default"].wrap(function _callee$(_context) {
     while (1) switch (_context.prev = _context.next) {

@@ -3,6 +3,7 @@ import {
     Scopes,
     authenticate,
     isClientContext,
+    useEffect,
     useState,
 } from '@state-less/react-server';
 import { JWT_SECRET, VAPID_PUBLIC, VAPID_PRIVATE } from '../config';
@@ -35,12 +36,23 @@ export const WebPushManager = (props, { key, context }) => {
         }
     );
 
+    useEffect(() => {
+        console.log('WEB PUSH', subscribed);
+        Object.keys(subscribed).forEach((clientId) => {
+            const { sub, user } = subscribed[clientId] || {};
+            if (sub) {
+                console.log('Resubscribing to Push Manager', clientId);
+                notificationEngine.subscribe(clientId, user, sub);
+            }
+        });
+    });
+
     const subscribe = (subscription) => {
         setSubscribed({
             ...subscribed,
             [clientId]: {
                 sub: JSON.parse(subscription),
-                user: user,
+                user,
             },
         });
         notificationEngine.subscribe(clientId, user, JSON.parse(subscription));

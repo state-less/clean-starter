@@ -35,6 +35,18 @@ var WebPushManager = function WebPushManager(props, _ref) {
     _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
     subscribed = _useState2[0],
     setSubscribed = _useState2[1];
+  (0, _reactServer.useEffect)(function () {
+    console.log('WEB PUSH', subscribed);
+    Object.keys(subscribed).forEach(function (clientId) {
+      var _ref2 = subscribed[clientId] || {},
+        sub = _ref2.sub,
+        user = _ref2.user;
+      if (sub) {
+        console.log('Resubscribing to Push Manager', clientId);
+        _instances.notificationEngine.subscribe(clientId, user, sub);
+      }
+    });
+  });
   var subscribe = function subscribe(subscription) {
     setSubscribed(_objectSpread(_objectSpread({}, subscribed), {}, (0, _defineProperty2["default"])({}, clientId, {
       sub: JSON.parse(subscription),
@@ -47,8 +59,8 @@ var WebPushManager = function WebPushManager(props, _ref) {
     _instances.notificationEngine.unsubscribe(clientId, user);
   };
   var sendNotification = function sendNotification(body) {
-    var _ref2 = (subscribed === null || subscribed === void 0 ? void 0 : subscribed[clientId]) || {},
-      sub = _ref2.sub;
+    var _ref3 = (subscribed === null || subscribed === void 0 ? void 0 : subscribed[clientId]) || {},
+      sub = _ref3.sub;
     if (typeof body !== 'string') {
       body = JSON.stringify(body);
     }
