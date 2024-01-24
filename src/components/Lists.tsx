@@ -476,6 +476,18 @@ export const Counter = (
         });
     };
 
+    const setArchived = (timestamp = Date.now()) => {
+        const date = new Date(timestamp).getTime();
+        if (date > Date.now()) {
+            throw new Error('Invalid date');
+        }
+
+        setCounter({
+            ...counter,
+            archived: date,
+        });
+    };
+
     const setTitle = (title) => {
         if (typeof title !== 'string') {
             throw new Error('Invalid title');
@@ -518,6 +530,7 @@ export const Counter = (
             setTitle={setTitle}
             setCost={setCost}
             setColor={setColor}
+            setArchived={setArchived}
             changeType={(type) => changeType(id, type)}
             type="Counter"
         />
