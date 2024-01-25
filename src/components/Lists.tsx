@@ -1062,14 +1062,18 @@ export const MyLists = (_: { key?: string }, { context, key }) => {
     const { lists, order } = state;
     const addEntry = (list: ListObject) => {
         const id = v4();
+        if (list.id && lists.some((existing) => list.id === existing.id)) {
+            throw new Error('Cannot create a duplicate list');
+        }
         const newList = {
             id,
-            ...list,
             order: [],
+            ...list,
             settings: {
                 defaultValuePoints: DEFAULT_VALUE_POINTS,
                 defaultType: 'Todo',
                 pinned: false,
+                ...list.settings,
             },
             createdAt: Date.now(),
         };
@@ -1183,6 +1187,7 @@ type ListObject = {
     title: string;
     todos: TodoObject[];
     order: string[];
+    settings: ListSettings;
 };
 
 const isValidList = (list: ListObject) => {

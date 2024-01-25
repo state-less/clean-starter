@@ -911,15 +911,20 @@ var MyLists = function MyLists(_, _ref13) {
     order = state.order;
   var addEntry = function addEntry(list) {
     var id = (0, _uuid.v4)();
+    if (list.id && lists.some(function (existing) {
+      return list.id === existing.id;
+    })) {
+      throw new Error('Cannot create a duplicate list');
+    }
     var newList = _objectSpread(_objectSpread({
-      id: id
+      id: id,
+      order: []
     }, list), {}, {
-      order: [],
-      settings: {
+      settings: _objectSpread({
         defaultValuePoints: DEFAULT_VALUE_POINTS,
         defaultType: 'Todo',
         pinned: false
-      },
+      }, list.settings),
       createdAt: Date.now()
     });
     var newLists = [newList].concat((0, _toConsumableArray2["default"])(state.lists));
