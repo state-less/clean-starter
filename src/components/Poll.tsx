@@ -19,8 +19,11 @@ export const Poll: IComponent<any> = (
     { values, policies = [] }: { values: string[]; policies: PollActions[] },
     { context, key }
 ) => {
-    if (isClientContext(context) && policies.includes(PollActions.Authenticate))
-        authenticate(context.headers, JWT_SECRET);
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
 
     const [votes, setVotes] = useState(
         values.map(() => 0),
@@ -29,17 +32,20 @@ export const Poll: IComponent<any> = (
 
     const [voted, setVoted] = useState(-1, {
         key: `voted-${key}`,
-        scope: Scopes.Client,
+        scope: `${user?.id || Scopes.Client}`,
     });
 
     const unvote = (index) => {
         if (voted !== index) {
-            throw new Error('Already voted');
+            throw new Error('You can only unvote what you voted for');
+        }
+        if (voted === -1) {
+            throw new Error('You must vote first');
         }
         const newVotes = [...votes];
         newVotes[index] -= 1;
-        setVotes(newVotes);
         setVoted(-1);
+        setVotes(newVotes);
     };
 
     const vote = (index) => {
@@ -52,8 +58,8 @@ export const Poll: IComponent<any> = (
         }
         const newVotes = [...votes];
         newVotes[index] += 1;
-        setVotes(newVotes);
         setVoted(index);
+        setVotes(newVotes);
     };
 
     return (

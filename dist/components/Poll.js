@@ -18,12 +18,16 @@ var PollActions = /*#__PURE__*/function (PollActions) {
 }({});
 exports.PollActions = PollActions;
 var Poll = function Poll(_ref, _ref2) {
+  var _user;
   var values = _ref.values,
     _ref$policies = _ref.policies,
     policies = _ref$policies === void 0 ? [] : _ref$policies;
   var context = _ref2.context,
     key = _ref2.key;
-  if ((0, _reactServer.isClientContext)(context) && policies.includes(PollActions.Authenticate)) (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  var user = null;
+  if ((0, _reactServer.isClientContext)(context)) try {
+    user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
+  } catch (e) {}
   var _useState = (0, _reactServer.useState)(values.map(function () {
       return 0;
     }), {
@@ -35,19 +39,22 @@ var Poll = function Poll(_ref, _ref2) {
     setVotes = _useState2[1];
   var _useState3 = (0, _reactServer.useState)(-1, {
       key: "voted-".concat(key),
-      scope: _reactServer.Scopes.Client
+      scope: "".concat(((_user = user) === null || _user === void 0 ? void 0 : _user.id) || _reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
     voted = _useState4[0],
     setVoted = _useState4[1];
   var unvote = function unvote(index) {
     if (voted !== index) {
-      throw new Error('Already voted');
+      throw new Error('You can only unvote what you voted for');
+    }
+    if (voted === -1) {
+      throw new Error('You must vote first');
     }
     var newVotes = (0, _toConsumableArray2["default"])(votes);
     newVotes[index] -= 1;
-    setVotes(newVotes);
     setVoted(-1);
+    setVotes(newVotes);
   };
   var vote = function vote(index) {
     if (voted === index && policies.includes(PollActions.Revert)) {
@@ -59,8 +66,8 @@ var Poll = function Poll(_ref, _ref2) {
     }
     var newVotes = (0, _toConsumableArray2["default"])(votes);
     newVotes[index] += 1;
-    setVotes(newVotes);
     setVoted(index);
+    setVotes(newVotes);
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     votes: votes,
