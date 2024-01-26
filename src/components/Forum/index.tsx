@@ -1,11 +1,19 @@
-import { useState } from '@state-less/react-server';
+import {
+    authenticate,
+    isClientContext,
+    useState,
+} from '@state-less/react-server';
 import { v4 } from 'uuid';
 import { ServerSideProps } from '../ServerSideProps';
 import { Comments } from '../Comments';
 import { VotingPolicies, Votings } from '../Votings';
+import { admins } from '../../lib/permissions';
+import { JWT_SECRET } from '../../config';
 
 export type PostProps = {
     id: string;
+    deletePost: () => void;
+    owner: any;
 };
 
 export const Answer = ({ id, ...post }: PostProps) => {
@@ -20,12 +28,21 @@ export const Answer = ({ id, ...post }: PostProps) => {
     );
 };
 
-export const Post = ({ id, ...post }: PostProps) => {
+export const Post = ({ id, deletePost, ...post }: PostProps, { context }) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
     const [answers, setAnswers] = useState([], {
         key: 'answers',
         scope: id,
     });
-
+    const [deleted, setDeleted] = useState(false, {
+        key: 'deleted',
+        scope: id,
+    });
     const createAnswer = ({ body }) => {
         const answer = {
             id: v4(),
@@ -37,11 +54,30 @@ export const Post = ({ id, ...post }: PostProps) => {
 
         return answer;
     };
+
+    const del = (id) => {
+        setDeleted(true);
+        deletePost();
+    };
+
     return (
         <ServerSideProps
             key={`post-${id}-props`}
+            id={id}
             {...post}
+            owner={{
+                id: post.owner?.id,
+                name: post.owner?.strategies?.[user?.strategy]?.decoded.name,
+                picture:
+                    post.owner?.strategies?.[user?.strategy]?.decoded.picture,
+                email: post.owner?.strategies?.[user?.strategy]?.email,
+            }}
+            del={del}
+            deleted={deleted}
             createAnswer={createAnswer}
+            canDelete={admins.includes(
+                user?.strategies?.[user?.strategy]?.email
+            )}
         >
             <Votings
                 key={`post-${id}-votings`}
@@ -60,7 +96,13 @@ export type ForumProps = {
     name: string;
 };
 
-export const Forum = ({ id, name }: ForumProps) => {
+export const Forum = ({ id, name }: ForumProps, { key, context }) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
     const [posts, setPosts] = useState([], {
         key: 'posts',
         scope: id,
@@ -71,24 +113,50 @@ export const Forum = ({ id, name }: ForumProps) => {
             id: v4(),
             title,
             body,
+            owner: user,
         };
 
         setPosts([...posts, post]);
 
-        console.log('POST', post);
         return post;
     };
 
+    const deletePost = (id) => {
+        const deleted = posts.find((post) => post.id === id);
+        const { owner } = deleted || {};
+        if (
+            owner?.strategies?.[user?.strategy]?.email !==
+                user?.strategies?.[user?.strategy]?.email &&
+            !admins.includes(user?.strategies?.[user?.strategy]?.email)
+        ) {
+            throw new Error('Not an admin');
+        }
+
+        setPosts(
+            posts
+                .filter((post) => post.id !== id)
+                .concat([{ ...deleted, deleted: true }])
+        );
+
+        return deleted;
+    };
     return (
         <ServerSideProps
             key={`forum-${id}-props`}
             id={id}
             name={name}
             createPost={createPost}
+            deletePost={deletePost}
         >
-            {posts.map((post) => (
-                <Post key={'post-' + post.id} {...post} />
-            ))}
+            {posts
+                .filter((post) => !post.deleted)
+                .map((post) => (
+                    <Post
+                        key={'post-' + post.id}
+                        {...post}
+                        deletePost={() => deletePost(post.id)}
+                    />
+                ))}
         </ServerSideProps>
     );
 };
