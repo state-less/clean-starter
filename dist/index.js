@@ -235,7 +235,7 @@ var landingList3 = {
     createdAt: '2024-01-08',
     count: 1,
     type: 'Counter',
-    title: 'Joy'
+    title: 'Coffee'
   }],
   order: (0, _toConsumableArray2["default"])(Array(16)).map(function (_, i) {
     return "history-".concat(i + 1);

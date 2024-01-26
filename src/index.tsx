@@ -265,7 +265,7 @@ const landingList3 = {
             createdAt: '2024-01-08',
             count: 1,
             type: 'Counter',
-            title: 'Joy',
+            title: 'Coffee',
         },
     ],
     order: [...Array(16)].map((_, i) => `history-${i + 1}`),
