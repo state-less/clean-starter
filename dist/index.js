@@ -127,7 +127,7 @@ var landingList3 = {
     defaultType: 'Counter'
   },
   todos: [{
-    id: 'history-0',
+    id: 'history-1',
     createdAt: '2024-01-01',
     count: 3,
     type: 'Counter',
@@ -212,61 +212,33 @@ var landingList3 = {
     archived: '2024-01-06'
   }, {
     id: 'history-13',
-    createdAt: '2024-01-06',
-    count: 2,
+    createdAt: '2024-01-07',
+    count: 1,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-06'
+    archived: '2024-01-07'
   }, {
     id: 'history-14',
-    createdAt: '2024-01-06',
+    createdAt: '2024-01-07',
     count: 1,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-06'
+    archived: '2024-01-07'
   }, {
     id: 'history-15',
-    createdAt: '2024-01-07',
-    count: 1,
-    type: 'Counter',
-    title: 'Joy',
-    archived: '2024-01-07'
-  }, {
-    id: 'history-16',
-    createdAt: '2024-01-07',
-    count: 1,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: '2024-01-07'
-  }, {
-    id: 'history-17',
-    createdAt: '2024-01-07',
-    count: 1,
-    type: 'Counter',
-    title: 'Joy',
-    archived: '2024-01-07'
-  }, {
-    id: 'history-18',
-    createdAt: '2024-01-07',
-    count: 1,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: '2024-01-07'
-  }, {
-    id: 'history-19',
     createdAt: '2024-01-08',
     count: 1,
     type: 'Counter',
     title: 'Joy'
   }, {
-    id: 'history-20',
+    id: 'history-16',
     createdAt: '2024-01-08',
     count: 1,
     type: 'Counter',
     title: 'Joy'
   }],
-  order: (0, _toConsumableArray2["default"])(Array(20)).map(function (_, i) {
-    return "history-".concat(i);
+  order: (0, _toConsumableArray2["default"])(Array(16)).map(function (_, i) {
+    return "history-".concat(i + 1);
   })
 };
 var demoList1 = {
