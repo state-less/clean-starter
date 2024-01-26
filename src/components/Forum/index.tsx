@@ -17,9 +17,56 @@ export type PostProps = {
     owner: any;
 };
 
-export const Answer = ({ id, ...post }: PostProps) => {
+export const Answer = (
+    {
+        id,
+        deleteAnswer,
+        ...initialAnswer
+    }: PostProps & { deleteAnswer: () => void },
+    { context }
+) => {
+    let user = null;
+    if (isClientContext(context))
+        try {
+            user = authenticate(context.headers, JWT_SECRET);
+        } catch (e) {}
+
+    const [post, setPost] = useState<Partial<PostProps>>(initialAnswer, {
+        key: 'answer',
+        scope: id,
+    });
+    const [deleted, setDeleted] = useState(false, {
+        key: 'deleted',
+        scope: id,
+    });
+    const setBody = (body) => {
+        if (typeof body !== 'string') throw new Error('Body must be a string');
+        if (deleted) throw new Error('Cannot edit a deleted post');
+        setPost({ ...post, body });
+    };
+    const del = (id) => {
+        setDeleted(true);
+        deleteAnswer();
+    };
     return (
-        <ServerSideProps key={`answer-${id}-props`} {...post}>
+        <ServerSideProps
+            key={`answer-${id}-props`}
+            {...post}
+            deleted={deleted}
+            setBody={setBody}
+            owner={{
+                id: post.owner?.id,
+                name: post.owner?.strategies?.[user?.strategy]?.decoded.name,
+                picture:
+                    post.owner?.strategies?.[user?.strategy]?.decoded.picture,
+                email: post.owner?.strategies?.[user?.strategy]?.email,
+            }}
+            del={del}
+            canDelete={
+                post?.owner?.id === user?.id ||
+                admins.includes(user?.strategies?.[user?.strategy]?.email)
+            }
+        >
             <Votings
                 key={`answer-${id}-votings`}
                 policies={[VotingPolicies.SingleVote]}
@@ -54,7 +101,7 @@ export const Post = (
     const createAnswer = ({ body }) => {
         const answer = {
             id: v4(),
-
+            owner: user,
             body,
         };
 
@@ -73,6 +120,26 @@ export const Post = (
         deletePost();
     };
 
+    const deleteAnswer = (id: string) => {
+        if (!answers.find((answer) => answer.id === id)) {
+            throw new Error('Answer not found');
+        }
+        const deleted = answers.find((answer) => answer.id === id);
+        const canDelete =
+            deleted?.owner?.id === user?.id ||
+            admins.includes(user?.strategies?.[user?.strategy]?.email);
+
+        if (!canDelete) {
+            throw new Error('Not authorized to delete this answer');
+        }
+
+        setAnswers(
+            answers
+                .filter((answer) => answer.id !== id)
+                .concat([{ ...deleted, deleted: true }])
+        );
+    };
+
     return (
         <ServerSideProps
             key={`post-${id}-props`}
@@ -89,7 +156,9 @@ export const Post = (
             deleted={deleted}
             createAnswer={createAnswer}
             canDelete={
-                post?.owner?.id === user?.id ||
+                // post?.owner?.id === user?.id ||
+                // Only admins can delete posts...
+                // TODO: add policies to toggle owner deletion
                 admins.includes(user?.strategies?.[user?.strategy]?.email)
             }
             setBody={setBody}
@@ -98,9 +167,17 @@ export const Post = (
                 key={`post-${id}-votings`}
                 policies={[VotingPolicies.SingleVote]}
             />
-            {answers.map((answer) => (
-                <Answer key={`answer-${answer.id}`} {...answer} />
-            ))}
+            {answers
+                .filter(
+                    (answer) => !answer.deleted || answer.owner?.id === user?.id
+                )
+                .map((answer) => (
+                    <Answer
+                        key={`answer-${answer.id}`}
+                        {...answer}
+                        deleteAnswer={() => deleteAnswer(answer.id)}
+                    />
+                ))}
         </ServerSideProps>
     );
 };
