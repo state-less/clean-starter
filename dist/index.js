@@ -8,6 +8,7 @@ exports.reactServer = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _apolloServerExpress = require("apollo-server-express");
 var _graphqlTools = require("graphql-tools");
@@ -119,6 +120,155 @@ var landingList2 = {
   }],
   order: ['counter-0']
 };
+var landingList3 = {
+  id: 'landing-list-3',
+  title: 'History',
+  settings: {
+    defaultType: 'Counter'
+  },
+  todos: [{
+    id: 'history-0',
+    createdAt: '2024-01-01',
+    count: 3,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-01'
+  }, {
+    id: 'history-2',
+    createdAt: '2024-01-01',
+    count: 2,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-01'
+  }, {
+    id: 'history-3',
+    createdAt: '2024-01-02',
+    count: 1,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-02'
+  }, {
+    id: 'history-4',
+    createdAt: '2024-01-02',
+    count: 4,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-02'
+  }, {
+    id: 'history-5',
+    createdAt: '2024-01-03',
+    count: 0,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-03'
+  }, {
+    id: 'history-6',
+    createdAt: '2024-01-03',
+    count: 0,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-03'
+  }, {
+    id: 'history-7',
+    createdAt: '2024-01-04',
+    count: 2,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-04'
+  }, {
+    id: 'history-8',
+    createdAt: '2024-01-04',
+    count: 2,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-04'
+  }, {
+    id: 'history-9',
+    createdAt: '2024-01-05',
+    count: 5,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-05'
+  }, {
+    id: 'history-10',
+    createdAt: '2024-01-05',
+    count: 2,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-05'
+  }, {
+    id: 'history-11',
+    createdAt: '2024-01-06',
+    count: 3,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-06'
+  }, {
+    id: 'history-12',
+    createdAt: '2024-01-06',
+    count: 1,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-06'
+  }, {
+    id: 'history-13',
+    createdAt: '2024-01-06',
+    count: 2,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-06'
+  }, {
+    id: 'history-14',
+    createdAt: '2024-01-06',
+    count: 1,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-06'
+  }, {
+    id: 'history-15',
+    createdAt: '2024-01-07',
+    count: 1,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-07'
+  }, {
+    id: 'history-16',
+    createdAt: '2024-01-07',
+    count: 1,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-07'
+  }, {
+    id: 'history-17',
+    createdAt: '2024-01-07',
+    count: 1,
+    type: 'Counter',
+    title: 'Joy',
+    archived: '2024-01-07'
+  }, {
+    id: 'history-18',
+    createdAt: '2024-01-07',
+    count: 1,
+    type: 'Counter',
+    title: 'Coffee',
+    archived: '2024-01-07'
+  }, {
+    id: 'history-19',
+    createdAt: '2024-01-08',
+    count: 1,
+    type: 'Counter',
+    title: 'Joy'
+  }, {
+    id: 'history-20',
+    createdAt: '2024-01-08',
+    count: 1,
+    type: 'Counter',
+    title: 'Joy'
+  }],
+  order: (0, _toConsumableArray2["default"])(Array(20)).map(function (_, i) {
+    return "history-".concat(i);
+  })
+};
 var demoList1 = {
   id: 'demo-list-1',
   title: 'Todos',
@@ -133,7 +283,7 @@ var demoList1 = {
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
   children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
-  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, demoList1), "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList3), "landing-list-3"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, demoList1), "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
   }, "votings-multiple"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
     values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],

@@ -388,6 +388,16 @@ var Counter = function Counter(_ref6, _ref7) {
       archived: date
     }));
   };
+  var setCreated = function setCreated() {
+    var timestamp = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Date.now();
+    var date = new Date(timestamp).getTime();
+    if (date > Date.now()) {
+      throw new Error('Invalid date');
+    }
+    setCounter(_objectSpread(_objectSpread({}, counter), {}, {
+      createdAt: date
+    }));
+  };
   var setTitle = function setTitle(title) {
     if (typeof title !== 'string') {
       throw new Error('Invalid title');
@@ -423,6 +433,7 @@ var Counter = function Counter(_ref6, _ref7) {
     setCost: setCost,
     setColor: setColor,
     setArchived: setArchived,
+    setCreated: setCreated,
     changeType: function changeType(type) {
       return _changeType2(id, type);
     },
