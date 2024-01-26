@@ -12,6 +12,7 @@ import { JWT_SECRET } from '../../config';
 
 export type PostProps = {
     id: string;
+    body: string;
     deletePost: () => void;
     owner: any;
 };
@@ -28,13 +29,20 @@ export const Answer = ({ id, ...post }: PostProps) => {
     );
 };
 
-export const Post = ({ id, deletePost, ...post }: PostProps, { context }) => {
+export const Post = (
+    { id, deletePost, ...initialPost }: PostProps,
+    { context }
+) => {
     let user = null;
     if (isClientContext(context))
         try {
             user = authenticate(context.headers, JWT_SECRET);
         } catch (e) {}
 
+    const [post, setPost] = useState<Partial<PostProps>>(initialPost, {
+        key: 'post',
+        scope: id,
+    });
     const [answers, setAnswers] = useState([], {
         key: 'answers',
         scope: id,
@@ -55,7 +63,12 @@ export const Post = ({ id, deletePost, ...post }: PostProps, { context }) => {
         return answer;
     };
 
-    const del = (id) => {
+    const setBody = (body: string) => {
+        if (typeof body !== 'string') throw new Error('Body must be a string');
+        if (deleted) throw new Error('Cannot edit a deleted post');
+        setPost({ ...post, body });
+    };
+    const del = (id: string) => {
         setDeleted(true);
         deletePost();
     };
@@ -75,9 +88,11 @@ export const Post = ({ id, deletePost, ...post }: PostProps, { context }) => {
             del={del}
             deleted={deleted}
             createAnswer={createAnswer}
-            canDelete={admins.includes(
-                user?.strategies?.[user?.strategy]?.email
-            )}
+            canDelete={
+                post?.owner?.id === user?.id ||
+                admins.includes(user?.strategies?.[user?.strategy]?.email)
+            }
+            setBody={setBody}
         >
             <Votings
                 key={`post-${id}-votings`}
