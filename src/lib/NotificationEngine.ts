@@ -123,7 +123,8 @@ export class NotificationEngine {
                 key: 'state',
                 scope: `${this._listsKey}.${user?.id || clientId}`,
             });
-            const { lists, order } = state.value;
+            if (!state.value) return;
+            const { lists, order } = state.value || {};
             this._logger.info`User has ${lists.length} lists.`;
 
             lists.forEach((list) => {

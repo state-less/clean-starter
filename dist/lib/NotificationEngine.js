@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.isTodoCompleted = exports.NotificationEngine = void 0;
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
@@ -121,9 +122,12 @@ var NotificationEngine = /*#__PURE__*/function () {
             key: 'state',
             scope: "".concat(_this2._listsKey, ".").concat((user === null || user === void 0 ? void 0 : user.id) || clientId)
           });
-          var _state$value = state.value,
-            lists = _state$value.lists,
-            order = _state$value.order;
+          if (!state.value) return {
+            v: void 0
+          };
+          var _ref4 = state.value || {},
+            lists = _ref4.lists,
+            order = _ref4.order;
           _this2._logger.info(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["User has ", " lists."])), lists.length);
           lists.forEach(function (list) {
             var todos = _this2._store.getState(null, {
@@ -153,7 +157,8 @@ var NotificationEngine = /*#__PURE__*/function () {
           });
         };
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          _loop();
+          var _ret = _loop();
+          if ((0, _typeof2["default"])(_ret) === "object") return _ret.v;
         }
       } catch (err) {
         _iterator.e(err);
