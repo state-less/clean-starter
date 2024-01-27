@@ -219,12 +219,14 @@ var Forum = function Forum(_ref6, _ref7) {
     setPosts = _useState10[1];
   var createPost = function createPost(_ref8) {
     var title = _ref8.title,
-      body = _ref8.body;
+      body = _ref8.body,
+      tags = _ref8.tags;
     console.log('CREATE POST', user, clientId);
     var post = {
       id: (0, _uuid.v4)(),
       title: title,
       body: body,
+      tags: tags,
       deleted: false,
       approved: false,
       owner: user || {

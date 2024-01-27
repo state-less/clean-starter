@@ -229,12 +229,13 @@ export const Forum = (
         scope: id,
     });
 
-    const createPost = ({ title, body }) => {
+    const createPost = ({ title, body, tags }) => {
         console.log('CREATE POST', user, clientId);
         const post = {
             id: v4(),
             title,
             body,
+            tags,
             deleted: false,
             approved: false,
             owner: user || { id: clientId },
