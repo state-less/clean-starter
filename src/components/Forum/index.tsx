@@ -279,6 +279,21 @@ export const Forum = (
     };
 
     console.log('CLIENT PROPS', clientProps);
+    const filtered = posts
+        .filter((post) => !post.deleted)
+        .filter((post) => {
+            if (policies?.includes(ForumPolicies.PostsNeedApproval)) {
+                return (
+                    post.approved ||
+                    post?.owner?.id === (user?.id || clientId) ||
+                    admins.includes(user?.strategies?.[user?.strategy]?.email)
+                );
+            }
+            return true;
+        });
+    const { page, pageSize, compound } = clientProps;
+    const start = !compound ? (page - 1) * pageSize : 0;
+    const end = page * pageSize;
     return (
         <ServerSideProps
             key={`forum-${id}-props`}
@@ -286,29 +301,17 @@ export const Forum = (
             name={name}
             createPost={createPost}
             deletePost={deletePost}
+            totalCount={filtered.length}
+            page={page}
         >
-            {posts
-                .filter((post) => !post.deleted)
-                .filter((post) => {
-                    if (policies?.includes(ForumPolicies.PostsNeedApproval)) {
-                        return (
-                            post.approved ||
-                            post?.owner?.id === (user?.id || clientId) ||
-                            admins.includes(
-                                user?.strategies?.[user?.strategy]?.email
-                            )
-                        );
-                    }
-                    return true;
-                })
-                .map((post) => (
-                    <Post
-                        key={`post-${post.id}`}
-                        {...post}
-                        deletePost={() => deletePost(post.id)}
-                        approvePost={() => approvePost(post.id)}
-                    />
-                ))}
+            {filtered.slice(start, end).map((post) => (
+                <Post
+                    key={`post-${post.id}`}
+                    {...post}
+                    deletePost={() => deletePost(post.id)}
+                    approvePost={() => approvePost(post.id)}
+                />
+            ))}
         </ServerSideProps>
     );
 };

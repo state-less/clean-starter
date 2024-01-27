@@ -268,20 +268,28 @@ var Forum = function Forum(_ref6, _ref7) {
     })));
   };
   console.log('CLIENT PROPS', clientProps);
+  var filtered = posts.filter(function (post) {
+    return !post.deleted;
+  }).filter(function (post) {
+    if (policies !== null && policies !== void 0 && policies.includes(ForumPolicies.PostsNeedApproval)) {
+      var _post$owner11, _user26, _user27, _user27$strategies, _user27$strategies$us, _user28;
+      return post.approved || (post === null || post === void 0 ? void 0 : (_post$owner11 = post.owner) === null || _post$owner11 === void 0 ? void 0 : _post$owner11.id) === (((_user26 = user) === null || _user26 === void 0 ? void 0 : _user26.id) || clientId) || _permissions.admins.includes((_user27 = user) === null || _user27 === void 0 ? void 0 : (_user27$strategies = _user27.strategies) === null || _user27$strategies === void 0 ? void 0 : (_user27$strategies$us = _user27$strategies[(_user28 = user) === null || _user28 === void 0 ? void 0 : _user28.strategy]) === null || _user27$strategies$us === void 0 ? void 0 : _user27$strategies$us.email);
+    }
+    return true;
+  });
+  var page = clientProps.page,
+    pageSize = clientProps.pageSize,
+    compound = clientProps.compound;
+  var start = !compound ? (page - 1) * pageSize : 0;
+  var end = page * pageSize;
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     id: id,
     name: name,
     createPost: createPost,
     deletePost: _deletePost,
-    children: posts.filter(function (post) {
-      return !post.deleted;
-    }).filter(function (post) {
-      if (policies !== null && policies !== void 0 && policies.includes(ForumPolicies.PostsNeedApproval)) {
-        var _post$owner11, _user26, _user27, _user27$strategies, _user27$strategies$us, _user28;
-        return post.approved || (post === null || post === void 0 ? void 0 : (_post$owner11 = post.owner) === null || _post$owner11 === void 0 ? void 0 : _post$owner11.id) === (((_user26 = user) === null || _user26 === void 0 ? void 0 : _user26.id) || clientId) || _permissions.admins.includes((_user27 = user) === null || _user27 === void 0 ? void 0 : (_user27$strategies = _user27.strategies) === null || _user27$strategies === void 0 ? void 0 : (_user27$strategies$us = _user27$strategies[(_user28 = user) === null || _user28 === void 0 ? void 0 : _user28.strategy]) === null || _user27$strategies$us === void 0 ? void 0 : _user27$strategies$us.email);
-      }
-      return true;
-    }).map(function (post) {
+    totalCount: filtered.length,
+    page: page,
+    children: filtered.slice(start, end).map(function (post) {
       return (0, _jsxRuntime.jsx)(Post, _objectSpread(_objectSpread({}, post), {}, {
         deletePost: function deletePost() {
           return _deletePost(post.id);
