@@ -75,13 +75,14 @@ var Answer = function Answer(_ref, _ref2) {
 };
 exports.Answer = Answer;
 var Post = function Post(_ref3, _ref4) {
-  var _post$owner6, _post$owner7, _post$owner7$strategi, _post$owner7$strategi2, _user10, _post$owner8, _post$owner8$strategi, _post$owner8$strategi2, _user11, _post$owner9, _post$owner9$strategi, _post$owner9$strategi2, _user12, _user13, _user13$strategies, _user13$strategies$us, _user14;
+  var _context$headers, _user10, _user10$strategies, _user10$strategies$us, _user11, _post$owner6, _user12, _post$owner7, _post$owner8, _post$owner8$strategi, _post$owner8$strategi2, _user13, _post$owner9, _post$owner9$strategi, _post$owner9$strategi2, _user14, _post$owner10, _post$owner10$strateg, _post$owner10$strateg2, _user15, _user16, _user16$strategies, _user16$strategies$us, _user17;
   var id = _ref3.id,
     deletePost = _ref3.deletePost,
     approvePost = _ref3.approvePost,
     initialPost = (0, _objectWithoutProperties2["default"])(_ref3, _excluded2);
   var context = _ref4.context;
   var user = null;
+  var clientId = (context === null || context === void 0 ? void 0 : (_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
@@ -148,14 +149,23 @@ var Post = function Post(_ref3, _ref4) {
       deleted: true
     })]));
   };
+  var isAdmin = _permissions.admins.includes((_user10 = user) === null || _user10 === void 0 ? void 0 : (_user10$strategies = _user10.strategies) === null || _user10$strategies === void 0 ? void 0 : (_user10$strategies$us = _user10$strategies[(_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.strategy]) === null || _user10$strategies$us === void 0 ? void 0 : _user10$strategies$us.email);
+  var isOwner = (post === null || post === void 0 ? void 0 : (_post$owner6 = post.owner) === null || _post$owner6 === void 0 ? void 0 : _post$owner6.id) === (((_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.id) || clientId);
+  var isApproved = post === null || post === void 0 ? void 0 : post.approved;
+  var passProps = {
+    approved: isApproved
+  };
+  if (isAdmin || isOwner || isApproved) {
+    Object.assign(passProps, post);
+  }
   return (0, _jsxRuntime.jsxs)(_ServerSideProps.ServerSideProps, _objectSpread(_objectSpread({
     id: id
-  }, post), {}, {
+  }, passProps), {}, {
     owner: {
-      id: (_post$owner6 = post.owner) === null || _post$owner6 === void 0 ? void 0 : _post$owner6.id,
-      name: (_post$owner7 = post.owner) === null || _post$owner7 === void 0 ? void 0 : (_post$owner7$strategi = _post$owner7.strategies) === null || _post$owner7$strategi === void 0 ? void 0 : (_post$owner7$strategi2 = _post$owner7$strategi[(_user10 = user) === null || _user10 === void 0 ? void 0 : _user10.strategy]) === null || _post$owner7$strategi2 === void 0 ? void 0 : _post$owner7$strategi2.decoded.name,
-      picture: (_post$owner8 = post.owner) === null || _post$owner8 === void 0 ? void 0 : (_post$owner8$strategi = _post$owner8.strategies) === null || _post$owner8$strategi === void 0 ? void 0 : (_post$owner8$strategi2 = _post$owner8$strategi[(_user11 = user) === null || _user11 === void 0 ? void 0 : _user11.strategy]) === null || _post$owner8$strategi2 === void 0 ? void 0 : _post$owner8$strategi2.decoded.picture,
-      email: (_post$owner9 = post.owner) === null || _post$owner9 === void 0 ? void 0 : (_post$owner9$strategi = _post$owner9.strategies) === null || _post$owner9$strategi === void 0 ? void 0 : (_post$owner9$strategi2 = _post$owner9$strategi[(_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.strategy]) === null || _post$owner9$strategi2 === void 0 ? void 0 : _post$owner9$strategi2.email
+      id: (_post$owner7 = post.owner) === null || _post$owner7 === void 0 ? void 0 : _post$owner7.id,
+      name: (_post$owner8 = post.owner) === null || _post$owner8 === void 0 ? void 0 : (_post$owner8$strategi = _post$owner8.strategies) === null || _post$owner8$strategi === void 0 ? void 0 : (_post$owner8$strategi2 = _post$owner8$strategi[(_user13 = user) === null || _user13 === void 0 ? void 0 : _user13.strategy]) === null || _post$owner8$strategi2 === void 0 ? void 0 : _post$owner8$strategi2.decoded.name,
+      picture: (_post$owner9 = post.owner) === null || _post$owner9 === void 0 ? void 0 : (_post$owner9$strategi = _post$owner9.strategies) === null || _post$owner9$strategi === void 0 ? void 0 : (_post$owner9$strategi2 = _post$owner9$strategi[(_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.strategy]) === null || _post$owner9$strategi2 === void 0 ? void 0 : _post$owner9$strategi2.decoded.picture,
+      email: (_post$owner10 = post.owner) === null || _post$owner10 === void 0 ? void 0 : (_post$owner10$strateg = _post$owner10.strategies) === null || _post$owner10$strateg === void 0 ? void 0 : (_post$owner10$strateg2 = _post$owner10$strateg[(_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.strategy]) === null || _post$owner10$strateg2 === void 0 ? void 0 : _post$owner10$strateg2.email
     },
     del: del,
     deleted: post.deleted,
@@ -165,13 +175,13 @@ var Post = function Post(_ref3, _ref4) {
     // post?.owner?.id === user?.id ||
     // Only admins can delete posts...
     // TODO: add policies to toggle owner deletion
-    _permissions.admins.includes((_user13 = user) === null || _user13 === void 0 ? void 0 : (_user13$strategies = _user13.strategies) === null || _user13$strategies === void 0 ? void 0 : (_user13$strategies$us = _user13$strategies[(_user14 = user) === null || _user14 === void 0 ? void 0 : _user14.strategy]) === null || _user13$strategies$us === void 0 ? void 0 : _user13$strategies$us.email),
+    _permissions.admins.includes((_user16 = user) === null || _user16 === void 0 ? void 0 : (_user16$strategies = _user16.strategies) === null || _user16$strategies === void 0 ? void 0 : (_user16$strategies$us = _user16$strategies[(_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.strategy]) === null || _user16$strategies$us === void 0 ? void 0 : _user16$strategies$us.email),
     setBody: setBody,
     children: [(0, _jsxRuntime.jsx)(_Votings.Votings, {
       policies: [_Votings.VotingPolicies.SingleVote]
     }, "post-".concat(id, "-votings")), answers.filter(function (answer) {
-      var _answer$owner, _user15;
-      return !answer.deleted || ((_answer$owner = answer.owner) === null || _answer$owner === void 0 ? void 0 : _answer$owner.id) === ((_user15 = user) === null || _user15 === void 0 ? void 0 : _user15.id);
+      var _answer$owner, _user18;
+      return !answer.deleted || ((_answer$owner = answer.owner) === null || _answer$owner === void 0 ? void 0 : _answer$owner.id) === ((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id);
     }).map(function (answer) {
       return (0, _jsxRuntime.jsx)(Answer, _objectSpread(_objectSpread({}, answer), {}, {
         deleteAnswer: function deleteAnswer() {
@@ -188,6 +198,7 @@ var ForumPolicies = /*#__PURE__*/function (ForumPolicies) {
 }({});
 exports.ForumPolicies = ForumPolicies;
 var Forum = function Forum(_ref6, _ref7) {
+  var _context$headers2;
   var id = _ref6.id,
     name = _ref6.name,
     policies = _ref6.policies;
@@ -195,6 +206,7 @@ var Forum = function Forum(_ref6, _ref7) {
     context = _ref7.context,
     clientProps = _ref7.clientProps;
   var user = null;
+  var clientId = (context === null || context === void 0 ? void 0 : (_context$headers2 = context.headers) === null || _context$headers2 === void 0 ? void 0 : _context$headers2['x-unique-id']) || 'server';
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
@@ -214,19 +226,21 @@ var Forum = function Forum(_ref6, _ref7) {
       body: body,
       deleted: false,
       approved: false,
-      owner: user
+      owner: user || {
+        id: clientId
+      }
     };
     setPosts([].concat((0, _toConsumableArray2["default"])(posts), [post]));
     return post;
   };
   var _deletePost = function deletePost(id) {
-    var _owner$strategies, _owner$strategies$use, _user16, _user17, _user17$strategies, _user17$strategies$us, _user18, _user19, _user19$strategies, _user19$strategies$us, _user20;
+    var _owner$strategies, _owner$strategies$use, _user19, _user20, _user20$strategies, _user20$strategies$us, _user21, _user22, _user22$strategies, _user22$strategies$us, _user23;
     var deleted = posts.find(function (post) {
       return post.id === id;
     });
     var _ref9 = deleted || {},
       owner = _ref9.owner;
-    if ((owner === null || owner === void 0 ? void 0 : (_owner$strategies = owner.strategies) === null || _owner$strategies === void 0 ? void 0 : (_owner$strategies$use = _owner$strategies[(_user16 = user) === null || _user16 === void 0 ? void 0 : _user16.strategy]) === null || _owner$strategies$use === void 0 ? void 0 : _owner$strategies$use.email) !== ((_user17 = user) === null || _user17 === void 0 ? void 0 : (_user17$strategies = _user17.strategies) === null || _user17$strategies === void 0 ? void 0 : (_user17$strategies$us = _user17$strategies[(_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.strategy]) === null || _user17$strategies$us === void 0 ? void 0 : _user17$strategies$us.email) && !_permissions.admins.includes((_user19 = user) === null || _user19 === void 0 ? void 0 : (_user19$strategies = _user19.strategies) === null || _user19$strategies === void 0 ? void 0 : (_user19$strategies$us = _user19$strategies[(_user20 = user) === null || _user20 === void 0 ? void 0 : _user20.strategy]) === null || _user19$strategies$us === void 0 ? void 0 : _user19$strategies$us.email)) {
+    if ((owner === null || owner === void 0 ? void 0 : (_owner$strategies = owner.strategies) === null || _owner$strategies === void 0 ? void 0 : (_owner$strategies$use = _owner$strategies[(_user19 = user) === null || _user19 === void 0 ? void 0 : _user19.strategy]) === null || _owner$strategies$use === void 0 ? void 0 : _owner$strategies$use.email) !== ((_user20 = user) === null || _user20 === void 0 ? void 0 : (_user20$strategies = _user20.strategies) === null || _user20$strategies === void 0 ? void 0 : (_user20$strategies$us = _user20$strategies[(_user21 = user) === null || _user21 === void 0 ? void 0 : _user21.strategy]) === null || _user20$strategies$us === void 0 ? void 0 : _user20$strategies$us.email) && !_permissions.admins.includes((_user22 = user) === null || _user22 === void 0 ? void 0 : (_user22$strategies = _user22.strategies) === null || _user22$strategies === void 0 ? void 0 : (_user22$strategies$us = _user22$strategies[(_user23 = user) === null || _user23 === void 0 ? void 0 : _user23.strategy]) === null || _user22$strategies$us === void 0 ? void 0 : _user22$strategies$us.email)) {
       throw new Error('Not an admin');
     }
     setPosts(posts.filter(function (post) {
@@ -237,11 +251,11 @@ var Forum = function Forum(_ref6, _ref7) {
     return deleted;
   };
   var _approvePost = function approvePost(id) {
-    var _user21, _user21$strategies, _user21$strategies$us, _user22;
+    var _user24, _user24$strategies, _user24$strategies$us, _user25;
     var post = posts.find(function (post) {
       return post.id === id;
     });
-    if (!_permissions.admins.includes((_user21 = user) === null || _user21 === void 0 ? void 0 : (_user21$strategies = _user21.strategies) === null || _user21$strategies === void 0 ? void 0 : (_user21$strategies$us = _user21$strategies[(_user22 = user) === null || _user22 === void 0 ? void 0 : _user22.strategy]) === null || _user21$strategies$us === void 0 ? void 0 : _user21$strategies$us.email)) {
+    if (!_permissions.admins.includes((_user24 = user) === null || _user24 === void 0 ? void 0 : (_user24$strategies = _user24.strategies) === null || _user24$strategies === void 0 ? void 0 : (_user24$strategies$us = _user24$strategies[(_user25 = user) === null || _user25 === void 0 ? void 0 : _user25.strategy]) === null || _user24$strategies$us === void 0 ? void 0 : _user24$strategies$us.email)) {
       throw new Error('Not an admin');
     }
     setPosts([_objectSpread(_objectSpread({}, post), {}, {
@@ -260,8 +274,8 @@ var Forum = function Forum(_ref6, _ref7) {
       return !post.deleted;
     }).filter(function (post) {
       if (policies !== null && policies !== void 0 && policies.includes(ForumPolicies.PostsNeedApproval)) {
-        var _user23, _user23$strategies, _user23$strategies$us, _user24;
-        return post.approved || _permissions.admins.includes((_user23 = user) === null || _user23 === void 0 ? void 0 : (_user23$strategies = _user23.strategies) === null || _user23$strategies === void 0 ? void 0 : (_user23$strategies$us = _user23$strategies[(_user24 = user) === null || _user24 === void 0 ? void 0 : _user24.strategy]) === null || _user23$strategies$us === void 0 ? void 0 : _user23$strategies$us.email);
+        var _user26, _user26$strategies, _user26$strategies$us, _user27;
+        return post.approved || _permissions.admins.includes((_user26 = user) === null || _user26 === void 0 ? void 0 : (_user26$strategies = _user26.strategies) === null || _user26$strategies === void 0 ? void 0 : (_user26$strategies$us = _user26$strategies[(_user27 = user) === null || _user27 === void 0 ? void 0 : _user27.strategy]) === null || _user26$strategies$us === void 0 ? void 0 : _user26$strategies$us.email);
       }
       return true;
     }).map(function (post) {

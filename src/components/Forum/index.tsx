@@ -85,6 +85,7 @@ export const Post = (
     { context }
 ) => {
     let user = null;
+    const clientId = context?.headers?.['x-unique-id'] || 'server';
     if (isClientContext(context))
         try {
             user = authenticate(context.headers, JWT_SECRET);
@@ -146,11 +147,23 @@ export const Post = (
         );
     };
 
+    const isAdmin = admins.includes(user?.strategies?.[user?.strategy]?.email);
+    const isOwner = post?.owner?.id === (user?.id || clientId);
+    const isApproved = post?.approved;
+
+    const passProps = {
+        approved: isApproved,
+    };
+
+    if (isAdmin || isOwner || isApproved) {
+        Object.assign(passProps, post);
+    }
+
     return (
         <ServerSideProps
             key={`post-${id}-props`}
             id={id}
-            {...post}
+            {...passProps}
             owner={{
                 id: post.owner?.id,
                 name: post.owner?.strategies?.[user?.strategy]?.decoded.name,
@@ -205,6 +218,7 @@ export const Forum = (
     { key, context, clientProps }
 ) => {
     let user = null;
+    const clientId = context?.headers?.['x-unique-id'] || 'server';
     if (isClientContext(context))
         try {
             user = authenticate(context.headers, JWT_SECRET);
@@ -222,7 +236,7 @@ export const Forum = (
             body,
             deleted: false,
             approved: false,
-            owner: user,
+            owner: user || { id: clientId },
         };
 
         setPosts([...posts, post]);
