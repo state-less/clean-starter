@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 import {
+    Initiator,
     authenticate,
     isClientContext,
+    render,
     useState,
 } from '@state-less/react-server';
 import { v4 } from 'uuid';
@@ -10,6 +12,7 @@ import { Comments } from '../Comments';
 import { VotingPolicies, Votings } from '../Votings';
 import { admins } from '../../lib/permissions';
 import { JWT_SECRET } from '../../config';
+import { ViewCounter } from '../ViewCounter';
 
 export type PostProps = {
     id: string;
@@ -182,6 +185,16 @@ export const Post = (
                 admins.includes(user?.strategies?.[user?.strategy]?.email)
             }
             setBody={setBody}
+            // TODO: Add renderWithoutEffects utility.
+            viewCounter={render(
+                <ViewCounter key={`post-${id}-view-counter`} />,
+                {
+                    clientProps: {},
+                    initiator: Initiator.RenderServer,
+                    context: null,
+                },
+                null
+            )}
         >
             <Votings
                 key={`post-${id}-votings`}

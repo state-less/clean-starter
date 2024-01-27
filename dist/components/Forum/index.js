@@ -16,6 +16,7 @@ var _Comments = require("../Comments");
 var _Votings = require("../Votings");
 var _permissions = require("../../lib/permissions");
 var _config = require("../../config");
+var _ViewCounter = require("../ViewCounter");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _excluded = ["id", "deleteAnswer"],
   _excluded2 = ["id", "deletePost", "approvePost"];
@@ -176,7 +177,14 @@ var Post = function Post(_ref3, _ref4) {
     // Only admins can delete posts...
     // TODO: add policies to toggle owner deletion
     _permissions.admins.includes((_user16 = user) === null || _user16 === void 0 ? void 0 : (_user16$strategies = _user16.strategies) === null || _user16$strategies === void 0 ? void 0 : (_user16$strategies$us = _user16$strategies[(_user17 = user) === null || _user17 === void 0 ? void 0 : _user17.strategy]) === null || _user16$strategies$us === void 0 ? void 0 : _user16$strategies$us.email),
-    setBody: setBody,
+    setBody: setBody
+    // TODO: Add renderWithoutEffects utility.
+    ,
+    viewCounter: (0, _reactServer.render)((0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "post-".concat(id, "-view-counter")), {
+      clientProps: {},
+      initiator: _reactServer.Initiator.RenderServer,
+      context: null
+    }, null),
     children: [(0, _jsxRuntime.jsx)(_Votings.Votings, {
       policies: [_Votings.VotingPolicies.SingleVote]
     }, "post-".concat(id, "-votings")), answers.filter(function (answer) {

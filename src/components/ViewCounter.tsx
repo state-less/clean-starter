@@ -2,19 +2,23 @@ import {
     Initiator,
     RenderOptions,
     Scopes,
+    clientKey,
     useClientEffect,
     useState,
 } from '@state-less/react-server';
 import { ServerSideProps } from './ServerSideProps';
 
-export const ViewCounter = (props, { key, initiator }: RenderOptions) => {
+export const ViewCounter = (
+    props,
+    { key, initiator, context }: RenderOptions
+) => {
     const [views, setViews] = useState(0, {
         key: 'views',
-        scope: Scopes.Global,
+        scope: `${key}-${Scopes.Global}`,
     });
     const [clients, setClients] = useState(0, {
         key: 'clients',
-        scope: Scopes.Global,
+        scope: `${key}-${Scopes.Global}`,
     });
 
     useClientEffect(() => {
@@ -28,6 +32,11 @@ export const ViewCounter = (props, { key, initiator }: RenderOptions) => {
     });
 
     return (
-        <ServerSideProps key={`${key}-props`} views={views} clients={clients} />
+        <ServerSideProps
+            key={clientKey(`${key}-props`, context)}
+            component={key}
+            views={views}
+            clients={clients}
+        />
     );
 };
