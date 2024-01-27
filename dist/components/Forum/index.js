@@ -277,9 +277,13 @@ var Forum = function Forum(_ref6, _ref7) {
     }
     return true;
   });
-  var page = clientProps.page,
-    pageSize = clientProps.pageSize,
-    compound = clientProps.compound;
+  var _ref10 = clientProps || {},
+    _ref10$page = _ref10.page,
+    page = _ref10$page === void 0 ? 1 : _ref10$page,
+    _ref10$pageSize = _ref10.pageSize,
+    pageSize = _ref10$pageSize === void 0 ? 25 : _ref10$pageSize,
+    _ref10$compound = _ref10.compound,
+    compound = _ref10$compound === void 0 ? false : _ref10$compound;
   var start = !compound ? (page - 1) * pageSize : 0;
   var end = page * pageSize;
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
@@ -310,8 +314,8 @@ var Platform = function Platform() {
     _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
     forums = _useState12[0],
     setForums = _useState12[1];
-  var createForum = function createForum(_ref10) {
-    var name = _ref10.name;
+  var createForum = function createForum(_ref11) {
+    var name = _ref11.name;
     var forum = {
       id: (0, _uuid.v4)(),
       name: name

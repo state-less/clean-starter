@@ -291,7 +291,7 @@ export const Forum = (
             }
             return true;
         });
-    const { page, pageSize, compound } = clientProps;
+    const { page = 1, pageSize = 25, compound = false } = clientProps || {};
     const start = !compound ? (page - 1) * pageSize : 0;
     const end = page * pageSize;
     return (
