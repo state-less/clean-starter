@@ -267,7 +267,8 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     policies: [_Comments.CommentPolicies.Authenticate]
   }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
     id: "community-forum",
-    name: "Community"
+    name: "Community",
+    policies: [_Forum.ForumPolicies.PostsNeedApproval]
   }, "community-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;

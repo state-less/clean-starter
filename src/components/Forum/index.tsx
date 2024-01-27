@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     authenticate,
     isClientContext,
@@ -13,6 +14,9 @@ import { JWT_SECRET } from '../../config';
 export type PostProps = {
     id: string;
     body: string;
+    approved: boolean;
+    deleted: boolean;
+    approvePost: () => void;
     deletePost: () => void;
     owner: any;
 };
@@ -77,7 +81,7 @@ export const Answer = (
 };
 
 export const Post = (
-    { id, deletePost, ...initialPost }: PostProps,
+    { id, deletePost, approvePost, ...initialPost }: PostProps,
     { context }
 ) => {
     let user = null;
@@ -94,10 +98,7 @@ export const Post = (
         key: 'answers',
         scope: id,
     });
-    const [deleted, setDeleted] = useState(false, {
-        key: 'deleted',
-        scope: id,
-    });
+
     const createAnswer = ({ body }) => {
         const answer = {
             id: v4(),
@@ -116,8 +117,13 @@ export const Post = (
         setPost({ ...post, body });
     };
     const del = (id: string) => {
-        setDeleted(true);
+        setPost({ ...post, deleted: true });
         deletePost();
+    };
+
+    const approve = () => {
+        setPost({ ...post, approved: true });
+        approvePost();
     };
 
     const deleteAnswer = (id: string) => {
@@ -153,7 +159,8 @@ export const Post = (
                 email: post.owner?.strategies?.[user?.strategy]?.email,
             }}
             del={del}
-            deleted={deleted}
+            deleted={post.deleted}
+            approve={approve}
             createAnswer={createAnswer}
             canDelete={
                 // post?.owner?.id === user?.id ||
@@ -186,9 +193,17 @@ export type ForumProps = {
     key: string;
     id: string;
     name: string;
+    policies?: ForumPolicies[];
 };
 
-export const Forum = ({ id, name }: ForumProps, { key, context }) => {
+export enum ForumPolicies {
+    PostsNeedApproval = 'PostsNeedApproval',
+}
+
+export const Forum = (
+    { id, name, policies }: ForumProps,
+    { key, context, clientProps }
+) => {
     let user = null;
     if (isClientContext(context))
         try {
@@ -205,6 +220,8 @@ export const Forum = ({ id, name }: ForumProps, { key, context }) => {
             id: v4(),
             title,
             body,
+            deleted: false,
+            approved: false,
             owner: user,
         };
 
@@ -232,6 +249,20 @@ export const Forum = ({ id, name }: ForumProps, { key, context }) => {
 
         return deleted;
     };
+    const approvePost = (id) => {
+        const post = posts.find((post) => post.id === id);
+        if (!admins.includes(user?.strategies?.[user?.strategy]?.email)) {
+            throw new Error('Not an admin');
+        }
+
+        setPosts(
+            [{ ...post, approved: true }].concat(
+                posts.filter((p) => p.id !== id)
+            )
+        );
+    };
+
+    console.log('CLIENT PROPS', clientProps);
     return (
         <ServerSideProps
             key={`forum-${id}-props`}
@@ -242,11 +273,23 @@ export const Forum = ({ id, name }: ForumProps, { key, context }) => {
         >
             {posts
                 .filter((post) => !post.deleted)
+                .filter((post) => {
+                    if (policies?.includes(ForumPolicies.PostsNeedApproval)) {
+                        return (
+                            post.approved ||
+                            admins.includes(
+                                user?.strategies?.[user?.strategy]?.email
+                            )
+                        );
+                    }
+                    return true;
+                })
                 .map((post) => (
                     <Post
-                        key={'post-' + post.id}
+                        key={`post-${post.id}`}
                         {...post}
                         deletePost={() => deletePost(post.id)}
+                        approvePost={() => approvePost(post.id)}
                     />
                 ))}
         </ServerSideProps>

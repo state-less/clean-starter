@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Post = exports.Platform = exports.Forum = exports.Answer = void 0;
+exports.Post = exports.Platform = exports.ForumPolicies = exports.Forum = exports.Answer = void 0;
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
@@ -18,7 +18,8 @@ var _permissions = require("../../lib/permissions");
 var _config = require("../../config");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _excluded = ["id", "deleteAnswer"],
-  _excluded2 = ["id", "deletePost"];
+  _excluded2 = ["id", "deletePost", "approvePost"];
+/* eslint-disable no-unused-vars */
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var Answer = function Answer(_ref, _ref2) {
@@ -77,6 +78,7 @@ var Post = function Post(_ref3, _ref4) {
   var _post$owner6, _post$owner7, _post$owner7$strategi, _post$owner7$strategi2, _user10, _post$owner8, _post$owner8$strategi, _post$owner8$strategi2, _user11, _post$owner9, _post$owner9$strategi, _post$owner9$strategi2, _user12, _user13, _user13$strategies, _user13$strategies$us, _user14;
   var id = _ref3.id,
     deletePost = _ref3.deletePost,
+    approvePost = _ref3.approvePost,
     initialPost = (0, _objectWithoutProperties2["default"])(_ref3, _excluded2);
   var context = _ref4.context;
   var user = null;
@@ -97,13 +99,6 @@ var Post = function Post(_ref3, _ref4) {
     _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
     answers = _useState8[0],
     setAnswers = _useState8[1];
-  var _useState9 = (0, _reactServer.useState)(false, {
-      key: 'deleted',
-      scope: id
-    }),
-    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
-    deleted = _useState10[0],
-    setDeleted = _useState10[1];
   var createAnswer = function createAnswer(_ref5) {
     var body = _ref5.body;
     var answer = {
@@ -122,8 +117,16 @@ var Post = function Post(_ref3, _ref4) {
     }));
   };
   var del = function del(id) {
-    setDeleted(true);
+    setPost(_objectSpread(_objectSpread({}, post), {}, {
+      deleted: true
+    }));
     deletePost();
+  };
+  var approve = function approve() {
+    setPost(_objectSpread(_objectSpread({}, post), {}, {
+      approved: true
+    }));
+    approvePost();
   };
   var _deleteAnswer = function deleteAnswer(id) {
     var _deleted$owner, _user7, _user8, _user8$strategies, _user8$strategies$use, _user9;
@@ -155,7 +158,8 @@ var Post = function Post(_ref3, _ref4) {
       email: (_post$owner9 = post.owner) === null || _post$owner9 === void 0 ? void 0 : (_post$owner9$strategi = _post$owner9.strategies) === null || _post$owner9$strategi === void 0 ? void 0 : (_post$owner9$strategi2 = _post$owner9$strategi[(_user12 = user) === null || _user12 === void 0 ? void 0 : _user12.strategy]) === null || _post$owner9$strategi2 === void 0 ? void 0 : _post$owner9$strategi2.email
     },
     del: del,
-    deleted: deleted,
+    deleted: post.deleted,
+    approve: approve,
     createAnswer: createAnswer,
     canDelete:
     // post?.owner?.id === user?.id ||
@@ -178,22 +182,29 @@ var Post = function Post(_ref3, _ref4) {
   }), "post-".concat(id, "-props"));
 };
 exports.Post = Post;
+var ForumPolicies = /*#__PURE__*/function (ForumPolicies) {
+  ForumPolicies["PostsNeedApproval"] = "PostsNeedApproval";
+  return ForumPolicies;
+}({});
+exports.ForumPolicies = ForumPolicies;
 var Forum = function Forum(_ref6, _ref7) {
   var id = _ref6.id,
-    name = _ref6.name;
+    name = _ref6.name,
+    policies = _ref6.policies;
   var key = _ref7.key,
-    context = _ref7.context;
+    context = _ref7.context,
+    clientProps = _ref7.clientProps;
   var user = null;
   if ((0, _reactServer.isClientContext)(context)) try {
     user = (0, _reactServer.authenticate)(context.headers, _config.JWT_SECRET);
   } catch (e) {}
-  var _useState11 = (0, _reactServer.useState)([], {
+  var _useState9 = (0, _reactServer.useState)([], {
       key: 'posts',
       scope: id
     }),
-    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
-    posts = _useState12[0],
-    setPosts = _useState12[1];
+    _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
+    posts = _useState10[0],
+    setPosts = _useState10[1];
   var createPost = function createPost(_ref8) {
     var title = _ref8.title,
       body = _ref8.body;
@@ -201,6 +212,8 @@ var Forum = function Forum(_ref6, _ref7) {
       id: (0, _uuid.v4)(),
       title: title,
       body: body,
+      deleted: false,
+      approved: false,
       owner: user
     };
     setPosts([].concat((0, _toConsumableArray2["default"])(posts), [post]));
@@ -223,6 +236,21 @@ var Forum = function Forum(_ref6, _ref7) {
     })]));
     return deleted;
   };
+  var _approvePost = function approvePost(id) {
+    var _user21, _user21$strategies, _user21$strategies$us, _user22;
+    var post = posts.find(function (post) {
+      return post.id === id;
+    });
+    if (!_permissions.admins.includes((_user21 = user) === null || _user21 === void 0 ? void 0 : (_user21$strategies = _user21.strategies) === null || _user21$strategies === void 0 ? void 0 : (_user21$strategies$us = _user21$strategies[(_user22 = user) === null || _user22 === void 0 ? void 0 : _user22.strategy]) === null || _user21$strategies$us === void 0 ? void 0 : _user21$strategies$us.email)) {
+      throw new Error('Not an admin');
+    }
+    setPosts([_objectSpread(_objectSpread({}, post), {}, {
+      approved: true
+    })].concat(posts.filter(function (p) {
+      return p.id !== id;
+    })));
+  };
+  console.log('CLIENT PROPS', clientProps);
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     id: id,
     name: name,
@@ -230,24 +258,33 @@ var Forum = function Forum(_ref6, _ref7) {
     deletePost: _deletePost,
     children: posts.filter(function (post) {
       return !post.deleted;
+    }).filter(function (post) {
+      if (policies !== null && policies !== void 0 && policies.includes(ForumPolicies.PostsNeedApproval)) {
+        var _user23, _user23$strategies, _user23$strategies$us, _user24;
+        return post.approved || _permissions.admins.includes((_user23 = user) === null || _user23 === void 0 ? void 0 : (_user23$strategies = _user23.strategies) === null || _user23$strategies === void 0 ? void 0 : (_user23$strategies$us = _user23$strategies[(_user24 = user) === null || _user24 === void 0 ? void 0 : _user24.strategy]) === null || _user23$strategies$us === void 0 ? void 0 : _user23$strategies$us.email);
+      }
+      return true;
     }).map(function (post) {
       return (0, _jsxRuntime.jsx)(Post, _objectSpread(_objectSpread({}, post), {}, {
         deletePost: function deletePost() {
           return _deletePost(post.id);
+        },
+        approvePost: function approvePost() {
+          return _approvePost(post.id);
         }
-      }), 'post-' + post.id);
+      }), "post-".concat(post.id));
     })
   }, "forum-".concat(id, "-props"));
 };
 exports.Forum = Forum;
 var Platform = function Platform() {
-  var _useState13 = (0, _reactServer.useState)([], {
+  var _useState11 = (0, _reactServer.useState)([], {
       key: 'forums',
       scope: 'platform'
     }),
-    _useState14 = (0, _slicedToArray2["default"])(_useState13, 2),
-    forums = _useState14[0],
-    setForums = _useState14[1];
+    _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
+    forums = _useState12[0],
+    setForums = _useState12[1];
   var createForum = function createForum(_ref10) {
     var name = _ref10.name;
     var forum = {
