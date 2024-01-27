@@ -112,7 +112,7 @@ var Post = function Post(_ref3, _ref4) {
   };
   var setBody = function setBody(body) {
     if (typeof body !== 'string') throw new Error('Body must be a string');
-    if (deleted) throw new Error('Cannot edit a deleted post');
+    if (post.deleted) throw new Error('Cannot edit a deleted post');
     setPost(_objectSpread(_objectSpread({}, post), {}, {
       body: body
     }));

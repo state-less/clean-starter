@@ -114,7 +114,7 @@ export const Post = (
 
     const setBody = (body: string) => {
         if (typeof body !== 'string') throw new Error('Body must be a string');
-        if (deleted) throw new Error('Cannot edit a deleted post');
+        if (post.deleted) throw new Error('Cannot edit a deleted post');
         setPost({ ...post, body });
     };
     const del = (id: string) => {
