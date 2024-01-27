@@ -50,11 +50,6 @@ var Room = function Room(props, _ref2) {
       user: user,
       id: context.headers['x-unique-id']
     };
-    if (initiator !== _reactServer.Initiator.Mount) return function () {
-      setClients(clients.filter(function (c) {
-        return c.id !== client.id;
-      }));
-    };
     if (!clients.find(function (c) {
       return c.id === client.id;
     })) setImmediate(setClients, [].concat((0, _toConsumableArray2["default"])(clients), [client]));
@@ -88,6 +83,6 @@ var Room = function Room(props, _ref2) {
     messages: messages.slice(((clientProps === null || clientProps === void 0 ? void 0 : clientProps.num) || 30) * -1),
     clients: clients,
     sendMessage: sendMessage
-  }, "".concat(key, "-props"));
+  }, (0, _reactServer.clientKey)("".concat(key, "-props"), context));
 };
 exports.Room = Room;

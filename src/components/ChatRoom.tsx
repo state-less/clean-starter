@@ -4,6 +4,7 @@ import {
     RenderOptions,
     Scopes,
     authenticate,
+    clientKey,
     useClientEffect,
     useState,
 } from '@state-less/react-server';
@@ -47,11 +48,6 @@ export const Room = (
             id: (context as ClientContext).headers['x-unique-id'],
         };
 
-        if (initiator !== Initiator.Mount)
-            return () => {
-                setClients(clients.filter((c) => c.id !== client.id));
-            };
-
         if (!clients.find((c) => c.id === client.id))
             setImmediate(setClients, [...clients, client]);
 
@@ -82,7 +78,7 @@ export const Room = (
 
     return (
         <ServerSideProps
-            key={`${key}-props`}
+            key={clientKey(`${key}-props`, context)}
             total={messages.length}
             messages={messages.slice((clientProps?.num || 30) * -1)}
             clients={clients}
