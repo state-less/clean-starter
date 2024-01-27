@@ -230,6 +230,7 @@ export const Forum = (
     });
 
     const createPost = ({ title, body }) => {
+        console.log('CREATE POST', user, clientId);
         const post = {
             id: v4(),
             title,
@@ -291,6 +292,7 @@ export const Forum = (
                     if (policies?.includes(ForumPolicies.PostsNeedApproval)) {
                         return (
                             post.approved ||
+                            post?.owner?.id === (user?.id || clientId) ||
                             admins.includes(
                                 user?.strategies?.[user?.strategy]?.email
                             )
