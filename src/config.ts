@@ -9,6 +9,8 @@ const {
     PG_PASSWORD,
     VAPID_PRIVATE,
     VAPID_PUBLIC,
+    FORUM_KEY = 'my-forum',
+    ADMIN_EMAIL,
 } = process.env;
 
 export {
@@ -18,4 +20,6 @@ export {
     VAPID_PRIVATE,
     VAPID_PUBLIC,
     PG_PASSWORD,
+    FORUM_KEY,
+    ADMIN_EMAIL,
 };

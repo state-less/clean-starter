@@ -186,7 +186,7 @@ var callFunction = /*#__PURE__*/function () {
           _reactServer.Dispatcher.getCurrent().addCurrentComponent(component);
           _reactServer.Dispatcher.getCurrent().setClientContext({
             context: context,
-            initiator: _reactServer.Initiator.FunctionCall,
+            initiator: _reactServer.Initiator.RenderClient,
             clientProps: {}
           });
           start = Date.now();

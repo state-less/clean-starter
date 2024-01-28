@@ -5,7 +5,6 @@ import { createServer } from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import {
     Server,
-    TestComponent,
     render,
     Dispatcher,
     Initiator,
@@ -15,20 +14,10 @@ import { app, pubsub, store } from './instances';
 
 import { generatePubSubKey, resolvers } from './resolvers';
 import { typeDefs } from './schema';
-import { Navigation } from './components/Navigation';
-import { HelloWorldExample1, HelloWorldExample2 } from './components/examples';
-import { DynamicPage, Pages } from './components/Pages';
-import { VotingPolicies, Votings } from './components/Votings';
-import { Session } from './components/Session';
-import { Poll, PollActions } from './components/Poll';
-import { CommentPolicies, Comments } from './components/Comments';
 import logger from './lib/logger';
-import { Features } from './components/Features';
+import { Forum, ForumPolicies } from './components/Forum';
+import { FORUM_KEY } from './config';
 import { ViewCounter } from './components/ViewCounter';
-import { ChatApp } from './components/ChatRoom';
-import { Forum, ForumPolicies, Platform } from './components/Forum';
-import { List, MyLists, MyListsMeta } from './components/Lists';
-import { WebPushManager } from './components/WebPushManager';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -98,249 +87,15 @@ SubscriptionServer.create(
     }
 );
 
-const landingList1 = {
-    id: 'landing-list-1',
-    title: 'Hello World',
-    todos: [
-        {
-            id: 'todo-0',
-            title: 'Hello World',
-            completed: true,
-        },
-        {
-            id: 'todo-1',
-            title: 'Add your first Todo Item',
-            completed: false,
-        },
-        {
-            id: 'todo-2',
-            title: 'Add a counter item by clicking +',
-            completed: false,
-        },
-    ],
-    order: ['todo-0', 'todo-1', 'todo-2'],
-};
-
-const landingList2 = {
-    id: 'landing-list-2',
-    title: 'Colors',
-    color: '#ABDDA477',
-    todos: [
-        {
-            id: 'counter-0',
-            type: 'Counter',
-            count: 3,
-            title: 'Glasses of water',
-        },
-    ],
-    order: ['counter-0'],
-};
-const landingList3 = {
-    id: 'landing-list-3',
-    title: 'History',
-    settings: {
-        defaultType: 'Counter',
-    },
-    todos: [
-        {
-            id: 'history-1',
-            createdAt: '2024-01-01',
-            count: 3,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-01',
-        },
-        {
-            id: 'history-2',
-            createdAt: '2024-01-01',
-            count: 2,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-01',
-        },
-        {
-            id: 'history-3',
-            createdAt: '2024-01-02',
-            count: 1,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-02',
-        },
-        {
-            id: 'history-4',
-            createdAt: '2024-01-02',
-            count: 4,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-02',
-        },
-        {
-            id: 'history-5',
-            createdAt: '2024-01-03',
-            count: 0,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-03',
-        },
-        {
-            id: 'history-6',
-            createdAt: '2024-01-03',
-            count: 0,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-03',
-        },
-        {
-            id: 'history-7',
-            createdAt: '2024-01-04',
-            count: 2,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-04',
-        },
-        {
-            id: 'history-8',
-            createdAt: '2024-01-04',
-            count: 2,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-04',
-        },
-        {
-            id: 'history-9',
-            createdAt: '2024-01-05',
-            count: 5,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-05',
-        },
-        {
-            id: 'history-10',
-            createdAt: '2024-01-05',
-            count: 2,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-05',
-        },
-        {
-            id: 'history-11',
-            createdAt: '2024-01-06',
-            count: 3,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-06',
-        },
-        {
-            id: 'history-12',
-            createdAt: '2024-01-06',
-            count: 1,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-06',
-        },
-        {
-            id: 'history-13',
-            createdAt: '2024-01-07',
-            count: 1,
-            type: 'Counter',
-            title: 'Joy',
-            archived: '2024-01-07',
-        },
-        {
-            id: 'history-14',
-            createdAt: '2024-01-07',
-            count: 1,
-            type: 'Counter',
-            title: 'Coffee',
-            archived: '2024-01-07',
-        },
-        {
-            id: 'history-15',
-            createdAt: '2024-01-08',
-            count: 1,
-            type: 'Counter',
-            title: 'Joy',
-        },
-        {
-            id: 'history-16',
-            createdAt: '2024-01-08',
-            count: 1,
-            type: 'Counter',
-            title: 'Coffee',
-        },
-    ],
-    order: [...Array(16)].map((_, i) => `history-${i + 1}`),
-};
-const demoList1 = {
-    id: 'demo-list-1',
-    title: 'Todos',
-    order: ['todo-0'],
-    todos: [
-        {
-            id: 'todo-0',
-            title: 'Todo',
-            type: 'Todo',
-            completed: false,
-        },
-    ],
-};
 export const reactServer = (
     <Server key="server">
-        <ChatApp key="chat" />
-        <ViewCounter key="view-counter" />
-        <ViewCounter key="lists-views" />
-        <Features key="features" />
-        <TestComponent key="test" />
-        <Navigation key="navigation" />
-        <HelloWorldExample1 key="hello-world-1" />
-        <HelloWorldExample2 key="hello-world-2" />
-        <Pages key="pages" />
-        <DynamicPage key="page" />
-        <MyLists key="my-lists" />
-        <MyListsMeta key="my-lists-points" />
-        <Votings key="votings" policies={[VotingPolicies.SingleVote]} />
-        <List key="landing-list-1" {...landingList1} />
-        <List key="landing-list-2" {...landingList2} />
-        <List key="landing-list-3" {...landingList3} />
-        <List key="todos" {...demoList1} />
-        <Votings key="votings-multiple" policies={[]} />
-        <Session key="session" />
-        <Poll
-            key="poll"
-            values={[
-                'Where can I get this?',
-                'Meh...',
-                'Shut up and take my money.',
-            ]}
-            policies={[PollActions.Revert, PollActions.Authenticate]}
-        />
-        <Poll
-            key="poll-open"
-            values={[
-                'Nice!',
-                'Meh...',
-                "It's not working",
-                'Add more features.',
-                'Add a comment section.',
-                'Shut up and take my money.',
-            ]}
-            policies={[PollActions.Revert]}
-        />
-        <Comments key="comments" policies={[CommentPolicies.Authenticate]} />
-        <Platform key="platform" />
+        <ViewCounter key="forum-views" />
         <Forum
-            key="community-forum"
-            id="community-forum"
+            key={FORUM_KEY}
+            id={FORUM_KEY}
             name="Community"
             policies={[ForumPolicies.PostsNeedApproval]}
         />
-        <Forum
-            key="lists-forum"
-            id="lists-forum"
-            name="Lists Forum"
-            policies={[ForumPolicies.PostsNeedApproval]}
-        />
-        <WebPushManager key="web-push" />
     </Server>
 );
 
@@ -358,6 +113,7 @@ const node = render(
     null
 );
 
+console.log('NODE', node);
 (async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({

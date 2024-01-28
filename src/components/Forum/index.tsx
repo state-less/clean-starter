@@ -86,7 +86,7 @@ export const Answer = (
 
 export const Post = (
     { id, deletePost, approvePost, ...initialPost }: PostProps,
-    { context }
+    { context, initiator }
 ) => {
     let user = null;
     const clientId = context?.headers?.['x-unique-id'] || 'server';
@@ -112,10 +112,10 @@ export const Post = (
         };
 
         setAnswers([...answers, answer]);
-
+        console.log('CREATED ANSWER', answer);
         return answer;
     };
-
+    console.log('RERENDERING POSTS ', initiator, answers);
     const setBody = (body: string) => {
         if (typeof body !== 'string') throw new Error('Body must be a string');
         if (post.deleted) throw new Error('Cannot edit a deleted post');

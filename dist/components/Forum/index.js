@@ -81,7 +81,8 @@ var Post = function Post(_ref3, _ref4) {
     deletePost = _ref3.deletePost,
     approvePost = _ref3.approvePost,
     initialPost = (0, _objectWithoutProperties2["default"])(_ref3, _excluded2);
-  var context = _ref4.context;
+  var context = _ref4.context,
+    initiator = _ref4.initiator;
   var user = null;
   var clientId = (context === null || context === void 0 ? void 0 : (_context$headers = context.headers) === null || _context$headers === void 0 ? void 0 : _context$headers['x-unique-id']) || 'server';
   if ((0, _reactServer.isClientContext)(context)) try {
@@ -109,8 +110,10 @@ var Post = function Post(_ref3, _ref4) {
       body: body
     };
     setAnswers([].concat((0, _toConsumableArray2["default"])(answers), [answer]));
+    console.log('CREATED ANSWER', answer);
     return answer;
   };
+  console.log('RERENDERING POSTS ', initiator, answers);
   var setBody = function setBody(body) {
     if (typeof body !== 'string') throw new Error('Body must be a string');
     if (post.deleted) throw new Error('Cannot edit a deleted post');

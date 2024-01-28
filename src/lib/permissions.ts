@@ -1,1 +1,3 @@
-export const admins = ['moritz.roessler@gmail.com'];
+import { ADMIN_EMAIL } from '../config';
+
+export const admins = [ADMIN_EMAIL];
