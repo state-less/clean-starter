@@ -239,7 +239,7 @@ export const Forum = (
 
     const [posts, setPosts] = useState([], {
         key: 'posts',
-        scope: 'forum-' + id,
+        scope: id,
     });
 
     const createPost = ({ title, body, tags }) => {
@@ -283,12 +283,11 @@ export const Forum = (
         if (!admins.includes(user?.strategies?.[user?.strategy]?.email)) {
             throw new Error('Not an admin');
         }
-
-        setPosts(
-            [{ ...post, approved: true }].concat(
-                posts.filter((p) => p.id !== id)
-            )
+        const newPosts = [{ ...post, approved: true }].concat(
+            posts.filter((p) => p.id !== id)
         );
+        console.log('Approving post: ', id, post, newPosts);
+        setPosts(newPosts);
     };
 
     console.log('CLIENT PROPS', clientProps);

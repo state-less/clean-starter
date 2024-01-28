@@ -220,7 +220,7 @@ var Forum = function Forum(_ref6, _ref7) {
   } catch (e) {}
   var _useState9 = (0, _reactServer.useState)([], {
       key: 'posts',
-      scope: 'forum-' + id
+      scope: id
     }),
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     posts = _useState10[0],
@@ -269,11 +269,13 @@ var Forum = function Forum(_ref6, _ref7) {
     if (!_permissions.admins.includes((_user24 = user) === null || _user24 === void 0 ? void 0 : (_user24$strategies = _user24.strategies) === null || _user24$strategies === void 0 ? void 0 : (_user24$strategies$us = _user24$strategies[(_user25 = user) === null || _user25 === void 0 ? void 0 : _user25.strategy]) === null || _user24$strategies$us === void 0 ? void 0 : _user24$strategies$us.email)) {
       throw new Error('Not an admin');
     }
-    setPosts([_objectSpread(_objectSpread({}, post), {}, {
+    var newPosts = [_objectSpread(_objectSpread({}, post), {}, {
       approved: true
     })].concat(posts.filter(function (p) {
       return p.id !== id;
-    })));
+    }));
+    console.log('Approving post: ', id, post, newPosts);
+    setPosts(newPosts);
   };
   console.log('CLIENT PROPS', clientProps);
   var filtered = posts.filter(function (post) {
