@@ -12,7 +12,6 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _reactServer = require("@state-less/react-server");
 var _reactServer2 = require("@state-less/react-server/dist/lib/reactServer");
-var _internals = require("@state-less/react-server/dist/lib/internals");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 var _axios = _interopRequireDefault(require("axios"));
 var _jwksRsa = _interopRequireDefault(require("jwks-rsa"));
@@ -341,15 +340,15 @@ var resolvers = {
     updateComponent: {
       subscribe: function subscribe(parent, args) {
         _logger["default"].log(_templateObject3 || (_templateObject3 = (0, _taggedTemplateLiteral2["default"])(["Subscribing to component ", ""])), generateComponentPubSubKey(args));
-        setTimeout(function () {
-          var key = args.key;
-          var rendered = _internals.renderCache[key];
-          _instances.pubsub.publish(generateComponentPubSubKey(args), {
-            updateComponent: {
-              rendered: rendered
-            }
-          });
-        }, 0);
+
+        // setTimeout(() => {
+        //     const key = args.key;
+        //     const rendered = renderCache[key];
+        //     pubsub.publish(generateComponentPubSubKey(args), {
+        //         updateComponent: { rendered },
+        //     });
+        // }, 0);
+
         return _instances.pubsub.asyncIterator(generateComponentPubSubKey(args));
       }
     }

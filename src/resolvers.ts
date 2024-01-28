@@ -307,13 +307,13 @@ export const resolvers = {
                     args
                 )}`;
 
-                setTimeout(() => {
-                    const key = args.key;
-                    const rendered = renderCache[key];
-                    pubsub.publish(generateComponentPubSubKey(args), {
-                        updateComponent: { rendered },
-                    });
-                }, 0);
+                // setTimeout(() => {
+                //     const key = args.key;
+                //     const rendered = renderCache[key];
+                //     pubsub.publish(generateComponentPubSubKey(args), {
+                //         updateComponent: { rendered },
+                //     });
+                // }, 0);
 
                 return pubsub.asyncIterator(generateComponentPubSubKey(args));
             },
