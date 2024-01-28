@@ -220,7 +220,7 @@ var Forum = function Forum(_ref6, _ref7) {
   } catch (e) {}
   var _useState9 = (0, _reactServer.useState)([], {
       key: 'posts',
-      scope: id
+      scope: 'forum-' + id
     }),
     _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
     posts = _useState10[0],
@@ -294,6 +294,7 @@ var Forum = function Forum(_ref6, _ref7) {
     compound = _ref10$compound === void 0 ? false : _ref10$compound;
   var start = !compound ? (page - 1) * pageSize : 0;
   var end = page * pageSize;
+  console.log('FILTERED', posts, filtered, start, end, id);
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     id: id,
     name: name,
@@ -311,7 +312,7 @@ var Forum = function Forum(_ref6, _ref7) {
         }
       }), "post-".concat(post.id));
     })
-  }, "forum-".concat(id, "-props"));
+  }, (0, _reactServer.clientKey)("forum-".concat(id, "-props"), context));
 };
 exports.Forum = Forum;
 var Platform = function Platform() {

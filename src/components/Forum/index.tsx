@@ -2,6 +2,7 @@
 import {
     Initiator,
     authenticate,
+    clientKey,
     isClientContext,
     render,
     useState,
@@ -215,16 +216,15 @@ export const Post = (
     );
 };
 
+export enum ForumPolicies {
+    PostsNeedApproval = 'PostsNeedApproval',
+}
 export type ForumProps = {
     key: string;
     id: string;
     name: string;
     policies?: ForumPolicies[];
 };
-
-export enum ForumPolicies {
-    PostsNeedApproval = 'PostsNeedApproval',
-}
 
 export const Forum = (
     { id, name, policies }: ForumProps,
@@ -239,7 +239,7 @@ export const Forum = (
 
     const [posts, setPosts] = useState([], {
         key: 'posts',
-        scope: id,
+        scope: 'forum-' + id,
     });
 
     const createPost = ({ title, body, tags }) => {
@@ -307,9 +307,11 @@ export const Forum = (
     const { page = 1, pageSize = 25, compound = false } = clientProps || {};
     const start = !compound ? (page - 1) * pageSize : 0;
     const end = page * pageSize;
+
+    console.log('FILTERED', posts, filtered, start, end, id);
     return (
         <ServerSideProps
-            key={`forum-${id}-props`}
+            key={clientKey(`forum-${id}-props`, context)}
             id={id}
             name={name}
             createPost={createPost}

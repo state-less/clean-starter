@@ -288,6 +288,7 @@ export const reactServer = (
     <Server key="server">
         <ChatApp key="chat" />
         <ViewCounter key="view-counter" />
+        <ViewCounter key="lists-views" />
         <Features key="features" />
         <TestComponent key="test" />
         <Navigation key="navigation" />
@@ -331,6 +332,12 @@ export const reactServer = (
             key="community-forum"
             id="community-forum"
             name="Community"
+            policies={[ForumPolicies.PostsNeedApproval]}
+        />
+        <Forum
+            key="lists-forum"
+            id="lists-forum"
+            name="Lists Forum"
             policies={[ForumPolicies.PostsNeedApproval]}
         />
         <WebPushManager key="web-push" />

@@ -254,7 +254,7 @@ var demoList1 = {
   }]
 };
 var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
+  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "lists-views"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: [_Votings.VotingPolicies.SingleVote]
   }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList3), "landing-list-3"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, demoList1), "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
     policies: []
@@ -270,7 +270,11 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     id: "community-forum",
     name: "Community",
     policies: [_Forum.ForumPolicies.PostsNeedApproval]
-  }, "community-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
+  }, "community-forum"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+    id: "lists-forum",
+    name: "Lists Forum",
+    policies: [_Forum.ForumPolicies.PostsNeedApproval]
+  }, "lists-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, {
