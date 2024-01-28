@@ -59,6 +59,7 @@ const connections = store.createState(0, {
 const clients = new WeakMap();
 SubscriptionServer.create(
     {
+        keepAlive: 10000,
         schema,
         execute,
         subscribe,

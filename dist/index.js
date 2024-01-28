@@ -63,6 +63,7 @@ var connections = _instances.store.createState(0, {
 // Create a WebSocket server for subscriptions
 var clients = new WeakMap();
 _subscriptionsTransportWs.SubscriptionServer.create({
+  keepAlive: 10000,
   schema: schema,
   execute: _graphql.execute,
   subscribe: _graphql.subscribe,
