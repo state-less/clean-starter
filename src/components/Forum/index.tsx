@@ -112,10 +112,9 @@ export const Post = (
         };
 
         setAnswers([...answers, answer]);
-        console.log('CREATED ANSWER', answer);
         return answer;
     };
-    console.log('RERENDERING POSTS ', initiator, answers);
+
     const setBody = (body: string) => {
         if (typeof body !== 'string') throw new Error('Body must be a string');
         if (post.deleted) throw new Error('Cannot edit a deleted post');
@@ -243,7 +242,6 @@ export const Forum = (
     });
 
     const createPost = ({ title, body, tags }) => {
-        console.log('CREATE POST', user, clientId);
         const post = {
             id: v4(),
             title,
@@ -286,11 +284,10 @@ export const Forum = (
         const newPosts = [{ ...post, approved: true }].concat(
             posts.filter((p) => p.id !== id)
         );
-        console.log('Approving post: ', id, post, newPosts);
+
         setPosts(newPosts);
     };
 
-    console.log('CLIENT PROPS', clientProps);
     const filtered = posts
         .filter((post) => !post.deleted)
         .filter((post) => {
@@ -307,7 +304,6 @@ export const Forum = (
     const start = !compound ? (page - 1) * pageSize : 0;
     const end = page * pageSize;
 
-    console.log('FILTERED', posts, filtered, start, end, id);
     return (
         <ServerSideProps
             key={clientKey(`forum-${id}-props`, context)}

@@ -110,10 +110,8 @@ var Post = function Post(_ref3, _ref4) {
       body: body
     };
     setAnswers([].concat((0, _toConsumableArray2["default"])(answers), [answer]));
-    console.log('CREATED ANSWER', answer);
     return answer;
   };
-  console.log('RERENDERING POSTS ', initiator, answers);
   var setBody = function setBody(body) {
     if (typeof body !== 'string') throw new Error('Body must be a string');
     if (post.deleted) throw new Error('Cannot edit a deleted post');
@@ -232,7 +230,6 @@ var Forum = function Forum(_ref6, _ref7) {
     var title = _ref8.title,
       body = _ref8.body,
       tags = _ref8.tags;
-    console.log('CREATE POST', user, clientId);
     var post = {
       id: (0, _uuid.v4)(),
       title: title,
@@ -277,10 +274,8 @@ var Forum = function Forum(_ref6, _ref7) {
     })].concat(posts.filter(function (p) {
       return p.id !== id;
     }));
-    console.log('Approving post: ', id, post, newPosts);
     setPosts(newPosts);
   };
-  console.log('CLIENT PROPS', clientProps);
   var filtered = posts.filter(function (post) {
     return !post.deleted;
   }).filter(function (post) {
@@ -299,7 +294,6 @@ var Forum = function Forum(_ref6, _ref7) {
     compound = _ref10$compound === void 0 ? false : _ref10$compound;
   var start = !compound ? (page - 1) * pageSize : 0;
   var end = page * pageSize;
-  console.log('FILTERED', posts, filtered, start, end, id);
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     id: id,
     name: name,

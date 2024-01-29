@@ -37,7 +37,6 @@ export const WebPushManager = (props, { key, context }) => {
     );
 
     useEffect(() => {
-        console.log('WEB PUSH', subscribed);
         Object.keys(subscribed).forEach((clientId) => {
             const { sub, user } = subscribed[clientId] || {};
             if (sub) {

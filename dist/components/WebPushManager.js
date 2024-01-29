@@ -36,7 +36,6 @@ var WebPushManager = function WebPushManager(props, _ref) {
     subscribed = _useState2[0],
     setSubscribed = _useState2[1];
   (0, _reactServer.useEffect)(function () {
-    console.log('WEB PUSH', subscribed);
     Object.keys(subscribed).forEach(function (clientId) {
       var _ref2 = subscribed[clientId] || {},
         sub = _ref2.sub,

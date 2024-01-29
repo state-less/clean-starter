@@ -113,7 +113,6 @@ const node = render(
     null
 );
 
-console.log('NODE', node);
 (async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({
