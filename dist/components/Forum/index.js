@@ -17,6 +17,7 @@ var _Votings = require("../Votings");
 var _permissions = require("../../lib/permissions");
 var _config = require("../../config");
 var _ViewCounter = require("../ViewCounter");
+var _Reactions = require("../Reactions");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
 var _excluded = ["id", "deleteAnswer"],
   _excluded2 = ["id", "deletePost", "approvePost"];
@@ -71,7 +72,10 @@ var Answer = function Answer(_ref, _ref2) {
     canDelete: (post === null || post === void 0 ? void 0 : (_post$owner5 = post.owner) === null || _post$owner5 === void 0 ? void 0 : _post$owner5.id) === ((_user4 = user) === null || _user4 === void 0 ? void 0 : _user4.id) || _permissions.admins.includes((_user5 = user) === null || _user5 === void 0 ? void 0 : (_user5$strategies = _user5.strategies) === null || _user5$strategies === void 0 ? void 0 : (_user5$strategies$use = _user5$strategies[(_user6 = user) === null || _user6 === void 0 ? void 0 : _user6.strategy]) === null || _user5$strategies$use === void 0 ? void 0 : _user5$strategies$use.email),
     children: [(0, _jsxRuntime.jsx)(_Votings.Votings, {
       policies: [_Votings.VotingPolicies.SingleVote]
-    }, "answer-".concat(id, "-votings")), (0, _jsxRuntime.jsx)(_Comments.Comments, {}, "answer-".concat(id, "-comments"))]
+    }, "answer-".concat(id, "-votings")), (0, _jsxRuntime.jsx)(_Comments.Comments, {}, "answer-".concat(id, "-comments")), (0, _jsxRuntime.jsx)(_Reactions.Reactions, {
+      policies: [_Reactions.ReactionPolicies.SingleVote],
+      values: _Reactions.reactionsWhiteList
+    }, "answer-".concat(id, "-reactions"))]
   }), "answer-".concat(id, "-props"));
 };
 exports.Answer = Answer;
@@ -187,7 +191,10 @@ var Post = function Post(_ref3, _ref4) {
     }, null),
     children: [(0, _jsxRuntime.jsx)(_Votings.Votings, {
       policies: [_Votings.VotingPolicies.SingleVote]
-    }, "post-".concat(id, "-votings")), answers.filter(function (answer) {
+    }, "post-".concat(id, "-votings")), (0, _jsxRuntime.jsx)(_Reactions.Reactions, {
+      policies: [_Reactions.ReactionPolicies.SingleVote],
+      values: _Reactions.reactionsWhiteList
+    }, "post-".concat(id, "-reactions")), answers.filter(function (answer) {
       var _answer$owner, _user18;
       return !answer.deleted || ((_answer$owner = answer.owner) === null || _answer$owner === void 0 ? void 0 : _answer$owner.id) === ((_user18 = user) === null || _user18 === void 0 ? void 0 : _user18.id);
     }).map(function (answer) {

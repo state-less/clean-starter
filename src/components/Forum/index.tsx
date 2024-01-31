@@ -14,6 +14,7 @@ import { VotingPolicies, Votings } from '../Votings';
 import { admins } from '../../lib/permissions';
 import { JWT_SECRET } from '../../config';
 import { ViewCounter } from '../ViewCounter';
+import { ReactionPolicies, Reactions, reactionsWhiteList } from '../Reactions';
 
 export type PostProps = {
     id: string;
@@ -80,6 +81,11 @@ export const Answer = (
                 policies={[VotingPolicies.SingleVote]}
             />
             <Comments key={`answer-${id}-comments`} />
+            <Reactions
+                key={`answer-${id}-reactions`}
+                policies={[ReactionPolicies.SingleVote]}
+                values={reactionsWhiteList}
+            />
         </ServerSideProps>
     );
 };
@@ -200,6 +206,11 @@ export const Post = (
             <Votings
                 key={`post-${id}-votings`}
                 policies={[VotingPolicies.SingleVote]}
+            />
+            <Reactions
+                key={`post-${id}-reactions`}
+                policies={[ReactionPolicies.SingleVote]}
+                values={reactionsWhiteList}
             />
             {answers
                 .filter(
