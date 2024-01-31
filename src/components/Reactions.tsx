@@ -43,13 +43,13 @@ export const Reactions = (
         ) {
             newReactions = {
                 ...reactions,
-                [reactionKey]: Number(reactions[reactionKey]) - 1,
+                [reactionKey]: Math.max(0, Number(reactions[reactionKey]) - 1),
             };
             setVoted(null);
         } else {
             newReactions = {
                 ...reactions,
-                [reactionKey]: Math.max(0, Number(reactions[reactionKey])) + 1,
+                [reactionKey]: Math.max(0, Number(reactions[reactionKey]) + 1),
             };
             if (voted) {
                 newReactions[voted] = Math.max(0, Number(reactions[voted]) - 1);
