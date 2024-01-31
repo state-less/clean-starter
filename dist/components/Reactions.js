@@ -49,15 +49,13 @@ var Reactions = function Reactions(_ref, _ref2) {
       newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, Math.max(1, Number(reactions[reactionKey]) - 1)));
       setVoted(null);
     } else {
-      newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, Math.max(0, Number(reactions[reactionKey])) + 1));
+      newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, (reactions[reactionKey] || 0) + 1));
       if (voted) {
-        newReactions[voted] = Math.max(1, Number(reactions[voted]) - 1);
+        newReactions[voted] = Math.max(1, Number(newReactions[voted]) - 1);
       }
       setVoted(reactionKey);
     }
-    setTimeout(function () {
-      setReactions(newReactions);
-    }, 0);
+    setReactions(newReactions);
   };
   return (0, _jsxRuntime.jsx)(_ServerSideProps.ServerSideProps, {
     reactions: reactions,

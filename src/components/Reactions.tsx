@@ -49,16 +49,18 @@ export const Reactions = (
         } else {
             newReactions = {
                 ...reactions,
-                [reactionKey]: Math.max(0, Number(reactions[reactionKey])) + 1,
+                [reactionKey]: (reactions[reactionKey] || 0) + 1,
             };
             if (voted) {
-                newReactions[voted] = Math.max(1, Number(reactions[voted]) - 1);
+                newReactions[voted] = Math.max(
+                    1,
+                    Number(newReactions[voted]) - 1
+                );
             }
             setVoted(reactionKey);
         }
-        setTimeout(() => {
-            setReactions(newReactions);
-        }, 0);
+
+        setReactions(newReactions);
     };
 
     return (
