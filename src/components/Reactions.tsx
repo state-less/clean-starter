@@ -43,7 +43,7 @@ export const Reactions = (
         ) {
             newReactions = {
                 ...reactions,
-                [reactionKey]: Math.max(1, Number(reactions[reactionKey]) - 1),
+                [reactionKey]: Math.max(1, Number(reactions[reactionKey])) - 1,
             };
             setVoted(null);
         } else {

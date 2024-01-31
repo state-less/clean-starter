@@ -46,7 +46,7 @@ var Reactions = function Reactions(_ref, _ref2) {
     }
     var newReactions;
     if (voted === reactionKey && policies.includes(ReactionPolicies.SingleVote)) {
-      newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, Math.max(1, Number(reactions[reactionKey]) - 1)));
+      newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, Math.max(1, Number(reactions[reactionKey])) - 1));
       setVoted(null);
     } else {
       newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, (reactions[reactionKey] || 0) + 1));
