@@ -15,11 +15,14 @@ import { admins } from '../../lib/permissions';
 import { JWT_SECRET } from '../../config';
 import { ViewCounter } from '../ViewCounter';
 import { ReactionPolicies, Reactions, reactionsWhiteList } from '../Reactions';
+import { set } from 'date-fns';
 
 export type PostProps = {
     id: string;
     body: string;
     approved: boolean;
+    setPostSticky: (sticky: boolean) => void;
+    sticky: boolean;
     deleted: boolean;
     approvePost: () => void;
     deletePost: () => void;
@@ -53,6 +56,7 @@ export const Answer = (
         if (deleted) throw new Error('Cannot edit a deleted post');
         setPost({ ...post, body });
     };
+
     const del = (id) => {
         setDeleted(true);
         deleteAnswer();
@@ -91,7 +95,7 @@ export const Answer = (
 };
 
 export const Post = (
-    { id, deletePost, approvePost, ...initialPost }: PostProps,
+    { id, deletePost, approvePost, setPostSticky, ...initialPost }: PostProps,
     { context }
 ) => {
     let user = null;
@@ -132,31 +136,6 @@ export const Post = (
         deletePost();
     };
 
-    const approve = () => {
-        setPost({ ...post, approved: true });
-        approvePost();
-    };
-
-    const deleteAnswer = (id: string) => {
-        if (!answers.find((answer) => answer.id === id)) {
-            throw new Error('Answer not found');
-        }
-        const deleted = answers.find((answer) => answer.id === id);
-        const canDelete =
-            deleted?.owner?.id === user?.id ||
-            admins.includes(user?.strategies?.[user?.strategy]?.email);
-
-        if (!canDelete) {
-            throw new Error('Not authorized to delete this answer');
-        }
-
-        setAnswers(
-            answers
-                .filter((answer) => answer.id !== id)
-                .concat([{ ...deleted, deleted: true }])
-        );
-    };
-
     const isAdmin = admins.includes(user?.strategies?.[user?.strategy]?.email);
     const isOwner = post?.owner?.id === (user?.id || clientId);
     const isApproved = post?.approved;
@@ -169,6 +148,40 @@ export const Post = (
         Object.assign(passProps, post);
     }
 
+    const toggleSticky = () => {
+        if (!isAdmin) {
+            throw new Error('Not authorized.');
+        }
+
+        setPost({ ...post, sticky: !post.sticky });
+        setPostSticky(!post.sticky);
+    };
+
+    const approve = () => {
+        if (!isAdmin) {
+            throw new Error('Not authorized.');
+        }
+        setPost({ ...post, approved: !post.approved });
+        approvePost();
+    };
+
+    const deleteAnswer = (id: string) => {
+        if (!answers.find((answer) => answer.id === id)) {
+            throw new Error('Answer not found');
+        }
+        const deleted = answers.find((answer) => answer.id === id);
+        const canDelete = deleted?.owner?.id === user?.id || isAdmin;
+
+        if (!canDelete) {
+            throw new Error('Not authorized to delete this answer');
+        }
+
+        setAnswers(
+            answers
+                .filter((answer) => answer.id !== id)
+                .concat([{ ...deleted, deleted: true }])
+        );
+    };
     return (
         <ServerSideProps
             key={`post-${id}-props`}
@@ -184,6 +197,7 @@ export const Post = (
             del={del}
             deleted={post.deleted}
             approve={approve}
+            toggleSticky={toggleSticky}
             createAnswer={createAnswer}
             canDelete={
                 // post?.owner?.id === user?.id ||
@@ -270,8 +284,8 @@ export const Forum = (
         return post;
     };
 
-    const deletePost = (id) => {
-        const deleted = posts.find((post) => post.id === id);
+    const deletePost = (postId: string) => {
+        const deleted = posts.find((post) => post.id === postId);
         const { owner } = deleted || {};
         if (
             owner?.strategies?.[user?.strategy]?.email !==
@@ -283,25 +297,42 @@ export const Forum = (
 
         setPosts(
             posts
-                .filter((post) => post.id !== id)
+                .filter((post) => post.id !== postId)
                 .concat([{ ...deleted, deleted: true }])
         );
 
         return deleted;
     };
-    const approvePost = (id) => {
-        const post = posts.find((post) => post.id === id);
+    const approvePost = (postId: string) => {
+        const post = posts.find((p) => p.id === postId);
+        if (!post) {
+            throw new Error('Post not found');
+        }
         if (!admins.includes(user?.strategies?.[user?.strategy]?.email)) {
             throw new Error('Not an admin');
         }
         const newPosts = [{ ...post, approved: true }].concat(
-            posts.filter((p) => p.id !== id)
+            posts.filter((p) => p.id !== postId)
         );
-        console.log('Approving post: ', id, post, newPosts);
+
         setPosts(newPosts);
     };
 
-    console.log('CLIENT PROPS', clientProps);
+    const setPostSticky = (postId: string) => {
+        const post = posts.find((p) => p.id === postId);
+        if (!post) {
+            throw new Error('Post not found');
+        }
+        if (!admins.includes(user?.strategies?.[user?.strategy]?.email)) {
+            throw new Error('Not an admin');
+        }
+        const newPosts = [{ ...post, sticky: true }].concat(
+            posts.filter((p) => p.id !== postId)
+        );
+
+        setPosts(newPosts);
+    };
+
     const filtered = posts
         .filter((post) => !post.deleted)
         .filter((post) => {
@@ -318,7 +349,6 @@ export const Forum = (
     const start = !compound ? (page - 1) * pageSize : 0;
     const end = page * pageSize;
 
-    console.log('FILTERED', posts, filtered, start, end, id);
     return (
         <ServerSideProps
             key={clientKey(`forum-${id}-props`, context)}
@@ -335,6 +365,7 @@ export const Forum = (
                     {...post}
                     deletePost={() => deletePost(post.id)}
                     approvePost={() => approvePost(post.id)}
+                    setPostSticky={() => setPostSticky(post.id)}
                 />
             ))}
         </ServerSideProps>

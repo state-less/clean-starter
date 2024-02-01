@@ -25,7 +25,8 @@ var Reactions = function Reactions(_ref, _ref2) {
     _ref$values = _ref.values,
     values = _ref$values === void 0 ? [] : _ref$values;
   var context = _ref2.context,
-    key = _ref2.key;
+    key = _ref2.key,
+    initiator = _ref2.initiator;
   var _useState = (0, _reactServer.useState)({}, {
       key: "votings",
       scope: key
@@ -34,7 +35,7 @@ var Reactions = function Reactions(_ref, _ref2) {
     reactions = _useState2[0],
     setReactions = _useState2[1];
   var _useState3 = (0, _reactServer.useState)(null, {
-      key: "voted-".concat(key),
+      key: "voted",
       scope: "".concat(key, "-").concat(_reactServer.Scopes.Client)
     }),
     _useState4 = (0, _slicedToArray2["default"])(_useState3, 2),
@@ -45,15 +46,19 @@ var Reactions = function Reactions(_ref, _ref2) {
       throw new Error('Invalid reaction');
     }
     var newReactions;
-    if (voted === reactionKey && policies.includes(ReactionPolicies.SingleVote)) {
+    if (voted === reactionKey) {
       newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, Math.max(1, Number(reactions[reactionKey])) - 1));
-      setVoted(null);
+      setTimeout(function () {
+        setVoted(null);
+      }, 0);
     } else {
       newReactions = _objectSpread(_objectSpread({}, reactions), {}, (0, _defineProperty2["default"])({}, reactionKey, (reactions[reactionKey] || 0) + 1));
       if (voted) {
         newReactions[voted] = Math.max(1, Number(newReactions[voted]) - 1);
       }
-      setVoted(reactionKey);
+      setTimeout(function () {
+        setVoted(reactionKey);
+      }, 0);
     }
     setReactions(newReactions);
   };

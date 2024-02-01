@@ -1,4 +1,9 @@
-import { clientKey, Scopes, useState } from '@state-less/react-server';
+import {
+    clientKey,
+    Initiator,
+    Scopes,
+    useState,
+} from '@state-less/react-server';
 import { ServerSideProps } from './ServerSideProps';
 
 type ReactionsState = Record<string, number>;
@@ -16,7 +21,7 @@ export enum ReactionPolicies {
 
 export const Reactions = (
     { policies = [], values = [] }: ReactionsProps,
-    { context, key }
+    { context, key, initiator }
 ) => {
     const [reactions, setReactions] = useState<ReactionsState>(
         {},
@@ -27,7 +32,7 @@ export const Reactions = (
     );
 
     const [voted, setVoted] = useState(null, {
-        key: `voted-${key}`,
+        key: `voted`,
         scope: `${key}-${Scopes.Client}`,
     });
 
@@ -37,15 +42,15 @@ export const Reactions = (
         }
 
         let newReactions;
-        if (
-            voted === reactionKey &&
-            policies.includes(ReactionPolicies.SingleVote)
-        ) {
+
+        if (voted === reactionKey) {
             newReactions = {
                 ...reactions,
                 [reactionKey]: Math.max(1, Number(reactions[reactionKey])) - 1,
             };
-            setVoted(null);
+            setTimeout(() => {
+                setVoted(null);
+            }, 0);
         } else {
             newReactions = {
                 ...reactions,
@@ -57,7 +62,9 @@ export const Reactions = (
                     Number(newReactions[voted]) - 1
                 );
             }
-            setVoted(reactionKey);
+            setTimeout(() => {
+                setVoted(reactionKey);
+            }, 0);
         }
 
         setReactions(newReactions);

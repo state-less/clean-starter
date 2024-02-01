@@ -17,7 +17,7 @@
         "@babel/plugin-transform-modules-commonjs": "^7.21.2",
         "@babel/plugin-transform-runtime": "^7.21.0",
         "@babel/preset-env": "^7.20.2",
-        "@state-less/react-server": "^2.0.40",
+        "@state-less/react-server": "^2.0.42",
         "@types/graphql": "^14.5.0",
         "@types/node": "^18.15.10",
         "@typescript-eslint/eslint-plugin": "^5.54.0",
