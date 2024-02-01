@@ -340,6 +340,12 @@ export const reactServer = (
             name="Lists Forum"
             policies={[ForumPolicies.PostsNeedApproval]}
         />
+        <Forum
+            key="javascript-forum"
+            id="javascript-forum"
+            name="JavaScript Forum"
+            policies={[ForumPolicies.PostsNeedApproval]}
+        />
         <WebPushManager key="web-push" />
     </Server>
 );

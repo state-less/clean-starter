@@ -274,7 +274,11 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     id: "lists-forum",
     name: "Lists Forum",
     policies: [_Forum.ForumPolicies.PostsNeedApproval]
-  }, "lists-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
+  }, "lists-forum"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+    id: "javascript-forum",
+    name: "JavaScript Forum",
+    policies: [_Forum.ForumPolicies.PostsNeedApproval]
+  }, "javascript-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
 var node = (0, _reactServer.render)(reactServer, {
