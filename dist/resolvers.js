@@ -129,6 +129,7 @@ var renderComponent = function renderComponent(parent, args, context) {
   var key = args.key,
     props = args.props;
   lastClientProps[(0, _reactServer.clientKey)(key, context)] = props;
+  console.log('RENDERING COMPONENT', key, _reactServer2.globalInstance.components.has(key));
   var component = _reactServer2.globalInstance.components.get(key);
   renderedComponents[(0, _reactServer.clientKey)('components-', context)] = renderedComponents[(0, _reactServer.clientKey)('components-', context)] || [];
   renderedComponents[(0, _reactServer.clientKey)('components-', context)].push(key);

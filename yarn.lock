@@ -1708,10 +1708,9 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@^2.0.42":
+"@state-less/react-server@state-less/react-server#feat/state-deduplication":
   version "2.0.42"
-  resolved "https://registry.yarnpkg.com/@state-less/react-server/-/react-server-2.0.42.tgz#452683586f9289f2b4ce553421dae7db184004aa"
-  integrity sha512-ipDq9OOh4EBpWfIqwoGfj/M7TaARAK3JpQwMvW2/UkKRVrqpHOGK4zTk+G5CdWKKZXbhVVku1tn7ybQKnBT/Gw==
+  resolved "https://codeload.github.com/state-less/react-server/tar.gz/6f4b25528abb5b903c690830f8a4d6553e64ce57"
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.21.0"
     "@babel/preset-react" "^7.18.6"

@@ -4,6 +4,7 @@ import {
     authenticate,
     clientKey,
     isClientContext,
+    isServerContext,
     render,
     useState,
 } from '@state-less/react-server';
@@ -47,6 +48,7 @@ export const Answer = (
         key: 'answer',
         scope: id,
     });
+
     const [deleted, setDeleted] = useState(false, {
         key: 'deleted',
         scope: id,
@@ -108,6 +110,7 @@ export const Post = (
     const [post, setPost] = useState<Partial<PostProps>>(initialPost, {
         key: 'post',
         scope: id,
+        storeInitialState: true,
     });
     const [answers, setAnswers] = useState([], {
         key: 'answers',
@@ -253,7 +256,7 @@ export type ForumProps = {
 
 export const Forum = (
     { id, name, policies }: ForumProps,
-    { key, context, clientProps }
+    { key, context, clientProps, initiator }
 ) => {
     let user = null;
     const clientId = context?.headers?.['x-unique-id'] || 'server';
@@ -266,7 +269,6 @@ export const Forum = (
         key: 'posts',
         scope: id,
     });
-
     const createPost = ({ title, body, tags }) => {
         console.log('CREATE POST', user, clientId);
         const post = {
@@ -333,18 +335,28 @@ export const Forum = (
         setPosts(newPosts);
     };
 
+    const isAdmin = admins.includes(user?.strategies?.[user?.strategy]?.email);
+
+    /**
+     * When filtering posts for the client, you need to make sure they are still
+     * visible to the server. i.e. the server should be treated as admin.
+     * If you don't do this and a user tries to directly access a post the server won't find it
+     * as it's been filtered out.
+     */
     const filtered = posts
-        .filter((post) => !post.deleted)
+        .filter((post) => isServerContext(context) || isAdmin || !post.deleted)
         .filter((post) => {
             if (policies?.includes(ForumPolicies.PostsNeedApproval)) {
                 return (
+                    isServerContext(context) ||
                     post.approved ||
                     post?.owner?.id === (user?.id || clientId) ||
-                    admins.includes(user?.strategies?.[user?.strategy]?.email)
+                    isAdmin
                 );
             }
             return true;
         });
+
     const { page = 1, pageSize = 25, compound = false } = clientProps || {};
     const start = !compound ? (page - 1) * pageSize : 0;
     const end = page * pageSize;

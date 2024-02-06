@@ -94,7 +94,8 @@ var Post = function Post(_ref3, _ref4) {
   } catch (e) {}
   var _useState5 = (0, _reactServer.useState)(initialPost, {
       key: 'post',
-      scope: id
+      scope: id,
+      storeInitialState: true
     }),
     _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
     post = _useState6[0],
@@ -227,13 +228,14 @@ var ForumPolicies = /*#__PURE__*/function (ForumPolicies) {
 }({});
 exports.ForumPolicies = ForumPolicies;
 var Forum = function Forum(_ref6, _ref7) {
-  var _context$headers2;
+  var _context$headers2, _user26, _user26$strategies, _user26$strategies$us, _user27;
   var id = _ref6.id,
     name = _ref6.name,
     policies = _ref6.policies;
   var key = _ref7.key,
     context = _ref7.context,
-    clientProps = _ref7.clientProps;
+    clientProps = _ref7.clientProps,
+    initiator = _ref7.initiator;
   var user = null;
   var clientId = (context === null || context === void 0 ? void 0 : (_context$headers2 = context.headers) === null || _context$headers2 === void 0 ? void 0 : _context$headers2['x-unique-id']) || 'server';
   if ((0, _reactServer.isClientContext)(context)) try {
@@ -318,15 +320,17 @@ var Forum = function Forum(_ref6, _ref7) {
     }));
     setPosts(newPosts);
   };
+  var isAdmin = _permissions.admins.includes((_user26 = user) === null || _user26 === void 0 ? void 0 : (_user26$strategies = _user26.strategies) === null || _user26$strategies === void 0 ? void 0 : (_user26$strategies$us = _user26$strategies[(_user27 = user) === null || _user27 === void 0 ? void 0 : _user27.strategy]) === null || _user26$strategies$us === void 0 ? void 0 : _user26$strategies$us.email);
   var filtered = posts.filter(function (post) {
-    return !post.deleted;
+    return (0, _reactServer.isServerContext)(context) || isAdmin || !post.deleted;
   }).filter(function (post) {
     if (policies !== null && policies !== void 0 && policies.includes(ForumPolicies.PostsNeedApproval)) {
-      var _post$owner11, _user26, _user27, _user27$strategies, _user27$strategies$us, _user28;
-      return post.approved || (post === null || post === void 0 ? void 0 : (_post$owner11 = post.owner) === null || _post$owner11 === void 0 ? void 0 : _post$owner11.id) === (((_user26 = user) === null || _user26 === void 0 ? void 0 : _user26.id) || clientId) || _permissions.admins.includes((_user27 = user) === null || _user27 === void 0 ? void 0 : (_user27$strategies = _user27.strategies) === null || _user27$strategies === void 0 ? void 0 : (_user27$strategies$us = _user27$strategies[(_user28 = user) === null || _user28 === void 0 ? void 0 : _user28.strategy]) === null || _user27$strategies$us === void 0 ? void 0 : _user27$strategies$us.email);
+      var _post$owner11, _user28;
+      return (0, _reactServer.isServerContext)(context) || post.approved || (post === null || post === void 0 ? void 0 : (_post$owner11 = post.owner) === null || _post$owner11 === void 0 ? void 0 : _post$owner11.id) === (((_user28 = user) === null || _user28 === void 0 ? void 0 : _user28.id) || clientId) || isAdmin;
     }
     return true;
   });
+  console.log('RENDERING POSTS ON SERVER', id, filtered, (0, _reactServer.isServerContext)(context));
   var _ref10 = clientProps || {},
     _ref10$page = _ref10.page,
     page = _ref10$page === void 0 ? 1 : _ref10$page,

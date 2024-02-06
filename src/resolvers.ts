@@ -122,6 +122,7 @@ const mountComponent = (parent, args, context) => {
 const renderComponent = (parent, args, context) => {
     const { key, props } = args;
     lastClientProps[clientKey(key, context)] = props;
+    console.log('RENDERING COMPONENT', key, globalInstance.components.has(key));
     const component = globalInstance.components.get(key);
 
     renderedComponents[clientKey('components-', context)] =
