@@ -289,6 +289,7 @@ export const reactServer = (
         <ChatApp key="chat" />
         <ViewCounter key="view-counter" />
         <ViewCounter key="lists-views" />
+        <ViewCounter key="js-forum-views" />
         <Features key="features" />
         <TestComponent key="test" />
         <Navigation key="navigation" />
