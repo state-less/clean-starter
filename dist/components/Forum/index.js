@@ -321,6 +321,13 @@ var Forum = function Forum(_ref6, _ref7) {
     setPosts(newPosts);
   };
   var isAdmin = _permissions.admins.includes((_user26 = user) === null || _user26 === void 0 ? void 0 : (_user26$strategies = _user26.strategies) === null || _user26$strategies === void 0 ? void 0 : (_user26$strategies$us = _user26$strategies[(_user27 = user) === null || _user27 === void 0 ? void 0 : _user27.strategy]) === null || _user26$strategies$us === void 0 ? void 0 : _user26$strategies$us.email);
+
+  /**
+   * When filtering posts for the client, you need to make sure they are still
+   * visible to the server. i.e. the server should be treated as admin.
+   * If you don't do this and a user tries to directly access a post the server won't find it
+   * as it's been filtered out.
+   */
   var filtered = posts.filter(function (post) {
     return (0, _reactServer.isServerContext)(context) || isAdmin || !post.deleted;
   }).filter(function (post) {
@@ -330,7 +337,6 @@ var Forum = function Forum(_ref6, _ref7) {
     }
     return true;
   });
-  console.log('RENDERING POSTS ON SERVER', id, filtered, (0, _reactServer.isServerContext)(context));
   var _ref10 = clientProps || {},
     _ref10$page = _ref10.page,
     page = _ref10$page === void 0 ? 1 : _ref10$page,
