@@ -5,12 +5,12 @@ import express from 'express';
 import cors from 'cors';
 import logger from './lib/logger';
 import { NotificationEngine } from './lib/NotificationEngine';
-import { PG_PASSWORD } from './config';
+import { PG_PASSWORD, PG_PORT } from './config';
 
 export const pubsub = new PubSub();
 export const store = new Store({
     transport: new PostgresTransport({
-        connectionString: `postgres://postgres:${PG_PASSWORD}@localhost:5433/postgres`,
+        connectionString: `postgres://postgres:${PG_PASSWORD}@localhost:${PG_PORT}/postgres`,
     }),
 });
 
