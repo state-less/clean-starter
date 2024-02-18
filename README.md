@@ -18,7 +18,7 @@ Lists is a feature-rich productivity app designed to help you manage your tasks,
 
 ## Try It Out!
 
-Experience the power of Lists by visiting the [Live Demo](https://lists.state-less.cloud) hosted on React Server. Sign up for a free account and start boosting your productivity today!
+Experience the power of Lists by visiting the [Live Demo](https://lists.state-less.cloud/welcome) hosted on React Server. Sign up for a free account and start boosting your productivity today!
 
 ## Installation
 
