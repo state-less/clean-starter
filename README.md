@@ -2,7 +2,7 @@
 
 Welcome to Lists, a productivity app built with [React Server](https://state-less.cloud)!
 
-![Lists App](/public/screenshot.png)
+![Lists App](https://github.com/C5H8NNaO4/lists-app-frontend/raw/master/public/screenshot.png)
 
 ## Overview
 
