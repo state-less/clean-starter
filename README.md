@@ -39,10 +39,14 @@ Developers familiar with **React** and JSX components `<Component hello="world" 
 For detailed documentation and in-depth guides, please visit the official website at [state-less.cloud](https://state-less.cloud).
 
 ## Explore Examples
-Dive into real-world examples, like the [Lists App](https://lists.state-less.cloud), showcasing the potential of React Server.
+Dive into real-world examples showcasing the potential of React Server.
+
+### Projects using React Server
+* [Lists](https://lists.state-less.cloud)
+* [JavaScript Forum](https://javascript.forum)
+* [React Server Docs](https://state-less.cloud)
 
 ## Key Features
-
 - **Server-Side React**: Create server-side React components using TSX for efficient, component-driven backend development.
 - **@state-less/clean-starter**: Jumpstart your project with essential backend components, utilities, and examples.
 - **Explore the Future**: Harness the power of server-side real-time TSX components.
