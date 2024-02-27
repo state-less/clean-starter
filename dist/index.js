@@ -7,8 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.reactServer = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/taggedTemplateLiteral"));
 var _apolloServerExpress = require("apollo-server-express");
 var _graphqlTools = require("graphql-tools");
@@ -16,28 +14,13 @@ var _graphql = require("graphql");
 var _http = require("http");
 var _subscriptionsTransportWs = require("subscriptions-transport-ws");
 var _reactServer = require("@state-less/react-server");
-var _leapBackend = require("@state-less/leap-backend");
 var _instances = require("./instances");
 var _resolvers = require("./resolvers");
 var _schema = require("./schema");
-var _Navigation = require("./components/Navigation");
 var _examples = require("./components/examples");
-var _Pages = require("./components/Pages");
-var _Votings = require("./components/Votings");
-var _Session = require("./components/Session");
-var _Poll = require("./components/Poll");
-var _Comments = require("./components/Comments");
 var _logger = _interopRequireDefault(require("./lib/logger"));
-var _Features = require("./components/Features");
-var _ViewCounter = require("./components/ViewCounter");
-var _ChatRoom = require("./components/ChatRoom");
-var _Lists = require("./components/Lists");
-var _WebPushManager = require("./components/WebPushManager");
-var _permissions = require("./lib/permissions");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var _templateObject, _templateObject2; // import { Forum, ForumPolicies, Platform } from './components/Forum';
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+var _templateObject, _templateObject2;
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
 _reactServer.Dispatcher.getCurrent().setPubSub(_instances.pubsub);
 var PORT = 4000;
@@ -90,197 +73,8 @@ _subscriptionsTransportWs.SubscriptionServer.create({
   server: httpServer,
   path: apolloServer.graphqlPath
 });
-var landingList1 = {
-  id: 'landing-list-1',
-  title: 'Hello World',
-  todos: [{
-    id: 'todo-0',
-    title: 'Hello World',
-    completed: true
-  }, {
-    id: 'todo-1',
-    title: 'Add your first Todo Item',
-    completed: false
-  }, {
-    id: 'todo-2',
-    title: 'Add a counter item by clicking +',
-    completed: false
-  }],
-  order: ['todo-0', 'todo-1', 'todo-2']
-};
-var landingList2 = {
-  id: 'landing-list-2',
-  title: 'Colors',
-  color: '#ABDDA477',
-  todos: [{
-    id: 'counter-0',
-    type: 'Counter',
-    count: 3,
-    title: 'Glasses of water'
-  }],
-  order: ['counter-0']
-};
-var landingList3 = {
-  id: 'landing-list-3',
-  title: 'History',
-  settings: {
-    defaultType: 'Counter'
-  },
-  todos: [{
-    id: 'history-1',
-    createdAt: +new Date('2024-01-01'),
-    count: 3,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-01')
-  }, {
-    id: 'history-2',
-    createdAt: +new Date('2024-01-01'),
-    count: 2,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-01')
-  }, {
-    id: 'history-3',
-    createdAt: +new Date('2024-01-02'),
-    count: 1,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-02')
-  }, {
-    id: 'history-4',
-    createdAt: +new Date('2024-01-02'),
-    count: 4,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-02')
-  }, {
-    id: 'history-5',
-    createdAt: +new Date('2024-01-03'),
-    count: 0,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-03')
-  }, {
-    id: 'history-6',
-    createdAt: +new Date('2024-01-03'),
-    count: 0,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-03')
-  }, {
-    id: 'history-7',
-    createdAt: +new Date('2024-01-04'),
-    count: 2,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-04')
-  }, {
-    id: 'history-8',
-    createdAt: +new Date('2024-01-04'),
-    count: 2,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-04')
-  }, {
-    id: 'history-9',
-    createdAt: +new Date('2024-01-05'),
-    count: 5,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-05')
-  }, {
-    id: 'history-10',
-    createdAt: +new Date('2024-01-05'),
-    count: 2,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-05')
-  }, {
-    id: 'history-11',
-    createdAt: +new Date('2024-01-06'),
-    count: 3,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-06')
-  }, {
-    id: 'history-12',
-    createdAt: +new Date('2024-01-06'),
-    count: 1,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-06')
-  }, {
-    id: 'history-13',
-    createdAt: +new Date('2024-01-07'),
-    count: 1,
-    type: 'Counter',
-    title: 'Joy',
-    archived: +new Date('2024-01-07')
-  }, {
-    id: 'history-14',
-    createdAt: +new Date('2024-01-07'),
-    count: 1,
-    type: 'Counter',
-    title: 'Coffee',
-    archived: +new Date('2024-01-07')
-  }, {
-    id: 'history-15',
-    createdAt: +new Date('2024-01-08'),
-    count: 1,
-    type: 'Counter',
-    title: 'Joy'
-  }, {
-    id: 'history-16',
-    createdAt: +new Date('2024-01-08'),
-    count: 1,
-    type: 'Counter',
-    title: 'Coffee'
-  }],
-  order: (0, _toConsumableArray2["default"])(Array(16)).map(function (_, i) {
-    return "history-".concat(i + 1);
-  })
-};
-var demoList1 = {
-  id: 'demo-list-1',
-  title: 'Todos',
-  order: ['todo-0'],
-  todos: [{
-    id: 'todo-0',
-    title: 'Todo',
-    type: 'Todo',
-    completed: false
-  }]
-};
-var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
-  children: [(0, _jsxRuntime.jsx)(_ChatRoom.ChatApp, {}, "chat"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "view-counter"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "lists-views"), (0, _jsxRuntime.jsx)(_ViewCounter.ViewCounter, {}, "js-forum-views"), (0, _jsxRuntime.jsx)(_Features.Features, {}, "features"), (0, _jsxRuntime.jsx)(_reactServer.TestComponent, {}, "test"), (0, _jsxRuntime.jsx)(_Navigation.Navigation, {}, "navigation"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample1, {}, "hello-world-1"), (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "hello-world-2"), (0, _jsxRuntime.jsx)(_Pages.Pages, {}, "pages"), (0, _jsxRuntime.jsx)(_Pages.DynamicPage, {}, "page"), (0, _jsxRuntime.jsx)(_Lists.MyLists, {}, "my-lists"), (0, _jsxRuntime.jsx)(_Lists.MyListsMeta, {}, "my-lists-points"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
-    policies: [_Votings.VotingPolicies.SingleVote]
-  }, "votings"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList1), "landing-list-1"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList2), "landing-list-2"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, landingList3), "landing-list-3"), (0, _jsxRuntime.jsx)(_Lists.List, _objectSpread({}, demoList1), "todos"), (0, _jsxRuntime.jsx)(_Votings.Votings, {
-    policies: []
-  }, "votings-multiple"), (0, _jsxRuntime.jsx)(_Session.Session, {}, "session"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
-    values: ['Where can I get this?', 'Meh...', 'Shut up and take my money.'],
-    policies: [_Poll.PollActions.Revert, _Poll.PollActions.Authenticate]
-  }, "poll"), (0, _jsxRuntime.jsx)(_Poll.Poll, {
-    values: ['Nice!', 'Meh...', "It's not working", 'Add more features.', 'Add a comment section.', 'Shut up and take my money.'],
-    policies: [_Poll.PollActions.Revert]
-  }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
-    policies: [_Comments.CommentPolicies.Authenticate]
-  }, "comments"), (0, _jsxRuntime.jsx)(_leapBackend.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
-    id: "community-forum",
-    name: "Community",
-    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
-    users: _permissions.admins
-  }, "community-forum"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
-    id: "lists-forum",
-    name: "Lists Forum",
-    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
-    users: _permissions.admins
-  }, "lists-forum"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
-    id: "javascript-forum",
-    name: "JavaScript Forum",
-    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
-    users: _permissions.admins
-  }, "javascript-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
+var reactServer = (0, _jsxRuntime.jsx)(_reactServer.Server, {
+  children: (0, _jsxRuntime.jsx)(_examples.HelloWorldExample2, {}, "button")
 }, "server");
 exports.reactServer = reactServer;
 (0, _reactServer.render)(reactServer, {
