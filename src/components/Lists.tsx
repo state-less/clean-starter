@@ -26,7 +26,7 @@ type TodoObject = {
     title?: string;
     note?: string;
     completed?: boolean;
-    archived?: boolean;
+    archived?: number;
     lastModified?: number;
     lastNotified?: number;
     reset?: number;
@@ -628,11 +628,11 @@ export const Expense = (
     );
 };
 type ListSettings = {
-    defaultValuePoints: number;
-    pinned: boolean;
-    defaultType: string;
-    startOfDay: string;
-    endOfDay: string;
+    defaultValuePoints?: number;
+    pinned?: boolean;
+    defaultType?: string;
+    startOfDay?: string;
+    endOfDay?: string;
 };
 
 type Dependency = {
@@ -657,13 +657,13 @@ export const List = (
         id: string;
         title: string;
         todos: TodoObject[];
-        archived: boolean;
-        color: string;
-        pinned: boolean;
-        createdAt: number;
-        points: number;
-        labels: string[];
-        settings: ListSettings;
+        archived?: boolean;
+        color?: string;
+        pinned?: boolean;
+        createdAt?: number;
+        points?: number;
+        labels?: string[];
+        settings?: ListSettings;
         order: string[];
     },
     { key, context }

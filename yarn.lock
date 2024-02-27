@@ -1708,7 +1708,16 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@state-less/react-server@state-less/react-server#feat/state-deduplication":
+"@state-less/leap-backend@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@state-less/leap-backend/-/leap-backend-0.0.1.tgz#78a987bc37e26b2668b1d515da0a65b66d656934"
+  integrity sha512-CzFr4oGQLswekENeQjpmT6l0ByW5mPxkeEKAIYUQbtQS8hbQIpo5+2Ax6OnJE/V7opijGNtnWY1y/hXgTC5Hnw==
+  dependencies:
+    "@state-less/react-server" "^2.0.42"
+    date-fns "^3.3.1"
+    uuid "^9.0.1"
+
+"@state-less/react-server@^2.0.42", "@state-less/react-server@state-less/react-server#feat/state-deduplication":
   version "2.0.42"
   resolved "https://codeload.github.com/state-less/react-server/tar.gz/6f4b25528abb5b903c690830f8a4d6553e64ce57"
   dependencies:
@@ -3018,6 +3027,11 @@ date-fns@^2.30.0:
   integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
   dependencies:
     "@babel/runtime" "^7.21.0"
+
+date-fns@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-3.3.1.tgz#7581daca0892d139736697717a168afbb908cfed"
+  integrity sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==
 
 debug@2.6.9:
   version "2.6.9"
@@ -6721,6 +6735,11 @@ uuid@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
   integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
+
+uuid@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

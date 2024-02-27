@@ -17,6 +17,7 @@
         "@babel/plugin-transform-modules-commonjs": "^7.21.2",
         "@babel/plugin-transform-runtime": "^7.21.0",
         "@babel/preset-env": "^7.20.2",
+        "@state-less/leap-backend": "^0.0.1",
         "@state-less/react-server": "state-less/react-server#feat/state-deduplication",
         "@types/graphql": "^14.5.0",
         "@types/node": "^18.15.10",

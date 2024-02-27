@@ -11,6 +11,7 @@ import {
     Initiator,
 } from '@state-less/react-server';
 
+import { Forum, ForumPolicies, Platform } from '@state-less/leap-backend';
 import { app, pubsub, store } from './instances';
 
 import { generatePubSubKey, resolvers } from './resolvers';
@@ -26,9 +27,10 @@ import logger from './lib/logger';
 import { Features } from './components/Features';
 import { ViewCounter } from './components/ViewCounter';
 import { ChatApp } from './components/ChatRoom';
-import { Forum, ForumPolicies, Platform } from './components/Forum';
+// import { Forum, ForumPolicies, Platform } from './components/Forum';
 import { List, MyLists, MyListsMeta } from './components/Lists';
 import { WebPushManager } from './components/WebPushManager';
+import { admins } from './lib/permissions';
 
 Dispatcher.getCurrent().setStore(store);
 Dispatcher.getCurrent().setPubSub(pubsub);
@@ -55,8 +57,7 @@ const connections = store.createState(0, {
     key: 'connections',
     scope: 'global',
 });
-// Create a WebSocket server for subscriptions
-const clients = new WeakMap();
+
 SubscriptionServer.create(
     {
         keepAlive: 10000,
@@ -144,126 +145,126 @@ const landingList3 = {
     todos: [
         {
             id: 'history-1',
-            createdAt: '2024-01-01',
+            createdAt: +new Date('2024-01-01'),
             count: 3,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-01',
+            archived: +new Date('2024-01-01'),
         },
         {
             id: 'history-2',
-            createdAt: '2024-01-01',
+            createdAt: +new Date('2024-01-01'),
             count: 2,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-01',
+            archived: +new Date('2024-01-01'),
         },
         {
             id: 'history-3',
-            createdAt: '2024-01-02',
+            createdAt: +new Date('2024-01-02'),
             count: 1,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-02',
+            archived: +new Date('2024-01-02'),
         },
         {
             id: 'history-4',
-            createdAt: '2024-01-02',
+            createdAt: +new Date('2024-01-02'),
             count: 4,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-02',
+            archived: +new Date('2024-01-02'),
         },
         {
             id: 'history-5',
-            createdAt: '2024-01-03',
+            createdAt: +new Date('2024-01-03'),
             count: 0,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-03',
+            archived: +new Date('2024-01-03'),
         },
         {
             id: 'history-6',
-            createdAt: '2024-01-03',
+            createdAt: +new Date('2024-01-03'),
             count: 0,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-03',
+            archived: +new Date('2024-01-03'),
         },
         {
             id: 'history-7',
-            createdAt: '2024-01-04',
+            createdAt: +new Date('2024-01-04'),
             count: 2,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-04',
+            archived: +new Date('2024-01-04'),
         },
         {
             id: 'history-8',
-            createdAt: '2024-01-04',
+            createdAt: +new Date('2024-01-04'),
             count: 2,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-04',
+            archived: +new Date('2024-01-04'),
         },
         {
             id: 'history-9',
-            createdAt: '2024-01-05',
+            createdAt: +new Date('2024-01-05'),
             count: 5,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-05',
+            archived: +new Date('2024-01-05'),
         },
         {
             id: 'history-10',
-            createdAt: '2024-01-05',
+            createdAt: +new Date('2024-01-05'),
             count: 2,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-05',
+            archived: +new Date('2024-01-05'),
         },
         {
             id: 'history-11',
-            createdAt: '2024-01-06',
+            createdAt: +new Date('2024-01-06'),
             count: 3,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-06',
+            archived: +new Date('2024-01-06'),
         },
         {
             id: 'history-12',
-            createdAt: '2024-01-06',
+            createdAt: +new Date('2024-01-06'),
             count: 1,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-06',
+            archived: +new Date('2024-01-06'),
         },
         {
             id: 'history-13',
-            createdAt: '2024-01-07',
+            createdAt: +new Date('2024-01-07'),
             count: 1,
             type: 'Counter',
             title: 'Joy',
-            archived: '2024-01-07',
+            archived: +new Date('2024-01-07'),
         },
         {
             id: 'history-14',
-            createdAt: '2024-01-07',
+            createdAt: +new Date('2024-01-07'),
             count: 1,
             type: 'Counter',
             title: 'Coffee',
-            archived: '2024-01-07',
+            archived: +new Date('2024-01-07'),
         },
         {
             id: 'history-15',
-            createdAt: '2024-01-08',
+            createdAt: +new Date('2024-01-08'),
             count: 1,
             type: 'Counter',
             title: 'Joy',
         },
         {
             id: 'history-16',
-            createdAt: '2024-01-08',
+            createdAt: +new Date('2024-01-08'),
             count: 1,
             type: 'Counter',
             title: 'Coffee',
@@ -334,24 +335,27 @@ export const reactServer = (
             id="community-forum"
             name="Community"
             policies={[ForumPolicies.PostsNeedApproval]}
+            users={admins}
         />
         <Forum
             key="lists-forum"
             id="lists-forum"
             name="Lists Forum"
             policies={[ForumPolicies.PostsNeedApproval]}
+            users={admins}
         />
         <Forum
             key="javascript-forum"
             id="javascript-forum"
             name="JavaScript Forum"
             policies={[ForumPolicies.PostsNeedApproval]}
+            users={admins}
         />
         <WebPushManager key="web-push" />
     </Server>
 );
 
-const node = render(
+render(
     reactServer,
     {
         initiator: Initiator.RenderServer,

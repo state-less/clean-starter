@@ -16,6 +16,7 @@ var _graphql = require("graphql");
 var _http = require("http");
 var _subscriptionsTransportWs = require("subscriptions-transport-ws");
 var _reactServer = require("@state-less/react-server");
+var _leapBackend = require("@state-less/leap-backend");
 var _instances = require("./instances");
 var _resolvers = require("./resolvers");
 var _schema = require("./schema");
@@ -30,11 +31,11 @@ var _logger = _interopRequireDefault(require("./lib/logger"));
 var _Features = require("./components/Features");
 var _ViewCounter = require("./components/ViewCounter");
 var _ChatRoom = require("./components/ChatRoom");
-var _Forum = require("./components/Forum");
 var _Lists = require("./components/Lists");
 var _WebPushManager = require("./components/WebPushManager");
+var _permissions = require("./lib/permissions");
 var _jsxRuntime = require("@state-less/react-server/dist/jsxRenderer/jsx-runtime");
-var _templateObject, _templateObject2;
+var _templateObject, _templateObject2; // import { Forum, ForumPolicies, Platform } from './components/Forum';
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 _reactServer.Dispatcher.getCurrent().setStore(_instances.store);
@@ -60,8 +61,6 @@ var connections = _instances.store.createState(0, {
   key: 'connections',
   scope: 'global'
 });
-// Create a WebSocket server for subscriptions
-var clients = new WeakMap();
 _subscriptionsTransportWs.SubscriptionServer.create({
   keepAlive: 10000,
   schema: schema,
@@ -129,111 +128,111 @@ var landingList3 = {
   },
   todos: [{
     id: 'history-1',
-    createdAt: '2024-01-01',
+    createdAt: +new Date('2024-01-01'),
     count: 3,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-01'
+    archived: +new Date('2024-01-01')
   }, {
     id: 'history-2',
-    createdAt: '2024-01-01',
+    createdAt: +new Date('2024-01-01'),
     count: 2,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-01'
+    archived: +new Date('2024-01-01')
   }, {
     id: 'history-3',
-    createdAt: '2024-01-02',
+    createdAt: +new Date('2024-01-02'),
     count: 1,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-02'
+    archived: +new Date('2024-01-02')
   }, {
     id: 'history-4',
-    createdAt: '2024-01-02',
+    createdAt: +new Date('2024-01-02'),
     count: 4,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-02'
+    archived: +new Date('2024-01-02')
   }, {
     id: 'history-5',
-    createdAt: '2024-01-03',
+    createdAt: +new Date('2024-01-03'),
     count: 0,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-03'
+    archived: +new Date('2024-01-03')
   }, {
     id: 'history-6',
-    createdAt: '2024-01-03',
+    createdAt: +new Date('2024-01-03'),
     count: 0,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-03'
+    archived: +new Date('2024-01-03')
   }, {
     id: 'history-7',
-    createdAt: '2024-01-04',
+    createdAt: +new Date('2024-01-04'),
     count: 2,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-04'
+    archived: +new Date('2024-01-04')
   }, {
     id: 'history-8',
-    createdAt: '2024-01-04',
+    createdAt: +new Date('2024-01-04'),
     count: 2,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-04'
+    archived: +new Date('2024-01-04')
   }, {
     id: 'history-9',
-    createdAt: '2024-01-05',
+    createdAt: +new Date('2024-01-05'),
     count: 5,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-05'
+    archived: +new Date('2024-01-05')
   }, {
     id: 'history-10',
-    createdAt: '2024-01-05',
+    createdAt: +new Date('2024-01-05'),
     count: 2,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-05'
+    archived: +new Date('2024-01-05')
   }, {
     id: 'history-11',
-    createdAt: '2024-01-06',
+    createdAt: +new Date('2024-01-06'),
     count: 3,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-06'
+    archived: +new Date('2024-01-06')
   }, {
     id: 'history-12',
-    createdAt: '2024-01-06',
+    createdAt: +new Date('2024-01-06'),
     count: 1,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-06'
+    archived: +new Date('2024-01-06')
   }, {
     id: 'history-13',
-    createdAt: '2024-01-07',
+    createdAt: +new Date('2024-01-07'),
     count: 1,
     type: 'Counter',
     title: 'Joy',
-    archived: '2024-01-07'
+    archived: +new Date('2024-01-07')
   }, {
     id: 'history-14',
-    createdAt: '2024-01-07',
+    createdAt: +new Date('2024-01-07'),
     count: 1,
     type: 'Counter',
     title: 'Coffee',
-    archived: '2024-01-07'
+    archived: +new Date('2024-01-07')
   }, {
     id: 'history-15',
-    createdAt: '2024-01-08',
+    createdAt: +new Date('2024-01-08'),
     count: 1,
     type: 'Counter',
     title: 'Joy'
   }, {
     id: 'history-16',
-    createdAt: '2024-01-08',
+    createdAt: +new Date('2024-01-08'),
     count: 1,
     type: 'Counter',
     title: 'Coffee'
@@ -266,22 +265,25 @@ var reactServer = (0, _jsxRuntime.jsxs)(_reactServer.Server, {
     policies: [_Poll.PollActions.Revert]
   }, "poll-open"), (0, _jsxRuntime.jsx)(_Comments.Comments, {
     policies: [_Comments.CommentPolicies.Authenticate]
-  }, "comments"), (0, _jsxRuntime.jsx)(_Forum.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+  }, "comments"), (0, _jsxRuntime.jsx)(_leapBackend.Platform, {}, "platform"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
     id: "community-forum",
     name: "Community",
-    policies: [_Forum.ForumPolicies.PostsNeedApproval]
-  }, "community-forum"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
+    users: _permissions.admins
+  }, "community-forum"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
     id: "lists-forum",
     name: "Lists Forum",
-    policies: [_Forum.ForumPolicies.PostsNeedApproval]
-  }, "lists-forum"), (0, _jsxRuntime.jsx)(_Forum.Forum, {
+    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
+    users: _permissions.admins
+  }, "lists-forum"), (0, _jsxRuntime.jsx)(_leapBackend.Forum, {
     id: "javascript-forum",
     name: "JavaScript Forum",
-    policies: [_Forum.ForumPolicies.PostsNeedApproval]
+    policies: [_leapBackend.ForumPolicies.PostsNeedApproval],
+    users: _permissions.admins
   }, "javascript-forum"), (0, _jsxRuntime.jsx)(_WebPushManager.WebPushManager, {}, "web-push")]
 }, "server");
 exports.reactServer = reactServer;
-var node = (0, _reactServer.render)(reactServer, {
+(0, _reactServer.render)(reactServer, {
   initiator: _reactServer.Initiator.RenderServer,
   context: {
     __typename: 'ServerContext',
